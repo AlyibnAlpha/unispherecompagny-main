@@ -1,0 +1,175 @@
+// app global css in SCSS form
+/*---------------------------------------------
+Template Name: EduBlink Education Vue/Nuxt Template
+Version: 1.0.0
+
+===============================================   
+STYLESHEET INDEXING
+|
+|___ Default Styles
+|	|___ Variables
+|	|___ Shortcode 
+|	|___ Reset Styels
+|	|___ Typography
+|	|___ Forms Styles
+|	|___ Common 
+|	|___ Animation 
+|
+|___ Elements Styles
+|	|___ Accordion Style
+|	|___ Back To Top
+|	|___ Breadcrumb
+|	|___ Button
+|	|___ Countdown
+|	|___ Course Widget
+|	|___ Pagination Styles 
+|	|___ Section Title
+|	|___ Slick Styles 
+|	|___ Social Share Style 
+|
+|___Template Styles
+|	|___ About Styles
+|	|___ Brand Styles
+|	|___ Call To Action Styles
+|	|___ Campus Styles
+|	|___ Categorie Styles
+|	|___ Contact Styles
+|	|___ Counterup Styles
+|	|___ Course Styles
+|	|___ Course Details Style
+|	|___ Event Styles
+|	|___ FAQ Styles
+|	|___ Features Styles
+|	|___ Gallery Styles
+|	|___ Hero Banner Styles
+|	|___ Instagram Styles
+|	|___ Pricing Table Styles
+|	|___ Privacy Policy Style
+|	|___ Product Details Styles
+|	|___ Shop Styles
+|	|___ Splash Page Styles
+|	|___ Team Styles
+|	|___ Testimonial Styles
+|	|___ Video Styles
+|	|___ Why Choose Styles
+|	|___ 404 Error
+|
+|___Blocks Styles
+|	|___ Header Styles
+|	|___ Footer Styles
+|
+|___Blog Styles
+|
+|___Spacing
+|
+|___ END STYLESHEET INDEXING
+
+--------------------------------------------*/
+
+:root {
+  --q-font-family: 'Graphik', sans-serif;
+}
+html,
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+span,
+strong,
+p,
+div,
+#q-app {
+  font-family: var(--q-font-family) !important;
+}
+
+// bootstrap & fonts
+@import '../../node_modules/bootstrap/scss/bootstrap.scss';
+@import 'aos/dist/aos.css';
+@import '../css/CSS/icomoon.css';
+@import '../css/CSS/remixicon.css';
+
+/*=======================================================================
+1. Default Styles
+=========================================================================*/
+@import '../css/scss/default/variable';
+@import '../css/scss/default/shortcode';
+@import '../css/scss/default/reset';
+@import '../css/scss/default/typography';
+@import '../css/scss/default/form';
+@import '../css/scss/default/common';
+@import '../css/scss/default/animations';
+
+/*=======================================================================
+2. Elements Styles
+=========================================================================*/
+@import '../css/scss/elements/accordion';
+@import '../css/scss/elements/backtotop';
+@import '../css/scss/elements/breadcrumb';
+@import '../css/scss/elements/button';
+@import '../css/scss/elements/countdown';
+@import '../css/scss/elements/course-widget';
+@import '../css/scss/elements/pagination';
+@import '../css/scss/elements/section-title';
+@import '../css/scss/elements/swiper';
+@import '../css/scss/elements/social-share';
+@import '../css/scss/elements/theme-switcher';
+
+/*=======================================================================
+3. Template Styles
+=========================================================================*/
+@import '../css/scss/template/about';
+@import '../css/scss/template/brand';
+@import '../css/scss/template/call_to_action';
+@import '../css/scss/template/campus';
+@import '../css/scss/template/categorie';
+@import '../css/scss/template/contact';
+@import '../css/scss/template/counterup';
+@import '../css/scss/template/course';
+@import '../css/scss/template/course_details';
+@import '../css/scss/template/event';
+@import '../css/scss/template/faq';
+@import '../css/scss/template/features';
+@import '../css/scss/template/gallery';
+@import '../css/scss/template/hero_banner';
+@import '../css/scss/template/instagram';
+@import '../css/scss/template/pricing';
+@import '../css/scss/template/privacy_policy';
+@import '../css/scss/template/product_details';
+@import '../css/scss/template/shop';
+@import '../css/scss/template/splash';
+@import '../css/scss/template/team';
+@import '../css/scss/template/testimonial';
+@import '../css/scss/template/video';
+@import '../css/scss/template/why_choose';
+@import '../css/scss/template/404';
+@import '../css/scss/template/modern_schooling/main';
+
+/*=======================================================================
+4.Blocks Styles 
+=========================================================================*/
+@import '../css/scss/header/header';
+@import '../css/scss/header/nav';
+@import '../css/scss/header/header-top';
+@import '../css/scss/header/header-action';
+@import '../css/scss/header/mobilemenu';
+@import '../css/scss/header/search-popup';
+@import '../css/scss/footer/footer';
+
+/*=======================================================================
+5.Blog Styles 
+=========================================================================*/
+@import '../css/scss/blog/blog';
+@import '../css/scss/blog/blog-details';
+@import '../css/scss/blog/comments';
+@import '../css/scss/blog/widget';
+
+/*=======================================================================
+6. Spacing/Dark
+=========================================================================*/
+@import '../css/scss/default/spacing';
+@import '../css/scss/default/dark';
+@import '../css/scss/default/rtl';
+@import '../css/scss/default/vue-specific';
