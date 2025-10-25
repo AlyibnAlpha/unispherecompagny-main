@@ -259,79 +259,94 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div class="modern-enquete-container">
     <BRow>
       <BCol cols="12">
-        <div class="d-flex justify-content-between">
-          <BButton variant="success" class="waves-effect waves-light mb-3" @click="creaOpenModal"
-            >Créer une enquête</BButton
-          >
+        <div class="page-header">
+          <div class="header-content">
+            <h2 class="page-title">Gestion des Enquêtes</h2>
+            <p class="page-subtitle">Créez et gérez vos enquêtes en toute simplicité</p>
+          </div>
+          <BButton variant="success" class="modern-create-btn" @click="creaOpenModal">
+            <i class="bi bi-plus-circle me-2"></i>
+            Créer une enquête
+          </BButton>
+        </div>
 
           <q-dialog v-model="ajout">
-            <q-card
-              style="
-                width: 800px;
-                max-width: 90vw;
-                background: linear-gradient(135deg, #f0f4ff, #e0f7fa);
-              "
-            >
+            <q-card class="modern-wizard-card">
               <!-- Titre -->
-              <q-card-section class="q-pa-sm bg-grey-2">
-                <div class="text-h6">Créez une enquête</div>
+              <q-card-section class="wizard-header">
+                <div class="wizard-title">
+                  <i class="bi bi-clipboard-data me-2"></i>
+                  Créez une enquête
+                </div>
+                <div class="wizard-subtitle">Suivez les étapes pour créer votre enquête</div>
               </q-card-section>
 
-              <!-- Barre de progression -->
-              <div class="q-pa-sm">
-                <q-linear-progress
-                  :value="progressBarValue / 100"
-                  color="success"
-                  class="progress-bar"
-                />
+              <!-- Étapes modernes -->
+              <div class="wizard-steps-container">
+                <div class="wizard-progress">
+                  <div class="progress-line" :style="{ width: `${progressBarValue}%` }"></div>
+                </div>
 
-                <ul class="nav nav-pills d-flex justify-content-around wizard-steps" role="tablist">
-                  <li class="nav-item" role="presentation">
-                    <q-btn
-                      flat
-                      round
-                      icon="check_circle"
-                      :color="activeTab >= 1 ? 'success' : 'grey'"
-                    />
-                  </li>
-                  <li class="nav-item" role="presentation">
-                    <q-btn
-                      flat
-                      round
-                      icon="check_circle"
-                      :color="activeTab >= 2 ? 'success' : 'grey'"
-                    />
-                  </li>
+                <div class="wizard-steps">
+                  <div class="wizard-step" :class="{ active: activeTab >= 1, completed: activeTab > 1 }">
+                    <div class="step-icon">
+                      <i class="bi bi-gear-fill" v-if="activeTab >= 1"></i>
+                      <i class="bi bi-gear" v-else></i>
+                    </div>
+                    <div class="step-content">
+                      <div class="step-title">Installation</div>
+                      <div class="step-description">Configuration initiale</div>
+                    </div>
+                    <div class="step-arrow" v-if="activeTab < 5">
+                      <i class="bi bi-arrow-right"></i>
+                    </div>
+                  </div>
 
-                  <li class="nav-item" role="presentation">
-                    <q-btn
-                      flat
-                      round
-                      icon="check_circle"
-                      :color="activeTab >= 3 ? 'success' : 'grey'"
-                    />
-                  </li>
+                  <div class="wizard-step" :class="{ active: activeTab >= 2, completed: activeTab > 2 }">
+                    <div class="step-icon">
+                      <i class="bi bi-people-fill" v-if="activeTab >= 2"></i>
+                      <i class="bi bi-people" v-else></i>
+                    </div>
+                    <div class="step-content">
+                      <div class="step-title">Choisissez votre public</div>
+                      <div class="step-description">Définir la cible</div>
+                    </div>
+                    <div class="step-arrow" v-if="activeTab < 5">
+                      <i class="bi bi-arrow-right"></i>
+                    </div>
+                  </div>
 
-                  <li class="nav-item" role="presentation">
-                    <q-btn
-                      flat
-                      round
-                      icon="check_circle"
-                      :color="activeTab >= 4 ? 'success' : 'grey'"
-                    />
-                  </li>
-                  <li class="nav-item" role="presentation">
-                    <q-btn
-                      flat
-                      round
-                      icon="check_circle"
-                      :color="activeTab >= 5 ? 'success' : 'grey'"
-                    />
-                  </li>
-                </ul>
+                  <div class="wizard-step" :class="{ active: activeTab >= 3, completed: activeTab > 3 }">
+                    <div class="step-icon">
+                      <i class="bi bi-hammer-fill" v-if="activeTab >= 3"></i>
+                      <i class="bi bi-hammer" v-else></i>
+                    </div>
+                    <div class="step-content">
+                      <div class="step-title">Construire une enquête</div>
+                      <div class="step-description">Créer les questions</div>
+                    </div>
+                    <div class="step-arrow" v-if="activeTab < 5">
+                      <i class="bi bi-arrow-right"></i>
+                    </div>
+                  </div>
+
+                  <div class="wizard-step" :class="{ active: activeTab >= 4, completed: activeTab > 4 }">
+                    <div class="step-icon">
+                      <i class="bi bi-rocket-fill" v-if="activeTab >= 4"></i>
+                      <i class="bi bi-rocket" v-else></i>
+                    </div>
+                    <div class="step-content">
+                      <div class="step-title">Lancement</div>
+                      <div class="step-description">Publier l'enquête</div>
+                    </div>
+                    <div class="step-arrow" v-if="activeTab < 5">
+                      <i class="bi bi-arrow-right"></i>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <!-- Contenu dynamique selon l'étape -->
@@ -363,55 +378,59 @@ export default {
             </q-card>
           </q-dialog>
         </div>
-        <div
-          class="ttable table-centered datatable dt-responsive nowrap table-card-list dataTable no-footer dtr-inline"
-        >
-          <BRow>
-            <BCol sm="12" md="6">
-              <div id="tickets-table_length" class="dataTables_length">
-                <label class="d-inline-flex align-items-center">
-                  Trier:
-                  <BFormSelect v-model="perPage" size="sm" :options="pageOptions"></BFormSelect>
-                </label>
-              </div>
-            </BCol>
-            <BCol sm="12" md="6">
-              <div id="tickets-table_filter" class="dataTables_filter text-md-end">
-                <label class="d-inline-flex align-items-center">
-                  Recherche:
+        <div class="modern-table-container">
+          <div class="table-controls">
+            <BRow>
+              <BCol sm="12" md="6">
+                <div class="table-control-item">
+                  <label class="control-label">
+                    <i class="bi bi-sort-down me-2"></i>
+                    Trier:
+                  </label>
+                  <BFormSelect v-model="perPage" size="sm" :options="pageOptions" class="modern-select"></BFormSelect>
+                </div>
+              </BCol>
+              <BCol sm="12" md="6">
+                <div class="table-control-item search-control">
+                  <label class="control-label">
+                    <i class="bi bi-search me-2"></i>
+                    Recherche:
+                  </label>
                   <BFormInput
                     v-model="filter"
                     type="search"
-                    placeholder="Recherche..."
-                    class="form-control form-control-sm ms-2"
+                    placeholder="Rechercher une enquête..."
+                    class="modern-search-input"
                   ></BFormInput>
-                </label>
-              </div>
-            </BCol>
-          </BRow>
-          <div v-if="loading" class="text-center my-5">
+                </div>
+              </BCol>
+            </BRow>
+          </div>
+          <div v-if="loading" class="loading-state">
             <q-spinner-ball color="green" size="50px" />
+            <p class="loading-text">Chargement des enquêtes...</p>
           </div>
           <div
             v-else-if="Array.isArray(orderData) && orderData.length === 0"
-            class="text-center py-5"
+            class="empty-state"
           >
-            <i class="uil uil-folder-open text-muted" style="font-size: 3rem"></i>
-            <p class="mt-3 text-muted">Aucune enquête trouvée</p>
+            <i class="bi bi-clipboard-data empty-icon"></i>
+            <h4 class="empty-title">Aucune enquête trouvée</h4>
+            <p class="empty-description">Commencez par créer votre première enquête</p>
           </div>
-          <BTable
-            v-else
-            table-class="table table-centered datatable table-card-list"
-            thead-tr-class="bg-transparent"
-            :items="orderData"
-            :fields="fields"
-            responsive="sm"
-            :per-page="perPage"
-            :current-page="currentPage"
-            :filter="filter"
-            :filter-included-fields="filterOn"
-            @filtered="onFiltered"
-          >
+          <div v-else class="table-wrapper">
+            <BTable
+              table-class="modern-table"
+              thead-tr-class="table-header"
+              :items="orderData"
+              :fields="fields"
+              responsive="sm"
+              :per-page="perPage"
+              :current-page="currentPage"
+              :filter="filter"
+              :filter-included-fields="filterOn"
+              @filtered="onFiltered"
+            >
             <template v-slot:cell(check)="data">
               <div class="custom-control custom-checkbox text-center">
                 <input
@@ -445,78 +464,63 @@ export default {
               }}</a>
             </template>
             <template v-slot:cell(status)="data">
-              <div
-                class="badge badge-pill font-size-12"
+              <span
+                class="modern-status-badge"
                 :class="{
-                  'bg-soft-primary': data.item.status === 'draft',
-                  'bg-soft-success': data.item.status === 'published',
-                  'bg-soft-warning': data.item.status === 'archived',
-                  'bg-soft-secondary': data.item.status === 'review',
-                  'bg-soft-danger': data.item.status === 'closed',
+                  'status-draft': data.item.status === 'draft',
+                  'status-published': data.item.status === 'published',
+                  'status-archived': data.item.status === 'archived',
+                  'status-review': data.item.status === 'review',
+                  'status-closed': data.item.status === 'closed',
                 }"
               >
                 {{ data.item.status }}
-              </div>
+              </span>
             </template>
             <template v-slot:cell(action)="data">
-              <ul class="list-inline mb-0">
-                <li class="list-inline-item">
-                  <a
-                    href="#"
-                    class="px-2 text-info"
-                    @click.prevent="openDetailModal(data.item)"
-                    title="stastique"
-                  >
-                    <i class="bi bi-eye" style="font-size: 18px"></i>
-                  </a>
-                </li>
+              <div class="action-buttons">
+                <button
+                  class="action-btn view-btn"
+                  @click="openDetailModal(data.item)"
+                  title="Voir les statistiques"
+                >
+                  <i class="bi bi-eye"></i>
+                </button>
 
-                <li class="list-inline-item">
-                  <a
-                    href="#"
-                    class="px-2 text-warning"
-                    @click.prevent="openEditModal(data.item)"
-                    title="Edit"
-                  >
-                    <i class="uil uil-pen font-size-18"></i>
-                  </a>
-                </li>
+                <button
+                  class="action-btn edit-btn"
+                  @click="openEditModal(data.item)"
+                  title="Modifier"
+                >
+                  <i class="bi bi-pencil"></i>
+                </button>
 
-                <li class="list-inline-item">
-                  <a
-                    href="#"
-                    class="px-2 text-primary"
-                    @click.prevent="chat = !chat"
-                    title="chat I.A"
-                  >
-                    <i class="uil uil-robot font-size-18"></i>
-                  </a>
-                </li>
-                <li class="list-inline-item">
-                  <a
-                    href="#"
-                    class="px-2 text-danger"
-                    @click.prevent="deleteSurvey(data.item.id)"
-                    title="Delete"
-                  >
-                    <i class="uil uil-trash-alt font-size-18"></i>
-                  </a>
-                </li>
-              </ul>
+                <button
+                  class="action-btn chat-btn"
+                  @click="chat = !chat"
+                  title="Chat IA"
+                >
+                  <i class="bi bi-robot"></i>
+                </button>
+
+                <button
+                  class="action-btn delete-btn"
+                  @click="deleteSurvey(data.item.id)"
+                  title="Supprimer"
+                >
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
             </template>
           </BTable>
+          </div>
         </div>
-        <BRow>
-          <BCol>
-            <div class="dataTables_paginate paging_simple_numbers float-end">
-              <ul class="pagination pagination-rounded">
-                <BPagination v-model="currentPage" :total-rows="rows" :per-page="perPage" />
-              </ul>
-            </div>
-          </BCol>
-        </BRow>
+        <div class="pagination-container">
+          <BPagination v-model="currentPage" :total-rows="rows" :per-page="perPage" class="modern-pagination" />
+        </div>
       </BCol>
     </BRow>
+
     <q-dialog v-model="chat" persistent>
       <q-card style="width: 700px; max-width: 80vw" class="bg-white text-black">
         <q-card-section class="q-pa-md row items-center">
@@ -573,72 +577,52 @@ export default {
 
 <style lang="scss">
 @import '../../../css/assets/scss/app2.scss';
-.progress-nav {
-  position: relative;
+
+/* Modern Enquete Container */
+.modern-enquete-container {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+  padding: 2rem 0;
+}
+
+/* Page Header */
+.page-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-}
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 
-.progress {
-  width: 100%;
-  position: absolute;
-  height: 4px;
-}
+  .header-content {
+    .page-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0 0 0.5rem 0;
+    }
 
-.wizard-steps {
-  position: relative;
-  z-index: 3;
-  width: 100%;
-
-  .wizard-step {
-    height: 60px;
-    width: 60px;
-    border-radius: 50%;
-    border: 3px solid;
-    display: flex;
-    justify-content: center;
-    z-index: 9;
-    position: relative;
-    background: white;
-  }
-}
-
-.step-arrow-nav {
-  .nav-link {
-    background: #f3f2ee;
-    padding: 4px 0;
-    border-radius: 0 !important;
-  }
-}
-
-.wizard {
-  .nav-link:not(.active) {
-    color: #f3f2ee;
-
-    .wizard-icon {
-      color: #a5a5a5;
+    .page-subtitle {
+      font-size: 1rem;
+      color: #64748b;
+      margin: 0;
     }
   }
 }
 
-[data-bs-theme='dark'] {
-  .wizard-steps .wizard-step:not(.active) {
-    background: var(--bs-input-bg);
-  }
-
-  .step-arrow-nav {
-    .nav-link:not(.active) {
-      background: var(--bs-input-bg);
-    }
-  }
-}
-.btn-success {
+/* Modern Create Button */
+.modern-create-btn {
   background: linear-gradient(135deg, #34c38f, #2ea3f2);
   border: none;
-  border-radius: 50px;
-  transition: all 0.3s ease;
+  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
   font-weight: 600;
+  font-size: 1rem;
   box-shadow: 0 4px 10px rgba(46, 163, 242, 0.3);
+  transition: all 0.3s ease;
 
   &:hover {
     background: linear-gradient(135deg, #2ea3f2, #34c38f);
@@ -650,109 +634,423 @@ export default {
     transform: scale(0.96);
   }
 }
-.table tbody tr {
-  transition: all 0.2s ease-in-out;
 
-  &:hover {
-    background: #f9fcff;
-    box-shadow: #1f6bad33 0px 4px 8px;
-    transform: scale(1.01);
+/* Modern Wizard Card */
+.modern-wizard-card {
+  width: 900px;
+  max-width: 95vw;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
+.wizard-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2rem;
+  text-align: center;
+
+  .wizard-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .wizard-subtitle {
+    font-size: 1rem;
+    opacity: 0.9;
   }
 }
 
-/* Icônes d'action */
-.list-inline-item a {
-  transition: all 0.2s ease-in-out;
+/* Wizard Steps Container */
+.wizard-steps-container {
+  padding: 2rem;
+  background: #f8fafc;
+}
 
-  &:hover {
-    transform: scale(1.2) rotate(-5deg);
-    opacity: 0.8;
+.wizard-progress {
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 2px;
+  margin-bottom: 2rem;
+  position: relative;
+
+  .progress-line {
+    height: 100%;
+    background: linear-gradient(135deg, #34c38f, #2ea3f2);
+    border-radius: 2px;
+    transition: width 0.3s ease;
   }
 }
 
-/* === Dialogues avec animation === */
-.q-dialog__inner {
-  animation: fadeScale 0.35s ease forwards;
+.wizard-steps {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
 }
 
-@keyframes fadeScale {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* === Inputs flottants modernes === */
-.form-control {
+.wizard-step {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #ffffff;
   border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  flex: 1;
+  position: relative;
+
+  &.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+  }
+
+  &.completed {
+    background: linear-gradient(135deg, #34c38f, #2ea3f2);
+    color: white;
+  }
+
+  .step-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.2);
+    font-size: 1.2rem;
+  }
+
+  .step-content {
+    flex: 1;
+
+    .step-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .step-description {
+      font-size: 0.75rem;
+      opacity: 0.8;
+    }
+  }
+
+  .step-arrow {
+    color: #94a3b8;
+    font-size: 1.2rem;
+  }
+
+  &.active .step-arrow,
+  &.completed .step-arrow {
+    color: white;
+  }
+}
+
+/* Modern Table Container */
+.modern-table-container {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  margin-top: 2rem;
+}
+
+.table-controls {
+  padding: 1.5rem;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+
+  .table-control-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    .control-label {
+      font-weight: 600;
+      color: #475569;
+      margin: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    &.search-control {
+      justify-content: flex-end;
+    }
+  }
+}
+
+.modern-select {
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  padding: 0.5rem;
+  background: white;
+  transition: all 0.2s ease;
 
   &:focus {
-    border-color: #2ea3f2;
-    box-shadow: 0 0 8px rgba(46, 163, 242, 0.4);
-    transform: scale(1.01);
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
   }
 }
 
-.bg-gradient {
-  background: linear-gradient(135deg, #0d6efd, #6610f2);
-}
-
-/* === Champs modernes avec floating label === */
-.floating-label {
-  position: relative;
-}
-
-.form-control-modern {
-  border-radius: 12px;
-  border: 2px solid #e0e7ff;
-  padding: 0.9rem 1rem;
-  width: 100%;
-  transition: all 0.3s ease;
-  background: #fff;
-}
-
-.form-control-modern:focus {
-  border-color: #10d0f2;
-  box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
-  transform: scale(1.01);
-}
-
-/* Labels flottants */
-.floating-label label {
-  position: absolute;
-  top: 50%;
-  left: 15px;
-  transform: translateY(-50%);
-  color: #6c757d;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  pointer-events: none;
+.modern-search-input {
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  padding: 0.5rem 1rem;
   background: white;
-  padding: 0 5px;
+  transition: all 0.2s ease;
+  min-width: 250px;
+
+  &:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    outline: none;
+  }
 }
 
-.form-control-modern:focus + label,
-.form-control-modern:not(:placeholder-shown) + label {
-  top: -10px;
-  left: 10px;
-  font-size: 0.8rem;
-  color: #10d0f2;
+/* Loading and Empty States */
+.loading-state {
+  text-align: center;
+  padding: 4rem 2rem;
+
+  .loading-text {
+    margin-top: 1rem;
+    color: #64748b;
+    font-weight: 500;
+  }
 }
 
-/* Multiselect alignement */
-.multiselect {
-  border-radius: 12px !important;
-  border: 2px solid #e0e7ff !important;
-  padding: 6px 10px;
-  transition: all 0.3s ease;
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+
+  .empty-icon {
+    font-size: 4rem;
+    color: #cbd5e1;
+    margin-bottom: 1rem;
+  }
+
+  .empty-title {
+    color: #374151;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .empty-description {
+    color: #6b7280;
+    margin: 0;
+  }
 }
-.multiselect:focus-within {
-  border-color: #10d0f2 !important;
-  box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
+
+/* Modern Table */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.modern-table {
+  .table {
+    margin-bottom: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+
+    .table-header {
+      background: #f8fafc;
+
+      th {
+        border: none;
+        padding: 1rem 0.75rem;
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: #475569;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 2px solid #e2e8f0;
+      }
+    }
+
+    tbody {
+      tr {
+        transition: all 0.2s ease;
+        border-bottom: 1px solid #f1f5f9;
+
+        &:hover {
+          background: #f8fafc;
+          transform: scale(1.01);
+        }
+
+        td {
+          border: none;
+          padding: 1rem 0.75rem;
+          vertical-align: middle;
+        }
+      }
+    }
+  }
+}
+
+/* Modern Status Badges */
+.modern-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+
+  &.status-draft {
+    background: linear-gradient(135deg, #6b7280, #4b5563);
+    color: #ffffff;
+  }
+
+  &.status-published {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #ffffff;
+  }
+
+  &.status-archived {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #ffffff;
+  }
+
+  &.status-review {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: #ffffff;
+  }
+
+  &.status-closed {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #ffffff;
+  }
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.action-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &.view-btn {
+    background: #dbeafe;
+    color: #2563eb;
+
+    &:hover {
+      background: #bfdbfe;
+    }
+  }
+
+  &.edit-btn {
+    background: #fef3c7;
+    color: #d97706;
+
+    &:hover {
+      background: #fde68a;
+    }
+  }
+
+  &.chat-btn {
+    background: #e0e7ff;
+    color: #7c3aed;
+
+    &:hover {
+      background: #c7d2fe;
+    }
+  }
+
+  &.delete-btn {
+    background: #fee2e2;
+    color: #dc2626;
+
+    &:hover {
+      background: #fecaca;
+    }
+  }
+}
+
+/* Pagination */
+.pagination-container {
+  padding: 1.5rem;
+  display: flex;
+  justify-content: center;
+  background: #f8fafc;
+}
+
+.modern-pagination {
+  .page-link {
+    border-radius: 8px;
+    margin: 0 0.25rem;
+    border: 1px solid #d1d5db;
+    color: #374151;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+    }
+  }
+
+  .page-item.active .page-link {
+    background: #667eea;
+    border-color: #667eea;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .wizard-steps {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .wizard-step {
+    .step-arrow {
+      display: none;
+    }
+  }
+
+  .table-controls {
+    .table-control-item {
+      flex-direction: column;
+      align-items: flex-start;
+
+      &.search-control {
+        align-items: flex-end;
+      }
+    }
+  }
+
+  .modern-search-input {
+    min-width: 200px;
+  }
 }
 </style>
