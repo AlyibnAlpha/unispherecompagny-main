@@ -1,228 +1,209 @@
 <template>
-  <BRow>
-    <BCol md="12" order="1" cols="xl-12">
-      <BRow>
-        <BCol md="3" cols="xl-3">
-          <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-            <BCardBody class="d-flex justify-content-between align-items-center p-4 bg-light">
-              <div>
-                <div class="d-flex align-items-center mb-2">
-                  <i class="bi bi-file-text text-warning fs-3 me-2"></i>
-
-                  <h4 class="fw-bold mb-0 fs-2">
+  <div class="modern-dashboard">
+    <BRow class="g-4">
+      <BCol md="12" order="1" cols="xl-12">
+        <BRow class="g-4">
+          <BCol md="3" cols="xl-3">
+            <div class="modern-stat-card stat-card-primary">
+              <div class="stat-card-content">
+                <div class="stat-icon">
+                  <i class="bi bi-file-text"></i>
+                </div>
+                <div class="stat-info">
+                  <h3 class="stat-number">
                     <CountToComponent :startVal="0" :endVal="Tsur" :duration="2000" />
-                  </h4>
+                  </h3>
+                  <p class="stat-label">Sondages</p>
                 </div>
-
-                <span
-                  class="badge bg-warning-subtle text-warning fw-semibold px-3 py-1 rounded-pill"
-                  >Sondanges</span
-                >
               </div>
-            </BCardBody>
-          </BCard>
-        </BCol>
-        <BCol md="3" cols="xl-3">
-          <BCard no-body class="shadow-sm rounded-4 stat-card shadow-success">
-            <BCardBody class="d-flex justify-content-between align-items-center p-4 bg-light">
-              <div>
-                <div class="d-flex align-items-center mb-2">
-                  <i class="bi bi-check2-square text-success fs-3 me-2"></i>
-                  <h4 class="fw-bold mb-0 fs-2">
+              <div class="stat-card-bg"></div>
+            </div>
+          </BCol>
+          <BCol md="3" cols="xl-3">
+            <div class="modern-stat-card stat-card-success">
+              <div class="stat-card-content">
+                <div class="stat-icon">
+                  <i class="bi bi-check2-square"></i>
+                </div>
+                <div class="stat-info">
+                  <h3 class="stat-number">
                     <CountToComponent :startVal="0" :endVal="Tsuracive" :duration="2000" />
-                  </h4>
+                  </h3>
+                  <p class="stat-label">Sondages Publiés</p>
                 </div>
-
-                <span
-                  class="badge bg-success-subtle text-success fw-semibold px-3 py-1 rounded-pill"
-                  >Sondages Publie</span
-                >
               </div>
-            </BCardBody>
-          </BCard>
-        </BCol>
+              <div class="stat-card-bg"></div>
+            </div>
+          </BCol>
 
-        <BCol md="3" cols="xl-3">
-          <BCard no-body class="shadow-sm rounded-4 stat-card shadow-success">
-            <BCardBody class="d-flex justify-content-between align-items-center p-4 bg-light">
-              <div>
-                <div class="d-flex align-items-center mb-2">
-                  <i class="bi bi-pencil-square text-success fs-3 me-2"></i>
-                  <h4 class="fw-bold mb-0 fs-2">
+          <BCol md="3" cols="xl-3">
+            <div class="modern-stat-card stat-card-info">
+              <div class="stat-card-content">
+                <div class="stat-icon">
+                  <i class="bi bi-pencil-square"></i>
+                </div>
+                <div class="stat-info">
+                  <h3 class="stat-number">
                     <CountToComponent :startVal="0" :endVal="Trep" :duration="2000" />
-                  </h4>
+                  </h3>
+                  <p class="stat-label">Réponses</p>
                 </div>
-                <span
-                  class="badge bg-success-subtle text-success fw-semibold px-3 py-1 rounded-pill"
-                  >Réponses</span
-                >
               </div>
-            </BCardBody>
-          </BCard>
-        </BCol>
+              <div class="stat-card-bg"></div>
+            </div>
+          </BCol>
 
-        <BCol md="3" cols="xl-3">
-          <BCard no-body class="shadow-sm rounded-4 stat-card shadow-danger">
-            <BCardBody class="d-flex justify-content-between align-items-center p-4 bg-light">
-              <div>
-                <div class="d-flex align-items-center mb-2">
-                  <i class="bi bi-ui-checks-grid text-danger fs-3 me-2"></i>
-                  <h4 class="fw-bold mb-0 fs-2">
+          <BCol md="3" cols="xl-3">
+            <div class="modern-stat-card stat-card-warning">
+              <div class="stat-card-content">
+                <div class="stat-icon">
+                  <i class="bi bi-ui-checks-grid"></i>
+                </div>
+                <div class="stat-info">
+                  <h3 class="stat-number">
                     <CountToComponent :startVal="0" :endVal="ttask" :duration="2000" />
-                  </h4>
+                  </h3>
+                  <p class="stat-label">Tâches</p>
                 </div>
-
-                <span class="badge bg-danger-subtle text-danger fw-semibold px-3 py-1 rounded-pill"
-                  >Tâches</span
-                >
               </div>
-            </BCardBody>
-          </BCard>
-        </BCol>
-      </BRow>
-      <BRow>
-        <BCol md="3" cols="xl-3">
-          <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-            <BCardBody class="d-flex justify-content-between align-items-center p-4 bg-light">
-              <div>
-                <div class="d-flex align-items-center mb-2">
-                  <i class="bi bi-building text-warning fs-3 me-2"></i>
-                  <h4 class="fw-bold mb-0 fs-2">
+              <div class="stat-card-bg"></div>
+            </div>
+          </BCol>
+        </BRow>
+        <BRow class="g-4">
+          <BCol md="3" cols="xl-3">
+            <div class="modern-stat-card stat-card-secondary">
+              <div class="stat-card-content">
+                <div class="stat-icon">
+                  <i class="bi bi-building"></i>
+                </div>
+                <div class="stat-info">
+                  <h3 class="stat-number">
                     <CountToComponent :startVal="0" :endVal="Tbusniness" :duration="2000" />
-                  </h4>
+                  </h3>
+                  <p class="stat-label">Comptes Business</p>
                 </div>
-
-                <span
-                  class="badge bg-warning-subtle text-warning fw-semibold px-3 py-1 rounded-pill"
-                  >Comptes Business</span
-                >
               </div>
-            </BCardBody>
-          </BCard>
-        </BCol>
-        <BCol md="3" cols="xl-3">
-          <BCard no-body class="shadow-sm rounded-4 stat-card shadow-success">
-            <BCardBody class="d-flex justify-content-between align-items-center p-4 bg-light">
-              <div>
-                <div class="d-flex align-items-center mb-2">
-                  <i class="bi bi-people text-success fs-3 me-2"></i>
-                  <h4 class="fw-bold mb-0 fs-2">
+              <div class="stat-card-bg"></div>
+            </div>
+          </BCol>
+          <BCol md="3" cols="xl-3">
+            <div class="modern-stat-card stat-card-purple">
+              <div class="stat-card-content">
+                <div class="stat-icon">
+                  <i class="bi bi-people"></i>
+                </div>
+                <div class="stat-info">
+                  <h3 class="stat-number">
                     <CountToComponent :startVal="0" :endVal="Tparticipant" :duration="2000" />
-                  </h4>
+                  </h3>
+                  <p class="stat-label">Comptes Participants</p>
                 </div>
-
-                <span
-                  class="badge bg-success-subtle text-success fw-semibold px-2 py-1 rounded-pill"
-                  >Comptes Participants</span
-                >
               </div>
-            </BCardBody>
-          </BCard>
-        </BCol>
+              <div class="stat-card-bg"></div>
+            </div>
+          </BCol>
 
-        <BCol md="3" cols="xl-3">
-          <BCard no-body class="shadow-sm rounded-4 stat-card shadow-success">
-            <BCardBody class="d-flex justify-content-between align-items-center p-4 bg-light">
-              <div>
-                <div class="d-flex align-items-center mb-2">
-                  <i class="bi bi-lightning-charge-fill text-success fs-3 me-2"></i>
-                  <h4 class="fw-bold mb-0 fs-2">
+          <BCol md="3" cols="xl-3">
+            <div class="modern-stat-card stat-card-orange">
+              <div class="stat-card-content">
+                <div class="stat-icon">
+                  <i class="bi bi-lightning-charge-fill"></i>
+                </div>
+                <div class="stat-info">
+                  <h3 class="stat-number">
                     <CountToComponent :startVal="0" :endVal="Tflashsur" :duration="2000" />
-                  </h4>
+                  </h3>
+                  <p class="stat-label">Sondages Flash</p>
                 </div>
-                <span
-                  class="badge bg-success-subtle text-success fw-semibold px-3 py-1 rounded-pill"
-                  >Sondages Flash</span
-                >
               </div>
-            </BCardBody>
-          </BCard>
-        </BCol>
+              <div class="stat-card-bg"></div>
+            </div>
+          </BCol>
 
-        <BCol md="3" cols="xl-3">
-          <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-            <BCardBody class="d-flex justify-content-between align-items-center p-4 bg-light">
-              <div>
-                <div class="d-flex align-items-center mb-2">
-                  <i class="bi bi-file-text text-warning fs-3 me-2"></i>
-
-                  <h4 class="fw-bold mb-0 fs-2">
+          <BCol md="3" cols="xl-3">
+            <div class="modern-stat-card stat-card-teal">
+              <div class="stat-card-content">
+                <div class="stat-icon">
+                  <i class="bi bi-gift"></i>
+                </div>
+                <div class="stat-info">
+                  <h3 class="stat-number">
                     <CountToComponent :startVal="0" :endVal="recompom" :duration="2000" />
-                  </h4>
+                  </h3>
+                  <p class="stat-label">Points Distribués</p>
                 </div>
-
-                <span
-                  class="badge bg-warning-subtle text-warning fw-semibold px-3 py-1 rounded-pill"
-                  >Points Distribués</span
-                >
               </div>
-            </BCardBody>
-          </BCard>
-        </BCol>
-      </BRow>
-    </BCol>
-    <BCol md="12" cols="xl-12" order="2">
-      <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-        <BCardBody class="p-0 bg-light" style="height: 400px">
-          <div class="h-100 w-100 p-3">
-            <h5 class="fw-semibold mb-3">Sondages par Catégories</h5>
+              <div class="stat-card-bg"></div>
+            </div>
+          </BCol>
+        </BRow>
+      </BCol>
+      <BCol md="12" cols="xl-12" order="2">
+        <div class="modern-chart-card">
+          <div class="chart-header">
+            <h5 class="chart-title">Sondages par Catégories</h5>
+            <div class="chart-subtitle">Répartition des sondages par catégorie</div>
+          </div>
+          <div class="chart-content">
             <apexchart
               type="bar"
-              height="90%"
+              height="350"
               width="100%"
               :options="categoryOptionsBar"
               :series="categorySeriesBar"
             />
           </div>
-        </BCardBody>
-      </BCard>
-    </BCol>
-    <BCol md="6" cols="xl-6" order="3">
-      <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning" style="height: 300px">
-        <BCardBody class="d-flex p-4 bg-light">
-          <div>
-            <h5 class="fw-semibold mb-3">Classement - Top 5 Sondages</h5>
+        </div>
+      </BCol>
+      <BCol md="6" cols="xl-6" order="3">
+        <div class="modern-chart-card chart-small">
+          <div class="chart-header">
+            <h5 class="chart-title">Top 5 Sondages</h5>
+            <div class="chart-subtitle">Sondages les plus populaires</div>
+          </div>
+          <div class="chart-content">
             <apexchart
               type="bar"
-              height="170"
+              height="200"
               :options="leaderOptions"
               :series="leaderSeries"
             ></apexchart>
           </div>
-        </BCardBody>
-      </BCard>
-    </BCol>
-    <BCol md="6" cols="xl-6" order="4">
-      <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning" style="height: 300px">
-        <BCardBody class="d-flex p-4 bg-light">
-          <div>
-            <h5 class="fw-semibold mb-3">Classement - Top 5 Participants</h5>
+        </div>
+      </BCol>
+      <BCol md="6" cols="xl-6" order="4">
+        <div class="modern-chart-card chart-small">
+          <div class="chart-header">
+            <h5 class="chart-title">Top 5 Participants</h5>
+            <div class="chart-subtitle">Participants les plus actifs</div>
+          </div>
+          <div class="chart-content">
             <div
               v-if="Array.isArray(topParticipants) && topParticipants.length === 0"
-              class="text-center py-4"
+              class="empty-state"
             >
-              <i class="uil uil-folder-open text-muted" style="font-size: 3rem"></i>
-              <p class="mt-3 text-muted">Aucune données</p>
+              <i class="bi bi-people text-muted"></i>
+              <p class="empty-text">Aucune donnée disponible</p>
             </div>
             <apexchart
               v-else
               type="bar"
-              height="90%"
+              height="200"
               width="100%"
               :options="leaderOptionsParticipants"
               :series="leaderSeriesParticipants"
-              class="px-5"
             ></apexchart>
           </div>
-        </BCardBody>
-      </BCard>
-    </BCol>
-  </BRow>
+        </div>
+      </BCol>
+    </BRow>
+  </div>
 </template>
 
 <script>
 import CountToComponent from '../../../../components/common/CountToComponent.vue'
-import { BRow, BCol, BCard, BCardBody } from 'bootstrap-vue-next'
+import { BRow, BCol } from 'bootstrap-vue-next'
 import { api } from 'src/boot/axios'
 import { onMounted, ref } from 'vue'
 import ApexCharts from 'vue3-apexcharts'
@@ -231,8 +212,6 @@ export default {
     CountToComponent,
     BRow,
     BCol,
-    BCard,
-    BCardBody,
     apexchart: ApexCharts,
   },
   data() {
@@ -260,45 +239,117 @@ export default {
       chart: {
         type: 'bar',
         toolbar: { show: false },
-        height: '90%', // 👈 Ajoute ceci
+        height: '100%',
         width: '100%',
+        background: 'transparent',
+        fontFamily: 'Inter, sans-serif',
       },
       plotOptions: {
         bar: {
-          borderRadius: 3,
+          borderRadius: 8,
           horizontal: false,
-          columnWidth: '50%',
-          distributed: true, // chaque barre a sa couleur
+          columnWidth: '60%',
+          distributed: true,
         },
       },
-      colors: ['#42A5F5', '#FF6384', '#FFC107', '#28A745', '#8E44AD'],
+      colors: ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe'],
       xaxis: {
         categories: [],
         labels: {
           style: {
-            fontSize: '14px',
+            fontSize: '12px',
+            fontWeight: 500,
+            colors: '#64748b',
           },
+        },
+        axisBorder: {
+          show: false,
+        },
+        axisTicks: {
+          show: false,
         },
       },
       yaxis: {
         title: {
           text: 'Nombre de Sondages',
+          style: {
+            fontSize: '12px',
+            fontWeight: 600,
+            color: '#64748b',
+          },
+        },
+        labels: {
+          style: {
+            fontSize: '11px',
+            colors: '#64748b',
+          },
         },
       },
       tooltip: {
+        theme: 'light',
+        style: {
+          fontSize: '12px',
+        },
         y: {
           formatter: (val) => `${val} Sondages`,
         },
       },
       legend: { show: false },
+      grid: {
+        borderColor: '#f1f5f9',
+        strokeDashArray: 3,
+      },
     })
     const leaderOptions = ref({
-      chart: { type: 'bar', toolbar: { show: false }, height: '90%', width: '100%' },
-      plotOptions: { bar: { borderRadius: 3, horizontal: true, barHeight: '60%' } },
-      dataLabels: { enabled: true },
-      xaxis: { categories: [] },
+      chart: {
+        type: 'bar',
+        toolbar: { show: false },
+        height: '100%',
+        width: '100%',
+        background: 'transparent',
+        fontFamily: 'Inter, sans-serif',
+      },
+      plotOptions: {
+        bar: {
+          borderRadius: 6,
+          horizontal: true,
+          barHeight: '70%',
+        },
+      },
+      dataLabels: {
+        enabled: true,
+        style: {
+          fontSize: '11px',
+          fontWeight: 600,
+          colors: ['#fff'],
+        },
+      },
+      xaxis: {
+        categories: [],
+        labels: {
+          style: {
+            fontSize: '11px',
+            colors: '#64748b',
+          },
+        },
+        axisBorder: {
+          show: false,
+        },
+        axisTicks: {
+          show: false,
+        },
+      },
       colors: [],
-      tooltip: { y: {} },
+      tooltip: {
+        theme: 'light',
+        y: {
+          formatter: (val) => `${val} réponses`,
+        },
+      },
+      grid: {
+        borderColor: '#f1f5f9',
+        strokeDashArray: 3,
+      },
     })
 
     const gets = async () => {
@@ -359,7 +410,7 @@ export default {
           ...leaderOptions.value.xaxis,
           categories,
         },
-        colors: topSurveys.value.map((s) => (s.type === 'BUSINESS' ? '#FFC107' : '#28a745')),
+        colors: topSurveys.value.map((s) => (s.type === 'BUSINESS' ? '#f59e0b' : '#10b981')),
         tooltip: {
           y: {
             formatter: (val, { dataPointIndex }) => {
@@ -389,48 +440,68 @@ export default {
       chart: {
         type: 'bar',
         toolbar: { show: false },
-        height: '90%',
+        height: '100%',
         width: '100%',
+        background: 'transparent',
+        fontFamily: 'Inter, sans-serif',
       },
       plotOptions: {
         bar: {
-          horizontal: false, // ✅ Barres horizontales
-          barHeight: '60%',
-          borderRadius: 5,
+          horizontal: false,
+          barHeight: '70%',
+          borderRadius: 8,
         },
       },
       dataLabels: {
         enabled: true,
-        formatter: (val) => `${val}`, // affiche le nombre sur la barre
+        formatter: (val) => `${val}`,
         style: {
-          fontSize: '13px',
+          fontSize: '11px',
+          fontWeight: 600,
           colors: ['#fff'],
         },
       },
       xaxis: {
         title: {
-          text: 'Participants', // ✅ Axe X = réponses
-          style: { fontWeight: 600 },
+          text: 'Participants',
+          style: {
+            fontWeight: 600,
+            fontSize: '12px',
+            color: '#64748b',
+          },
         },
         labels: {
           style: {
-            fontSize: '13px',
+            fontSize: '11px',
+            colors: '#64748b',
           },
+        },
+        axisBorder: {
+          show: false,
+        },
+        axisTicks: {
+          show: false,
         },
       },
       yaxis: {
         title: {
-          text: 'Nombre de points', // ✅ Axe Y = noms
-          style: { fontWeight: 600 },
+          text: 'Points',
+          style: {
+            fontWeight: 600,
+            fontSize: '12px',
+            color: '#64748b',
+          },
         },
         labels: {
           style: {
             fontSize: '10px',
+            colors: '#64748b',
           },
         },
       },
-      colors: ['#007bff'],
+      colors: ['#8b5cf6'],
       tooltip: {
+        theme: 'light',
         y: {
           formatter: (val, { dataPointIndex }) => {
             const fullName = `${topParticipants.value[dataPointIndex].participant.firstName} ${topParticipants.value[dataPointIndex].participant.lastName}(${
@@ -441,6 +512,10 @@ export default {
             return `${val} points<br/><strong>${fullName}</strong>`
           },
         },
+      },
+      grid: {
+        borderColor: '#f1f5f9',
+        strokeDashArray: 3,
       },
     })
 
@@ -509,34 +584,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 @import '../../../../css/assets/scss/app2.scss';
-.stat-card {
-  transition: all 0.4s ease-in-out;
-  border: 2px solid transparent;
-  background: linear-gradient(135deg, #fdfdfd, #f5f5f5);
-  position: relative;
-  overflow: hidden;
-}
-.stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
-  border-radius: 20px;
-}
-
-.shadow-warning:hover {
-  border-color: #f1c40f;
-  background-color: linear-gradient(135deg, #f8dc9f, #fff3cc);
-  box-shadow: 0 0 18px rgba(241, 196, 15, 0.6);
-}
-.shadow-success:hover {
-  border-color: #2ecc71;
-  background: linear-gradient(135deg, #2ecc71, #d4f5e6);
-  box-shadow: 0 0 18px rgba(46, 204, 113, 0.6);
-}
-.shadow-danger:hover {
-  border-color: #e74c3c;
-  background: linear-gradient(135deg, #ffecec, #ffd9d6);
-  box-shadow: 0 0 18px rgba(231, 76, 60, 0.6);
-}
+@import '../../../../css/admin/dashboard.scss';
 </style>

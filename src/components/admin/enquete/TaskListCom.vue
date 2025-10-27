@@ -3,7 +3,6 @@ import { onMounted, ref } from 'vue'
 import {
   BRow,
   BCol,
-  BButton,
   BFormInput,
   BPagination,
   BFormSelect,
@@ -19,7 +18,6 @@ export default {
   components: {
     BRow,
     BCol,
-    BButton,
     BFormInput,
     BPagination,
     BFormSelect,
@@ -227,21 +225,36 @@ export default {
 </script>
 
 <template>
-  <div>
-    <BRow>
-      <BCol cols="12" class="h-100">
-        <div v-if="loadings" class="d-flex justify-content-between">
-          <q-spinner-orbit color="green" size="20px" class="q-mr-sm" />
+  <div class="modern-admin-page">
+    <!-- Carte d'en-tête séparée -->
+    <div class="header-card mb-4">
+      <div class="section-header-modern">
+        <div class="section-title-wrapper">
+          <div class="section-icon-modern">
+            <i class="bi bi-list-task"></i>
+          </div>
+          <div class="section-title-content">
+            <h3 class="section-title-modern">Mes Tâches</h3>
+            <p class="section-subtitle-modern">Gestion des tâches planifiées</p>
+          </div>
         </div>
-        <div v-else class="d-flex justify-content-between">
-          <BButton variant="success" class="waves-effect waves-light mb-3" @click="Add"
-            >Tout Execute</BButton
-          >
+        <div v-if="loadings" class="d-flex align-items-center">
+          <q-spinner-orbit color="primary" size="20px" class="me-2" />
+          <span class="text-muted">Exécution en cours...</span>
         </div>
+        <button v-else class="btn-execute-all" @click="Add">
+          <i class="bi bi-play-circle-fill me-2"></i>
+          Tout Exécuter
+        </button>
+      </div>
+    </div>
 
-        <div
-          class="ttable table-centered datatable dt-responsive nowrap table-card-list dataTable no-footer dtr-inline"
-        >
+    <!-- Section tableau séparée -->
+    <BRow>
+      <BCol cols="12">
+        <div class="table-section-card">
+          <!-- Contenu du tableau -->
+          <div class="table-content-section">
           <BRow>
             <BCol sm="12" md="6">
               <div id="tickets-table_length" class="dataTables_length">
@@ -266,14 +279,18 @@ export default {
             </BCol>
           </BRow>
           <div v-if="loading" class="text-center my-5">
-            <q-spinner-ball color="green" size="50px" />
+            <q-spinner-ball color="primary" size="50px" />
+            <p class="mt-3 text-muted">Chargement des tâches...</p>
           </div>
           <div
             v-else-if="Array.isArray(orderData) && orderData.length === 0"
-            class="text-center py-5"
+            class="empty-state"
           >
-            <i class="uil uil-folder-open text-muted" style="font-size: 3rem"></i>
-            <p class="mt-3 text-muted">Aucune Tâches</p>
+            <div class="empty-state-icon">
+              <i class="bi bi-inbox"></i>
+            </div>
+            <h5 class="empty-state-title">Aucune tâche disponible</h5>
+            <p class="empty-state-text">Il n'y a pas de tâches planifiées pour le moment.</p>
           </div>
           <BTable
             v-else
@@ -289,26 +306,23 @@ export default {
             @filtered="onFiltered"
           >
             <template v-slot:cell(title)="data">
-              <a href="#" class="text-body">{{ data.item.title }}</a>
+              <span class="text-body">{{ data.item.title }}</span>
             </template>
             <template v-slot:cell(surveys)="data">
-              <a href="#" class="text-body">{{
+              <span class="text-body">{{
                 data.item.survey.title.length > 30
                   ? data.item.survey.title.substring(0, 30) + '...'
                   : data.item.survey.title
-              }}</a>
+              }}</span>
             </template>
             <template v-slot:cell(survey)="data">
-              <a
-                href="#"
-                class="badge"
+              <span
+                class="badge-modern"
                 :class="{
-                  'bg-success': data.item.survey.type === 'PUBLIC',
-
-                  'bg-warning': data.item.survey.type === 'BUSINESS',
+                  'badge-modern-success': data.item.survey.type === 'PUBLIC',
+                  'badge-modern-warning': data.item.survey.type === 'BUSINESS',
                 }"
-                >{{ data.item.survey.type }}</a
-              >
+              >{{ data.item.survey.type }}</span>
             </template>
             <template v-slot:cell(surveyss)="data">
               <div
@@ -326,47 +340,41 @@ export default {
             </template>
 
             <template v-slot:cell(scheduled_at)="data">
-              <a href="#" class="text-body">{{
+              <span class="text-body">{{
                 new Date(data.item.scheduled_at).toLocaleDateString('fr-FR', {
                   day: 'numeric',
                   month: 'long',
                   year: 'numeric',
                 })
-              }}</a>
+              }}</span>
             </template>
             <template v-slot:cell(dueDate)="data">
-              <a href="#" class="text-body">{{
+              <span class="text-body">{{
                 new Date(data.item.dueDate).toLocaleDateString('fr-FR', {
                   day: 'numeric',
                   month: 'long',
                   year: 'numeric',
                 })
-              }}</a>
+              }}</span>
             </template>
             <template v-slot:cell(type)="data">
-              <a
-                href="#"
-                class="badge"
+              <span
+                class="badge-modern"
                 :class="{
-                  'bg-primary': data.item.type[0] === 'invitation',
-
-                  'bg-warning': data.item.type[0] === 'send_reminder',
+                  'badge-modern-info': data.item.type[0] === 'invitation',
+                  'badge-modern-warning': data.item.type[0] === 'send_reminder',
                 }"
-                >{{ data.item.type[0] === 'send_reminder' ? 'Renvoyer' : 'Invitation' }}</a
-              >
+              >{{ data.item.type[0] === 'send_reminder' ? 'Renvoyer' : 'Invitation' }}</span>
             </template>
 
             <template v-slot:cell(completed)="data">
-              <a
-                href="#"
-                class="badge"
+              <span
+                class="badge-modern"
                 :class="{
-                  'bg-success': data.item.completed === true,
-
-                  'bg-danger': data.item.completed === false,
+                  'badge-modern-success': data.item.completed === true,
+                  'badge-modern-danger': data.item.completed === false,
                 }"
-                >{{ data.item.completed === true ? 'Envoyée' : 'Non Transmit' }}</a
-              >
+              >{{ data.item.completed === true ? 'Envoyée' : 'Non Transmis' }}</span>
             </template>
 
             <template v-slot:cell(action)="data">
@@ -407,81 +415,104 @@ export default {
               </ul>
             </template>
           </BTable>
+          </div>
+          
+          <!-- Pagination -->
+          <div class="table-footer-section">
+            <BPagination 
+              v-model="currentPage" 
+              :total-rows="rows" 
+              :per-page="perPage"
+              class="modern-pagination"
+            />
+          </div>
         </div>
-        <BRow>
-          <BCol>
-            <div class="dataTables_paginate paging_simple_numbers float-end">
-              <ul class="pagination pagination-rounded">
-                <BPagination v-model="currentPage" :total-rows="rows" :per-page="perPage" />
-              </ul>
-            </div>
-          </BCol>
-        </BRow>
       </BCol>
     </BRow>
 
-    <q-dialog v-model="opendMdet">
-      <q-card class="detail-dialog" style="width: 800px; max-width: 90vw">
-        <!-- Header -->
-        <q-card-section class="dialog-header row items-center q-pa-sm text-white">
-          <div class="q-ml-sm">
-            <div class="text-h6 text-warning">{{ selectedTask?.title }}</div>
-            <div class="text-caption text-warning">📋 Détails de la tâche</div>
+    <q-dialog v-model="opendMdet" transition-show="scale" transition-hide="fade">
+      <q-card class="modern-detail-modal">
+        <!-- Header moderne -->
+        <div class="modal-header-modern">
+          <div class="modal-header-content">
+            <div class="modal-icon-wrapper">
+              <i class="bi bi-card-checklist"></i>
+            </div>
+            <div>
+              <h4 class="modal-title">{{ selectedTask?.title }}</h4>
+              <p class="modal-subtitle">Détails de la tâche</p>
+            </div>
           </div>
-          <q-space />
-        </q-card-section>
+          <button class="modal-close-btn" @click="opendMdet = false">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
 
         <!-- Contenu -->
-        <q-card-section class="dialog-content">
-          <div class="info-grid">
-            <div class="info-box">
-              <q-icon name="category" class="text-primary q-mr-sm" />
-              <div>
-                <div class="label">Type</div>
-                <q-badge
-                  :color="selectedTask?.type[0] === 'send_reminder' ? 'orange' : 'primary'"
-                  class="chip"
+        <div class="modal-content-modern">
+          <!-- Grille d'informations -->
+          <div class="info-cards-grid-task">
+            <div class="info-card-task">
+              <div class="info-card-icon info-icon-blue">
+                <i class="bi bi-tag-fill"></i>
+              </div>
+              <div class="info-card-content">
+                <div class="info-card-label">Type</div>
+                <span
+                  class="badge-modern"
+                  :class="selectedTask?.type[0] === 'send_reminder' ? 'badge-modern-warning' : 'badge-modern-info'"
                 >
                   {{ selectedTask?.type[0] === 'send_reminder' ? 'Rappel' : 'Invitation' }}
-                </q-badge>
+                </span>
               </div>
             </div>
 
-            <div class="info-box">
-              <q-icon name="check_circle" class="text-green q-mr-sm" />
-              <div>
-                <div class="label">Statut</div>
-                <q-badge :color="selectedTask?.completed ? 'green' : 'red'" class="chip">
+            <div class="info-card-task">
+              <div class="info-card-icon info-icon-green">
+                <i class="bi bi-check-circle-fill"></i>
+              </div>
+              <div class="info-card-content">
+                <div class="info-card-label">Statut</div>
+                <span
+                  class="badge-modern"
+                  :class="selectedTask?.completed ? 'badge-modern-success' : 'badge-modern-danger'"
+                >
                   {{ selectedTask?.completed ? 'Envoyée' : 'Non transmise' }}
-                </q-badge>
+                </span>
               </div>
             </div>
 
-            <div class="info-box">
-              <q-icon name="event" class="text-indigo q-mr-sm" />
-              <div>
-                <div class="label">Date début</div>
-                <div class="value">
+            <div class="info-card-task">
+              <div class="info-card-icon info-icon-purple">
+                <i class="bi bi-calendar-event"></i>
+              </div>
+              <div class="info-card-content">
+                <div class="info-card-label">Date début</div>
+                <div class="info-card-value">
                   {{ new Date(selectedTask?.scheduled_at).toLocaleDateString('fr-FR') }}
                 </div>
               </div>
             </div>
 
-            <div class="info-box">
-              <q-icon name="event_available" class="text-indigo q-mr-sm" />
-              <div>
-                <div class="label">Date fin</div>
-                <div class="value">
+            <div class="info-card-task">
+              <div class="info-card-icon info-icon-purple">
+                <i class="bi bi-calendar-check"></i>
+              </div>
+              <div class="info-card-content">
+                <div class="info-card-label">Date fin</div>
+                <div class="info-card-value">
                   {{ new Date(selectedTask?.dueDate).toLocaleDateString('fr-FR') }}
                 </div>
               </div>
             </div>
 
-            <div class="info-box">
-              <q-icon name="alarm" class="text-pink q-mr-sm" />
-              <div>
-                <div class="label">Exécution</div>
-                <div class="value">
+            <div class="info-card-task">
+              <div class="info-card-icon info-icon-orange">
+                <i class="bi bi-clock-history"></i>
+              </div>
+              <div class="info-card-content">
+                <div class="info-card-label">Exécution</div>
+                <div class="info-card-value">
                   {{
                     selectedTask?.executed_at
                       ? new Date(selectedTask.executed_at).toLocaleString('fr-FR')
@@ -491,11 +522,13 @@ export default {
               </div>
             </div>
 
-            <div class="info-box col-span-2">
-              <q-icon name="error_outline" class="text-red q-mr-sm" />
-              <div>
-                <div class="label">Erreur</div>
-                <div class="value text-negative">
+            <div class="info-card-task">
+              <div class="info-card-icon info-icon-red">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+              </div>
+              <div class="info-card-content">
+                <div class="info-card-label">Erreur</div>
+                <div class="info-card-value">
                   {{ selectedTask?.errorMessage || 'Aucune erreur' }}
                 </div>
               </div>
@@ -503,87 +536,658 @@ export default {
           </div>
 
           <!-- Description -->
-          <div class="description-box q-mt-md">
-            <q-icon name="description" class="text-teal q-mr-sm" />
-            <div>
-              <div class="label">Description</div>
-              <p class="description-text">
-                {{ selectedTask?.description || 'Pas de description' }}
-              </p>
+          <div class="description-section">
+            <h5 class="description-title">
+              <i class="bi bi-file-text me-2"></i>
+              Description
+            </h5>
+            <p class="description-text">
+              {{ selectedTask?.description || 'Pas de description' }}
+            </p>
+          </div>
+
+          <!-- Section Informations du sondage -->
+          <div v-if="selectedTask?.survey" class="survey-section">
+            <h5 class="survey-section-title">
+              <i class="bi bi-clipboard-data me-2"></i>
+              Informations du sondage
+            </h5>
+
+            <!-- Titre du sondage en vedette -->
+            <div class="survey-title-card">
+              <div class="survey-title-icon">
+                <i class="bi bi-file-earmark-text-fill"></i>
+              </div>
+              <div class="survey-title-content">
+                <div class="survey-title-label">Titre du sondage</div>
+                <div class="survey-title-value">{{ selectedTask.survey.title }}</div>
+              </div>
+            </div>
+
+            <!-- Grille d'informations -->
+            <div class="survey-cards-grid">
+              <div class="survey-card survey-card-type">
+                <div class="survey-card-icon">
+                  <i class="bi bi-diagram-3-fill"></i>
+                </div>
+                <div class="survey-card-content">
+                  <div class="survey-card-label">Type</div>
+                  <span
+                    class="badge-modern"
+                    :class="selectedTask.survey.type === 'PUBLIC' ? 'badge-modern-success' : 'badge-modern-warning'"
+                  >
+                    {{ selectedTask.survey.type }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="survey-card survey-card-status">
+                <div class="survey-card-icon">
+                  <i class="bi bi-shield-check"></i>
+                </div>
+                <div class="survey-card-content">
+                  <div class="survey-card-label">Statut</div>
+                  <span
+                    class="badge-modern"
+                    :class="{
+                      'badge-modern-info': selectedTask.survey.status === 'draft',
+                      'badge-modern-success': selectedTask.survey.status === 'published',
+                      'badge-modern-warning': selectedTask.survey.status === 'archived',
+                    }"
+                  >
+                    {{ selectedTask.survey.status }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="survey-card survey-card-start">
+                <div class="survey-card-icon">
+                  <i class="bi bi-calendar-event"></i>
+                </div>
+                <div class="survey-card-content">
+                  <div class="survey-card-label">Date de début</div>
+                  <div class="survey-card-value">{{ new Date(selectedTask.survey.startDate).toLocaleDateString('fr-FR') }}</div>
+                </div>
+              </div>
+
+              <div class="survey-card survey-card-end">
+                <div class="survey-card-icon">
+                  <i class="bi bi-calendar-check"></i>
+                </div>
+                <div class="survey-card-content">
+                  <div class="survey-card-label">Date de fin</div>
+                  <div class="survey-card-value">{{ new Date(selectedTask.survey.endDate).toLocaleDateString('fr-FR') }}</div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <!-- 🟩 Section Informations du sondage avec Bootstrap -->
-          <div
-            v-if="selectedTask?.survey"
-            class="survey-info q-mt-md q-pa-md bg-grey-1 rounded-borders shadow-1"
-          >
-            <div class="text-subtitle1 text-primary q-mb-md">🧾 Informations du sondage</div>
-
-            <table class="table table-sm table-striped table-bordered mb-0">
-              <tbody>
-                <tr>
-                  <th scope="row">Titre</th>
-                  <td>{{ selectedTask.survey.title }}</td>
-                </tr>
-                <tr>
-                  <th scope="row">Type de sondage</th>
-                  <td>
-                    <span
-                      class="badge"
-                      :class="selectedTask.survey.type === 'PUBLIC' ? 'bg-success' : 'bg-warning'"
-                    >
-                      {{ selectedTask.survey.type }}
-                    </span>
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">Statut</th>
-                  <td>
-                    <span
-                      class="badge"
-                      :class="{
-                        'bg-soft-primary': selectedTask.survey.status === 'draft',
-                        'bg-soft-success': selectedTask.survey.status === 'published',
-                        'bg-soft-warning': selectedTask.survey.status === 'archived',
-                        'bg-soft-secondary': selectedTask.survey.status === 'review',
-                        'bg-soft-danger': selectedTask.survey.status === 'closed',
-                      }"
-                    >
-                      {{ selectedTask.survey.status }}
-                    </span>
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">Date de début</th>
-                  <td>{{ new Date(selectedTask.survey.startDate).toLocaleDateString('fr-FR') }}</td>
-                </tr>
-                <tr>
-                  <th scope="row">Date de fin</th>
-                  <td>{{ new Date(selectedTask.survey.endDate).toLocaleDateString('fr-FR') }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </q-card-section>
+        </div>
       </q-card>
     </q-dialog>
   </div>
 </template>
 
 <style lang="scss">
-.detail-dialog {
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(50, 50, 93, 0.25);
-  background: #fff;
+@import '../../../css/assets/scss/app2.scss';
+
+/* === Page moderne === */
+.modern-admin-page {
+  padding: 1.5rem;
+  background: #f8fafc;
+  min-height: 100vh;
 }
 
-/* Header */
-.dialog-header {
-  padding: 16px 20px;
+/* === Carte d'en-tête === */
+.header-card {
+  background: white;
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border: 2px solid #f1f5f9;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #e2e8f0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* === En-tête de section moderne === */
+.section-header-modern {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .section-title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .section-icon-modern {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.8rem;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .section-title-content {
+      .section-title-modern {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .section-subtitle-modern {
+        font-size: 0.95rem;
+        color: #64748b;
+        margin: 0;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+/* === Bouton Exécuter Tout === */
+.btn-execute-all {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border: none;
+  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
+  color: white;
+  font-weight: 600;
+  font-size: 0.95rem;
   display: flex;
   align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    background: linear-gradient(135deg, #059669, #047857);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  i {
+    font-size: 1.2rem;
+  }
+}
+
+/* === Section tableau moderne === */
+.table-section-card {
+  background: white;
+  border-radius: 20px;
+  padding: 0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border: 2px solid #f1f5f9;
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #e2e8f0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.table-content-section {
+  padding: 1.5rem;
+}
+
+.table-footer-section {
+  padding: 1.25rem 1.5rem;
+  background: #fafbfc;
+  border-top: 2px solid #f1f5f9;
+  display: flex;
+  justify-content: center;
+
+  .modern-pagination {
+    margin: 0;
+    
+    .page-item {
+      margin: 0 0.25rem;
+
+      .page-link {
+        border-radius: 8px;
+        border: 2px solid #e2e8f0;
+        color: #64748b;
+        font-weight: 600;
+        padding: 0.5rem 0.75rem;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: #f1f5f9;
+          border-color: #cbd5e1;
+          color: #475569;
+        }
+      }
+
+      &.active .page-link {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-color: #667eea;
+        color: white;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+      }
+    }
+  }
+}
+
+/* === État vide === */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 16px;
+  margin: 2rem 0;
+
+  .empty-state-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    i {
+      font-size: 2.5rem;
+      color: #94a3b8;
+    }
+  }
+
+  .empty-state-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 0.5rem;
+  }
+
+  .empty-state-text {
+    font-size: 0.95rem;
+    color: #64748b;
+    margin: 0;
+  }
+}
+
+/* === Badges modernes === */
+.badge-modern {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &.badge-modern-success {
+    background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+    color: #065f46;
+    border: 1px solid #6ee7b7;
+  }
+
+  &.badge-modern-warning {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    color: #92400e;
+    border: 1px solid #fbbf24;
+  }
+
+  &.badge-modern-info {
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    color: #1e40af;
+    border: 1px solid #93c5fd;
+  }
+
+  &.badge-modern-danger {
+    background: linear-gradient(135deg, #fee2e2, #fecaca);
+    color: #991b1b;
+    border: 1px solid #f87171;
+  }
+}
+
+/* === Modal de détail moderne === */
+.modern-detail-modal {
+  width: 800px !important;
+  max-width: 90vw !important;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  background: white;
+}
+
+.modal-header-modern {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .modal-header-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .modal-icon-wrapper {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .modal-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: white;
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .modal-subtitle {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.8);
+      margin: 0.25rem 0 0 0;
+    }
+  }
+
+  .modal-close-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1);
+    }
+
+    i {
+      font-size: 1rem;
+    }
+  }
+}
+
+.modal-content-modern {
+  padding: 1.5rem;
+}
+
+/* Grille d'informations de tâche */
+.info-cards-grid-task {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.info-card-task {
+  background: white;
+  border: 2px solid #f1f5f9;
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+
+  .info-card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: white;
+    flex-shrink: 0;
+
+    &.info-icon-blue {
+      background: linear-gradient(135deg, #60a5fa, #3b82f6);
+    }
+
+    &.info-icon-green {
+      background: linear-gradient(135deg, #34d399, #10b981);
+    }
+
+    &.info-icon-purple {
+      background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+    }
+
+    &.info-icon-orange {
+      background: linear-gradient(135deg, #fb923c, #f97316);
+    }
+
+    &.info-icon-red {
+      background: linear-gradient(135deg, #f87171, #ef4444);
+    }
+  }
+
+  .info-card-content {
+    flex: 1;
+  }
+
+  .info-card-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
+  }
+
+  .info-card-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1e293b;
+  }
+}
+
+/* Section Description */
+.description-section {
+  background: linear-gradient(135deg, #f8fafc, #ffffff);
+  border: 2px solid #f1f5f9;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+
+  .description-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+
+    i {
+      color: #667eea;
+    }
+  }
+
+  .description-text {
+    font-size: 0.9rem;
+    color: #475569;
+    line-height: 1.6;
+    margin: 0;
+  }
+}
+
+/* Section Sondage */
+.survey-section {
+  background: linear-gradient(135deg, #fef3c7, #fffbeb);
+  border: 2px solid #fbbf24;
+  border-radius: 16px;
+  padding: 1.5rem;
+
+  .survey-section-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #92400e;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+
+    i {
+      color: #f59e0b;
+      font-size: 1.3rem;
+    }
+  }
+}
+
+/* Carte titre du sondage en vedette */
+.survey-title-card {
+  background: white;
+  border: 2px solid #fbbf24;
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.15);
+
+  .survey-title-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .survey-title-content {
+    flex: 1;
+  }
+
+  .survey-title-label {
+    font-size: 0.75rem;
+    color: #92400e;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+  }
+
+  .survey-title-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #78350f;
+    line-height: 1.3;
+  }
+}
+
+/* Grille de cartes sondage */
+.survey-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.survey-card {
+  background: white;
+  border: 2px solid #fde68a;
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #fbbf24;
+    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.2);
+    transform: translateY(-2px);
+  }
+
+  .survey-card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  &.survey-card-type .survey-card-icon {
+    background: linear-gradient(135deg, #10b981, #059669);
+  }
+
+  &.survey-card-status .survey-card-icon {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+  }
+
+  &.survey-card-start .survey-card-icon {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  }
+
+  &.survey-card-end .survey-card-icon {
+    background: linear-gradient(135deg, #ec4899, #db2777);
+  }
+
+  .survey-card-content {
+    flex: 1;
+  }
+
+  .survey-card-label {
+    font-size: 0.75rem;
+    color: #92400e;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
+  }
+
+  .survey-card-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #78350f;
+  }
 }
 
 /* Grid d'infos */

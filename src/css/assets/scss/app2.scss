@@ -57,6 +57,7 @@ div,
 @import './custom/components/widgets';
 @import './custom/components/demos';
 @import './custom/components/print';
+@import './custom/components/enquetes';
 
 // Plugins
 @import './custom/plugins/custom-scrollbar';
@@ -103,6 +104,9 @@ div,
 
 @import './variables-dark';
 @import './bootstrap-dark.scss';
+
+// Import Modern Dashboard Styles (réutilisables pour toutes les pages)
+@import '../../modern-dashboard.scss';
 
 body {
   font-family: sans-serif;

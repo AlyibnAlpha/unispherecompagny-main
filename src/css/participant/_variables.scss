@@ -1,0 +1,53 @@
+/**
+ * Variables SCSS pour l'interface Participant
+ */
+
+// Couleurs principales (exemple - à personnaliser)
+$participant-primary: #10b981;
+$participant-secondary: #059669;
+$participant-gradient: linear-gradient(135deg, $participant-primary, $participant-secondary);
+
+// Couleurs d'état
+$participant-success: #22c55e;
+$participant-warning: #f59e0b;
+$participant-danger: #ef4444;
+$participant-info: #06b6d4;
+
+// Couleurs de fond
+$participant-bg-light: #f8fafc;
+$participant-bg-white: #ffffff;
+$participant-bg-gray: #f1f5f9;
+
+// Couleurs de texte
+$participant-text-primary: #1e293b;
+$participant-text-secondary: #64748b;
+$participant-text-muted: #94a3b8;
+
+// Bordures
+$participant-border-light: #e2e8f0;
+$participant-border-medium: #cbd5e1;
+$participant-border-dark: #94a3b8;
+
+// Espacements
+$participant-spacing-xs: 0.5rem;
+$participant-spacing-sm: 0.75rem;
+$participant-spacing-md: 1rem;
+$participant-spacing-lg: 1.5rem;
+$participant-spacing-xl: 2rem;
+
+// Border radius
+$participant-radius-sm: 8px;
+$participant-radius-md: 12px;
+$participant-radius-lg: 16px;
+$participant-radius-xl: 20px;
+
+// Ombres
+$participant-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+$participant-shadow-md: 0 2px 12px rgba(0, 0, 0, 0.06);
+$participant-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.1);
+$participant-shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.15);
+
+// Transitions
+$participant-transition-fast: 0.2s ease;
+$participant-transition-normal: 0.3s ease;
+$participant-transition-slow: 0.5s ease;

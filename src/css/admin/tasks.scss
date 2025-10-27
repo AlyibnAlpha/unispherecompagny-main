@@ -1,0 +1,86 @@
+/**
+ * Styles spécifiques pour la page des tâches (calendrier)
+ */
+@import './variables';
+
+/* === Full Calendar Wrapper === */
+.full-calender-wrapper {
+  .fc-header-toolbar.fc-toolbar.fc-toolbar-ltr {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+}
+
+/* === Event Types === */
+// Invitation = bleu
+.fc-event.invitation {
+  background-color: #0d6efd !important;
+  border-color: #0d6efd !important;
+  color: white !important;
+}
+
+// Rappel = warning
+.fc-event.send_reminder {
+  background-color: #ffc107 !important;
+  border-color: #ffc107 !important;
+  color: black !important;
+}
+
+/* === Form Controls === */
+.form-control {
+  border-radius: 12px;
+  transition: all 0.3s ease;
+
+  &:focus {
+    border-color: #2ea3f2;
+    box-shadow: 0 0 8px rgba(46, 163, 242, 0.4);
+    transform: scale(1.01);
+  }
+}
+
+.bg-gradient {
+  background: linear-gradient(135deg, #0d6efd, #6610f2);
+}
+
+/* === Champs modernes avec floating label === */
+.floating-label {
+  position: relative;
+}
+
+.form-control-modern {
+  border-radius: 12px;
+  border: 2px solid #e0e7ff;
+  padding: 0.9rem 1rem;
+  width: 100%;
+  transition: all 0.3s ease;
+  background: #fff;
+
+  &:focus {
+    border-color: #10d0f2;
+    box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
+    transform: scale(1.01);
+  }
+}
+
+/* Labels flottants */
+.floating-label label {
+  position: absolute;
+  top: 50%;
+  left: 15px;
+  transform: translateY(-50%);
+  color: #6c757d;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  background: white;
+  padding: 0 5px;
+}
+
+.form-control-modern:focus + label,
+.form-control-modern:not(:placeholder-shown) + label {
+  top: -10px;
+  left: 10px;
+  font-size: 0.8rem;
+  color: #10d0f2;
+}

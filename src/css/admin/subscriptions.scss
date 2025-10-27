@@ -1,0 +1,764 @@
+/**
+ * Styles pour la gestion des abonnements
+ * Utilisé par : SubscriptionCom.vue et SubsBusinessCom.vue
+ */
+@import './variables';
+
+/* === Header Icon === */
+.header-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.25);
+  transition: all 0.3s ease;
+
+  i {
+    font-size: 1.4rem;
+    color: white;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.35);
+  }
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+}
+
+/* === Modern Modal Card === */
+.modern-modal-card {
+  width: 70vw !important;
+  max-width: 1300px !important;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modern-modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 25px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+
+  .modal-header-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+
+    .modal-icon {
+      width: 60px;
+      height: 60px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(10px);
+
+      i {
+        font-size: 1.8rem;
+        color: white;
+      }
+    }
+
+    .modal-title-section {
+      .modal-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: white;
+        margin: 0 0 5px 0;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .modal-subtitle {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.9);
+        margin: 0;
+      }
+    }
+  }
+
+  .modal-close-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: rotate(90deg);
+    }
+
+    i {
+      font-size: 1.5rem;
+    }
+  }
+}
+
+.modern-modal-body {
+  padding: 30px;
+  background: #f8f9fa;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.modern-modal-footer {
+  padding: 20px 30px;
+  background: white;
+  border-top: 2px solid #e9ecef;
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+
+  .modal-btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    &.modal-btn-cancel {
+      background: #6c757d;
+      color: white;
+
+      &:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+      }
+    }
+
+    &.modal-btn-primary {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+
+      &:hover {
+        background: linear-gradient(135deg, #5568d3, #6a4190);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+    }
+  }
+}
+.dialog-actions {
+  padding: 12px 20px;
+  background-color: #fafafa;
+
+  .q-btn {
+    border-radius: 12px;
+    min-width: 100px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+    }
+  }
+}
+
+/* Skeleton loading */
+.skeleton {
+  display: inline-block;
+  height: 1em;
+  width: 80px;
+  background: #e0e0e0;
+  border-radius: 4px;
+}
+
+.skeleton-title {
+  width: 150px;
+  height: 1.2em;
+  margin-bottom: 4px;
+}
+.progress-nav {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.progress {
+  width: 100%;
+  position: absolute;
+  height: 4px;
+}
+
+.wizard-steps {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+
+  .wizard-step {
+    height: 60px;
+    width: 60px;
+    border-radius: 50%;
+    border: 3px solid;
+    display: flex;
+    justify-content: center;
+    z-index: 9;
+    position: relative;
+    background: white;
+  }
+}
+
+.step-arrow-nav {
+  .nav-link {
+    background: #f3f2ee;
+    padding: 4px 0;
+    border-radius: 0 !important;
+  }
+}
+
+.wizard {
+  .nav-link:not(.active) {
+    color: #f3f2ee;
+
+    .wizard-icon {
+      color: #a5a5a5;
+    }
+  }
+}
+
+[data-bs-theme='dark'] {
+  .wizard-steps .wizard-step:not(.active) {
+    background: var(--bs-input-bg);
+  }
+
+  .step-arrow-nav {
+    .nav-link:not(.active) {
+      background: var(--bs-input-bg);
+    }
+  }
+}
+/* === Boutons modernes === */
+.btn-success {
+  background: linear-gradient(135deg, #34c38f, #2ea3f2);
+  border: none;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(46, 163, 242, 0.3);
+
+  &:hover {
+    background: linear-gradient(135deg, #2ea3f2, #34c38f);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(46, 163, 242, 0.4);
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
+/* === Table améliorée === */
+.table tbody tr {
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background: #f9fcff;
+    box-shadow: #1f6bad33 0px 4px 8px;
+    transform: scale(1.01);
+  }
+}
+
+/* Icônes d'action */
+.list-inline-item a {
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    transform: scale(1.2) rotate(-5deg);
+    opacity: 0.8;
+  }
+}
+
+/* === Dialogues avec animation === */
+.q-dialog__inner {
+  animation: fadeScale 0.35s ease forwards;
+}
+
+@keyframes fadeScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* === Inputs flottants modernes === */
+.form-control {
+  border-radius: 12px;
+  transition: all 0.3s ease;
+
+  &:focus {
+    border-color: #2ea3f2;
+    box-shadow: 0 0 8px rgba(46, 163, 242, 0.4);
+    transform: scale(1.01);
+  }
+}
+
+.bg-gradient {
+  background: linear-gradient(135deg, #0d6efd, #6610f2);
+}
+
+/* === Champs modernes avec floating label === */
+.floating-label {
+  position: relative;
+}
+
+.form-control.form-control-modern {
+  border-radius: 12px;
+  border: 2px solid #e0e7ff;
+  padding: 0.9rem 1rem;
+  width: 100%;
+  transition: all 0.3s ease;
+  background: #fff;
+}
+
+.form-control.form-control-modern:focus {
+  border-color: #10d0f2;
+  box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
+  transform: scale(1.01);
+}
+
+/* Labels flottants */
+.floating-label label {
+  position: absolute;
+  top: 50%;
+  left: 15px;
+  transform: translateY(-50%);
+  color: #6c757d;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  background: white;
+  padding: 0 5px;
+}
+
+.form-control-modern:focus + label,
+.form-control-modern:not(:placeholder-shown) + label {
+  top: -10px;
+  left: 10px;
+  font-size: 0.8rem;
+  color: #10d0f2;
+}
+
+/* Multiselect alignement */
+.multiselect {
+  border-radius: 12px !important;
+  border: 2px solid #e0e7ff !important;
+  padding: 6px 10px;
+  transition: all 0.3s ease;
+}
+.multiselect:focus-within {
+  border-color: #10d0f2 !important;
+  box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
+}
+.stat-card {
+  transition: all 0.4s ease-in-out;
+  border: 2px solid transparent;
+  background: linear-gradient(135deg, #fdfdfd, #f5f5f5);
+  position: relative;
+  overflow: hidden;
+}
+.stat-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
+  border-radius: 20px;
+}
+
+.shadow-warning:hover {
+  border-color: #f1c40f;
+  background-color: linear-gradient(135deg, #f8dc9f, #fff3cc);
+  box-shadow: 0 0 18px rgba(241, 196, 15, 0.6);
+}
+.shadow-success:hover {
+  border-color: #2ecc71;
+  background: linear-gradient(135deg, #2ecc71, #d4f5e6);
+  box-shadow: 0 0 18px rgba(46, 204, 113, 0.6);
+}
+.shadow-danger:hover {
+  border-color: #e74c3c;
+  background: linear-gradient(135deg, #ffecec, #ffd9d6);
+  box-shadow: 0 0 18px rgba(231, 76, 60, 0.6);
+}
+
+.sub-card {
+  transition: all 0.3s ease-in-out;
+  background: #fff;
+  border: 1px solid #f0f0f0;
+}
+.sub-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+.icon-box {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+}
+.progress-nav {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.progress {
+  width: 100%;
+  position: absolute;
+  height: 4px;
+}
+
+.wizard-steps {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+
+  .wizard-step {
+    height: 60px;
+    width: 60px;
+    border-radius: 50%;
+    border: 3px solid;
+    display: flex;
+    justify-content: center;
+    z-index: 9;
+    position: relative;
+    background: white;
+  }
+}
+
+.step-arrow-nav {
+  .nav-link {
+    background: #f3f2ee;
+    padding: 4px 0;
+    border-radius: 0 !important;
+  }
+}
+
+.wizard {
+  .nav-link:not(.active) {
+    color: #f3f2ee;
+
+    .wizard-icon {
+      color: #a5a5a5;
+    }
+  }
+}
+
+[data-bs-theme='dark'] {
+  .wizard-steps .wizard-step:not(.active) {
+    background: var(--bs-input-bg);
+  }
+
+  .step-arrow-nav {
+    .nav-link:not(.active) {
+      background: var(--bs-input-bg);
+    }
+  }
+}
+/* === Boutons modernes === */
+.btn-success {
+  background: linear-gradient(135deg, #34c38f, #2ea3f2);
+  border: none;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(46, 163, 242, 0.3);
+
+  &:hover {
+    background: linear-gradient(135deg, #2ea3f2, #34c38f);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(46, 163, 242, 0.4);
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
+/* === Table améliorée === */
+.table tbody tr {
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background: #f9fcff;
+    box-shadow: #1f6bad33 0px 4px 8px;
+    transform: scale(1.01);
+  }
+}
+
+/* Icônes d'action */
+.list-inline-item a {
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    transform: scale(1.2) rotate(-5deg);
+    opacity: 0.8;
+  }
+}
+
+/* === Dialogues avec animation === */
+.q-dialog__inner {
+  animation: fadeScale 0.35s ease forwards;
+}
+
+@keyframes fadeScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* === Inputs flottants modernes === */
+.form-control {
+  border-radius: 12px;
+  transition: all 0.3s ease;
+
+  &:focus {
+    border-color: #2ea3f2;
+    box-shadow: 0 0 8px rgba(46, 163, 242, 0.4);
+    transform: scale(1.01);
+  }
+}
+
+.bg-gradient {
+  background: linear-gradient(135deg, #0d6efd, #6610f2);
+}
+
+/* === Champs modernes avec floating label === */
+.floating-label {
+  position: relative;
+}
+
+.form-control.form-control-modern {
+  border-radius: 12px;
+  border: 2px solid #e0e7ff;
+  padding: 0.9rem 1rem;
+  width: 100%;
+  transition: all 0.3s ease;
+  background: #fff;
+}
+
+.form-control.form-control-modern:focus {
+  border-color: #10d0f2;
+  box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
+  transform: scale(1.01);
+}
+
+/* Labels flottants */
+.floating-label label {
+  position: absolute;
+  top: 50%;
+  left: 15px;
+  transform: translateY(-50%);
+  color: #6c757d;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  background: white;
+  padding: 0 5px;
+}
+
+.form-control-modern:focus + label,
+.form-control-modern:not(:placeholder-shown) + label {
+  top: -10px;
+  left: 10px;
+  font-size: 0.8rem;
+  color: #10d0f2;
+}
+
+/* Multiselect alignement */
+.multiselect {
+  border-radius: 12px !important;
+  border: 2px solid #e0e7ff !important;
+  padding: 6px 10px;
+  transition: all 0.3s ease;
+}
+.multiselect:focus-within {
+  border-color: #10d0f2 !important;
+  box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
+}
+
+/* === Styles pour le modal de détails === */
+.info-row {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background: white;
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+  border: 2px solid #e5e7eb;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #667eea;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+    transform: translateX(4px);
+  }
+
+  .label {
+    font-weight: 700;
+    color: #64748b;
+    min-width: 150px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .value {
+    flex: 1;
+    color: #1e293b;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+}
+
+/* === Stat cards dans le modal === */
+.stat-card {
+  transition: all 0.3s ease;
+  border-radius: 16px !important;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  &.shadow-warning {
+    border: 2px solid #fbbf24;
+
+    &:hover {
+      border-color: #f59e0b;
+      box-shadow: 0 8px 20px rgba(251, 191, 36, 0.3);
+    }
+  }
+}
+
+/* === Grille d'informations moderne === */
+.detail-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.detail-info-card {
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    border-color: #667eea;
+  }
+
+  .info-card-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: white;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+    &.info-icon-primary {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    &.info-icon-success {
+      background: linear-gradient(135deg, #10b981, #059669);
+    }
+
+    &.info-icon-warning {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+
+    &.info-icon-danger {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+    }
+  }
+
+  .info-card-content {
+    flex: 1;
+
+    .info-card-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.5rem;
+    }
+
+    .info-card-value {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0;
+
+      .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        display: inline-block;
+
+        &.status-active {
+          background: linear-gradient(135deg, #10b981, #059669);
+          color: white;
+        }
+
+        &.status-expired {
+          background: linear-gradient(135deg, #ef4444, #dc2626);
+          color: white;
+        }
+      }
+    }
+  }
+}

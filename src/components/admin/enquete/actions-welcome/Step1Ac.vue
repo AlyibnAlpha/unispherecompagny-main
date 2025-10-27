@@ -1,30 +1,18 @@
 <template>
-  <q-card class="shadow-lg rounded-3" style="max-width: 800px; margin: auto" bordered>
-    <!-- Titre -->
-    <q-card-section
-      class="q-pa-md flex items-center justify-center"
-      style="
-        background: linear-gradient(135deg, #f0f4ff, #e0f7fa);
-        transition: background 0.5s ease;
-        color: #10d0f2;
-      "
-    >
-      <div class="text-h5 text-center text-weight-bold">Créer Votre Sondage de Bienvenue</div>
-    </q-card-section>
-
-    <!-- Formulaire -->
-    <q-card-section class="q-pa-lg">
-      <q-inner-loading v-if="loading" :showing="loading" background-color="rgba(0,0,0,0.4)">
-        <q-spinner-bars color="green" size="50px" />
-      </q-inner-loading>
-      <BForm v-else>
+  <div class="step-form-container">
+    <p class="text-muted mb-4" style="font-size: 0.9375rem;">Renseignez les informations de base de votre enquête de bienvenue</p>
+    
+    <q-inner-loading v-if="loading" :showing="loading" background-color="rgba(0,0,0,0.4)">
+      <q-spinner-bars color="green" size="50px" />
+    </q-inner-loading>
+    <BForm v-else>
         <!-- Titre -->
         <BCol cols="12" class="mb-4 floating-label">
           <input
             id="title"
             v-model="form.title"
             type="text"
-            class="form-control form-control-modern"
+            class="form-control-modern"
             placeholder=" "
           />
           <label for="title">Titre de l'enquête</label>
@@ -35,14 +23,14 @@
           <textarea
             id="desc"
             v-model="form.description"
-            class="form-control form-control-modern"
+            class="form-control-modern"
             rows="3"
             placeholder=" "
           ></textarea>
           <label for="desc">Description</label>
         </BCol>
 
-        <!-- Langues supportées -->
+        <!-- Langues supportées et Points de bonus -->
         <BRow class="mb-4">
           <BCol cols="6" class="floating-label">
             <Multiselect
@@ -60,46 +48,43 @@
               id="points"
               v-model="form.welcomeBonusPoints"
               type="number"
-              class="form-control form-control-modern"
+              class="form-control-modern"
               placeholder=" "
             />
             <label for="points">Points de bonus</label>
           </BCol>
         </BRow>
 
+        <!-- Ordre d'affichage -->
         <BRow class="mb-4">
           <BCol md="12" class="floating-label">
             <input
               id="orde"
               v-model="form.displayOrder"
               type="number"
-              class="form-control form-control-modern"
+              class="form-control-modern"
               placeholder=" "
             />
             <label for="orde">Ordre d'affichage</label>
           </BCol>
         </BRow>
-        <!-- Dates -->
+
 
         <!-- Bouton Suivant -->
-        <div v-if="loadings" class="d-flex justify-content-end mt-4">
-          <q-spinner-dots color="green" size="20px" class="q-mr-sm" />
-        </div>
-
-        <div v-else class="d-flex justify-content-end mt-4">
-          <BButton variant="success" size="lg" class="px-5 rounded-3 shadow-sm" @click="handleNext">
-            Suivant →
+        <div class="d-flex justify-content-end mt-4 w-100">
+          <q-spinner-dots v-if="loadings" color="green" size="20px" class="q-mr-sm" />
+          <BButton v-else class="btn-modern btn-success-modern" @click="handleNext">
+            Suivant
+            <i class="bi bi-arrow-right ms-2"></i>
           </BButton>
         </div>
       </BForm>
-    </q-card-section>
-  </q-card>
+  </div>
 </template>
 <script>
 import { BButton, BCol, BRow } from 'bootstrap-vue-next'
 import Multiselect from '@vueform/multiselect'
 import { getCurrentInstance, ref } from 'vue'
-import '@vuepic/vue-datepicker/dist/main.css'
 import { api } from 'src/boot/axios'
 import { Notify } from 'quasar'
 import { useRegisterStore } from 'src/stores/useRegisterStore'
@@ -121,10 +106,6 @@ export default {
     ]
 
     const { emit } = getCurrentInstance()
-    const optionl3 = [
-      { label: 'Public', value: 'PUBLIC' },
-      { label: 'Business', value: 'BUSINESS' },
-    ]
     const levals = ref([])
     const loading = ref(false)
     const loadings = ref(false)
@@ -139,6 +120,7 @@ export default {
       displayOrder: '',
       isPublished: false,
     })
+
 
     const formule = async () => {
       try {
@@ -158,10 +140,9 @@ export default {
 
           return false
         }
-
         const hasChanged = JSON.stringify(form.value) !== JSON.stringify(originalForm.value)
         if (!hasChanged) {
-          return true // On laisse passer pour "Suivant →"
+          return true
         }
 
         if (!store.idsurveyw) {
@@ -172,7 +153,7 @@ export default {
           Notify.create({
             type: 'positive',
             message: 'Opération effectuée avec succès !',
-            timeout: 5000, // durée en ms
+            timeout: 5000,
           })
           const responseS = await api.get('/admin/welcome-surveys')
           store.setSurveyDataw(responseS.data.find((s) => s.id === store.idsurveyw))
@@ -180,15 +161,17 @@ export default {
         } else {
           form.value.supportedLanguages = levals.value
           await api.put(`/admin/welcome-surveys/${form.value.id}`, {
-            tittle: form.value.title,
+            title: form.value.title,
             description: form.value.description,
             supportedLanguages: form.value.supportedLanguages,
+            welcomeBonusPoints: form.value.welcomeBonusPoints,
+            displayOrder: form.value.displayOrder,
             isPublished: form.value.isPublished,
           })
           Notify.create({
             type: 'positive',
             message: 'Opération effectuée avec succès !',
-            timeout: 5000, // durée en ms
+            timeout: 5000,
           })
         }
         const response = await api.get('/admin/welcome-surveys')
@@ -218,13 +201,11 @@ export default {
         emit('onNext')
       }
     }
-
     return {
       form,
       optionl,
       handleNext,
       levals,
-      optionl3,
       loading,
       loadings,
     }
@@ -232,7 +213,8 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+/* Les styles sont maintenant dans le fichier SCSS global _enquetes.scss */
 .btn-success {
   background: linear-gradient(135deg, #34c38f, #2ea3f2);
   border: none;

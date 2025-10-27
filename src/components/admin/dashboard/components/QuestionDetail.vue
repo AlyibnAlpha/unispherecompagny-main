@@ -1,536 +1,357 @@
 <template>
-  <hr />
-  <div class="mb-3 text-end">
-    <BRow class="d-flex justify-content-between align-items-center">
-      <BCol cols="auto"
-        ><a href="javascript:void(0)" class="btn btn-link text-muted" @click="$router.back()">
-          <i class="uil uil-arrow-left me-1"></i> Retour
-        </a></BCol
-      >
-      <BCol v-if="reportvalidasmin === true" cols="auto">
-        <BButton
-          variant="success"
-          class="shadow-sm px-3"
-          @click="downloadReports"
-          :disabled="isDownloading"
-          v-if="reportvalids"
-        >
-          <i v-if="!isDownloading" class="uil uil-file-download-alt me-1"></i>
-          <i v-else class="spinner-border spinner-border-sm me-2"></i>
-          {{ isDownloading ? 'Téléchargement...' : 'Télécharger' }}
-        </BButton>
-        <router-link v-else class="btn btn-link text-primary" to="/admin/rapport">
-          créer un rapport
-        </router-link>
-      </BCol>
-      <BCol v-if="reportvalid === true" cols="auto">
-        <BButton
-          variant="success"
-          class="shadow-sm px-3"
-          @click="downloadReports"
-          :disabled="isDownloading"
-        >
-          <i v-if="!isDownloading" class="uil uil-file-download-alt me-1"></i>
-          <i v-else class="spinner-border spinner-border-sm me-2"></i>
-          {{ isDownloading ? 'Téléchargement...' : 'Télécharger' }}
-        </BButton>
-      </BCol>
-      <div
-        ref="statDetail"
-        style="position: absolute; top: 0; left: -9999px; width: 210mm; padding: 20px"
-      >
-        <TeleDetail v-if="selectedReport" :report="selectedReport" />
+  <div class="modern-detail-wrapper">
+    <!-- Loading State -->
+    <q-inner-loading v-if="loading" :showing="loading" background-color="rgba(0,0,0,0.1)">
+      <q-spinner-ball color="primary" size="60px" />
+      <p class="loading-text">Chargement des détails...</p>
+    </q-inner-loading>
+
+    <!-- Empty State -->
+    <div v-else-if="!form || !form.id" class="empty-state-modern">
+      <i class="bi bi-inbox empty-icon"></i>
+      <h3>Aucune donnée disponible</h3>
+      <p>Impossible de charger les détails de l'enquête</p>
+      <button class="btn-modern btn-primary-modern" @click="$router.back()">
+        <i class="bi bi-arrow-left me-2"></i>
+        Retour
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div v-else class="modern-detail-content">
+      <!-- Header Actions -->
+      <div class="header-actions">
+        <button class="btn-icon btn-back" @click="$router.back()" title="Retour">
+          <i class="bi bi-arrow-left"></i>
+        </button>
+        
+        <div class="action-group">
+          <button
+            v-if="reportvalidasmin && reportvalids"
+            class="btn-modern btn-success-modern"
+            @click="downloadReports"
+            :disabled="isDownloading"
+          >
+            <i v-if="!isDownloading" class="bi bi-download me-2"></i>
+            <q-spinner-dots v-else color="white" size="20px" class="me-2" />
+            {{ isDownloading ? 'Téléchargement...' : 'Télécharger le rapport' }}
+          </button>
+          
+          <router-link
+            v-else-if="reportvalidasmin"
+            class="btn-modern btn-primary-modern"
+            to="/admin/rapport"
+          >
+            <i class="bi bi-plus-circle me-2"></i>
+            Créer un rapport
+          </router-link>
+
+          <button
+            v-if="reportvalid"
+            class="btn-modern btn-success-modern"
+            @click="downloadReports"
+            :disabled="isDownloading"
+          >
+            <i v-if="!isDownloading" class="bi bi-download me-2"></i>
+            <q-spinner-dots v-else color="white" size="20px" class="me-2" />
+            {{ isDownloading ? 'Téléchargement...' : 'Télécharger' }}
+          </button>
+        </div>
       </div>
-    </BRow>
-  </div>
-  <div v-if="loading" class="text-center my-5">
-    <q-spinner-ball color="green" size="50px" />
-  </div>
-  <div
-    v-else-if="Array.isArray(questionsList) && questionsList.length === 0"
-    class="text-center py-5"
-  >
-    <i class="uil uil-folder-open text-muted" style="font-size: 3rem"></i>
-    <p class="mt-3 text-muted">Aucune donnée ou réessayer</p>
-  </div>
-  <div v-else>
-    <BRow class="align-items-stretch">
-      <BCol lg="12" md="8" sm="12" order="2" class="h-100">
-        <BRow>
-          <BCol lg="12">
-            <div id="stat-detail">
-              <StatDetail :survey="form" />
-              <!-- 🔹 Graphique ApexCharts -->
-              <BCard class="mb-4">
-                <div class="p-3">
-                  <apexchart
-                    type="bar"
-                    height="350"
-                    :options="chartOptions"
-                    :series="chartSeries"
-                  />
-                </div>
-              </BCard>
-            </div>
 
-            <!-- 🔹 Tableau récapitulatif -->
-          </BCol>
-        </BRow>
-      </BCol>
-      <BCol lg="12" md="4" sm="12" order="1" class="h-100 border-end d-flex flex-column p-1">
-        <BRow class="mb-3">
-          <BCol cols="12">
-            <div class="text-center mb-4">
-              <BCard
-                class="shadow-lg border-0 p-1 rounded-4 position-relative overflow-hidden"
-                style="transition: transform 0.3s; cursor: pointer"
-                @mouseover="
-                  (e) => (e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)')
-                "
-                @mouseleave="(e) => (e.currentTarget.style.transform = 'translateY(0) scale(1)')"
-              >
-                <!-- Dégradé en arrière-plan -->
-                <div
-                  class="position-absolute top-0 start-0 w-100 h-100"
-                  style="
-                    background: linear-gradient(
-                      135deg,
-                      rgba(0, 123, 255, 0.15),
-                      rgba(0, 200, 255, 0.05)
-                    );
-                    z-index: 0;
-                    pointer-events: none;
-                  "
-                ></div>
-
-                <!-- Contenu du card -->
-                <div class="position-relative" style="z-index: 1">
-                  <!-- Titre du sondage avec ombre légère -->
-                  <div class="mb-3 text-md-start">
-                    <h3 class="fw-bold mb-2" style="text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1)">
-                      {{ truncate(form.title, 80) }}
-                    </h3>
-                    <p
-                      class="text-muted mx-auto mx-md-0"
-                      style="max-width: 650px; font-size: 0.95rem; line-height: 1.5"
-                    >
-                      {{ truncate(form.description, 1200) }}
-                    </p>
-                  </div>
-
-                  <!-- Badges de date avec gradient animé -->
-                  <div
-                    class="d-flex justify-content-center justify-content-md-start gap-3 flex-wrap mt-3"
-                  >
-                    <BBadge
-                      class="d-flex align-items-center gap-2 py-2 px-3 rounded-pill shadow-sm border border-light text-white"
-                      style="
-                        background: linear-gradient(90deg, #28a745, #85e085);
-                        background-size: 200% 100%;
-                        animation: gradientShift 3s ease infinite;
-                      "
-                    >
-                      <i class="bi bi-calendar-event-fill"></i> Début:
-                      {{
-                        new Date(form.startDate).toLocaleDateString('fr-FR', {
-                          day: 'numeric',
-                          month: 'long',
-                          year: 'numeric',
-                        })
-                      }}
-                    </BBadge>
-
-                    <BBadge
-                      class="d-flex align-items-center gap-2 py-2 px-3 rounded-pill shadow-sm border border-light text-white"
-                      style="
-                        background: linear-gradient(90deg, #dc3545, #ff7f7f);
-                        background-size: 200% 100%;
-                        animation: gradientShift 3s ease infinite;
-                      "
-                    >
-                      <i class="bi bi-hourglass-split"></i> Fin:
-                      {{
-                        new Date(form.endDate).toLocaleDateString('fr-FR', {
-                          day: 'numeric',
-                          month: 'long',
-                          year: 'numeric',
-                        })
-                      }}
-                    </BBadge>
-                  </div>
-                </div>
-              </BCard>
-            </div>
-          </BCol>
-          <BCol cols="12">
-            <!-- 🔹 Carte du créateur du sondage BUSINESS -->
-            <BCard v-if="form.user.businessAccount" class="shadow-sm border-0 mt-3 rounded-4">
-              <div class="p-3 d-flex align-items-center gap-3">
-                <!-- Avatar généré automatiquement -->
-                <img
-                  :src="`https://ui-avatars.com/api/?name=${form.user.businessAccount.firstName}+${form.user.businessAccount.lastName}&background=random`"
-                  alt="Avatar créateur"
-                  class="rounded-circle shadow-sm"
-                  style="width: 60px; height: 60px; object-fit: cover"
-                />
-                <div>
-                  <!-- Nom et prénom -->
-                  <h5 class="mb-1 fw-bold text-primary">
-                    {{ form.user.businessAccount.firstName }}
-                    {{ form.user.businessAccount.lastName }}
-                  </h5>
-
-                  <!-- Entreprise -->
-                  <p class="mb-1 text-muted small">
-                    <i class="bi bi-building me-2"></i>
-                    {{ form.user.businessAccount.companyName }}
-                  </p>
-
-                  <!-- Email -->
-                  <p class="mb-1 text-muted small">
-                    <i class="bi bi-envelope me-2"></i>
-                    {{ form.user.email }}
-                  </p>
-
-                  <!-- Téléphone -->
-                  <p class="mb-1 text-muted small">
-                    <i class="bi bi-telephone me-2"></i>
-                    {{ form.user.businessAccount.phone }}
-                  </p>
-
-                  <!-- Poste -->
-                  <p class="mb-1 text-muted small">
-                    <i class="bi bi-person-badge me-2"></i>
-                    {{ form.user.businessAccount.position }}
-                  </p>
-
-                  <!-- Pays -->
-                  <p class="mb-1 text-muted small">
-                    <i class="bi bi-geo-alt me-2"></i>
-                    {{ form.user.businessAccount.country }}
-                  </p>
-
-                  <!-- Date de création -->
-                  <p class="mb-0 text-muted small">
-                    <i class="bi bi-calendar-event me-2"></i>
-                    Créé le :
-                    {{
-                      new Date(form.createdAt).toLocaleDateString('fr-FR', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric',
-                      })
-                    }}
-                  </p>
-                </div>
+      <!-- Survey Header Card -->
+      <div class="survey-header-card">
+        <div class="survey-header-content">
+          <div class="survey-icon">
+            <i class="bi bi-clipboard-data"></i>
+          </div>
+          <div class="survey-info">
+            <h1 class="survey-title">{{ form.title }}</h1>
+            <p class="survey-description">{{ form.description }}</p>
+            
+            <div class="survey-meta">
+              <div class="meta-item">
+                <i class="bi bi-calendar-check"></i>
+                <span>Début: {{ formatDate(form.startDate) }}</span>
               </div>
-            </BCard>
-            <!-- 🔹 Carte du créateur ADMIN -->
-            <BCard v-if="form.user.admin" class="shadow-sm border-0 mt-3 rounded-4">
-              <div class="p-3 d-flex align-items-center gap-3">
-                <!-- Avatar généré automatiquement -->
-                <img
-                  :src="`https://ui-avatars.com/api/?name=${form.user.admin.firstName}+${form.user.admin.lastName}&background=random`"
-                  alt="Avatar créateur"
-                  class="rounded-circle shadow-sm"
-                  style="width: 60px; height: 60px; object-fit: cover"
-                />
-
-                <div>
-                  <!-- Nom et prénom -->
-                  <h5 class="mb-1 fw-bold text-primary">
-                    {{ form.user.admin.firstName }} {{ form.user.admin.lastName }}
-                  </h5>
-
-                  <!-- Poste -->
-                  <p class="mb-1 text-muted small">
-                    <i class="bi bi-person-badge me-2"></i>
-                    {{ form.user.admin.position }}
-                  </p>
-
-                  <!-- Téléphone -->
-                  <p class="mb-1 text-muted small">
-                    <i class="bi bi-telephone me-2"></i>
-                    {{ form.user.admin.phone }}
-                  </p>
-
-                  <!-- Email -->
-                  <p class="mb-1 text-muted small">
-                    <i class="bi bi-envelope me-2"></i>
-                    {{ form.user.email }}
-                  </p>
-
-                  <!-- Date de création -->
-                  <p class="mb-0 text-muted small">
-                    <i class="bi bi-calendar-event me-2"></i>
-                    Créé le :
-                    {{
-                      new Date(form.createdAt).toLocaleDateString('fr-FR', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric',
-                      })
-                    }}
-                  </p>
-                </div>
+              <div class="meta-item">
+                <i class="bi bi-calendar-x"></i>
+                <span>Fin: {{ formatDate(form.endDate) }}</span>
               </div>
-            </BCard>
-          </BCol>
-        </BRow>
-      </BCol>
-      <BCol lg="12" md="12" sm="12" order="2" class="h-100">
-        <BRow>
-          <BCol lg="6">
-            <BCard class="mb-4" style="height: 400px">
-              <div class="p-0">
-                <apexchart
-                  type="bar"
-                  height="330"
-                  :options="ageChartOptions"
-                  :series="ageChartSeries"
-                />
+              <div class="meta-item status-badge" :class="`status-${form.status}`">
+                <i class="bi bi-circle-fill"></i>
+                <span>{{ form.status }}</span>
               </div>
-            </BCard>
-          </BCol>
-          <BCol lg="6">
-            <BCard class="mb-4" style="height: 400px">
-              <div class="p-2">
-                <apexchart
-                  type="pie"
-                  height="370"
-                  :options="genderChartOptions"
-                  :series="genderChartSeries"
-                />
-              </div>
-            </BCard>
-          </BCol>
-        </BRow>
-      </BCol>
-      <BCol cols="12" order="3" class="border-end d-flex flex-column p-1">
-        <div id="table-recap">
-          <BCard class="mb-4">
-            <div class="p-3">
-              <h5 class="font-size-16 mb-3">Statistiques des suivies participants</h5>
-              <BTable
-                :items="participantStats"
-                :fields="tableFields"
-                small
-                bordered
-                striped
-                responsive
-              >
-                <template #cell(percent)="data">
-                  <strong>{{ data.value }}</strong>
-                </template>
-              </BTable>
             </div>
-          </BCard>
-          <BCard class="mb-4">
-            <div class="p-3 table-responsive">
-              <h5 class="font-size-16 mb-3">Résumé des réponses</h5>
-              <table class="table table-hover table-bordered align-middle text-center">
-                <thead class="table-dark">
-                  <tr>
-                    <th>#</th>
-                    <th>Question</th>
-                    <th>Type</th>
-                    <th>Total réponses</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="quest in questionsList" :key="'resume-' + quest.id">
-                    <td>
-                      <strong>{{ quest.position }}</strong>
-                    </td>
-                    <td class="text-start">{{ quest.title }}</td>
-                    <td>
-                      <span class="badge bg-info">{{ quest.type }}</span>
-                    </td>
-                    <td>
-                      <span class="badge bg-primary">{{ quest.answers.length }}</span>
-                    </td>
-                  </tr>
-                  <tr class="table-success fw-bold">
-                    <td colspan="3" class="text-end">Moyenne par question</td>
-                    <td>
-                      <span class="badge bg-success">{{ moyenneReponses }}</span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </BCard>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon stat-icon-primary">
+            <i class="bi bi-people-fill"></i>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-value">{{ form.survey_participants?.length || 0 }}</h3>
+            <p class="stat-label">Participants</p>
+          </div>
         </div>
 
-        <div id="addproduct-accordion" class="custom-accordion">
-          <BCard no-body v-for="quest in questionsList" :key="quest.id">
-            <a href="#" class="nav-link" @click.prevent="toggleCollapse(quest.id)">
-              <div class="p-4">
-                <div class="media align-items-center d-flex justify-content-between">
-                  <div class="d-flex">
-                    <div class="me-3">
-                      <div class="avatar-xs">
-                        <div class="avatar-title rounded-circle bg-primary-subtle text-primary">
-                          {{ quest.position }}
-                        </div>
-                      </div>
-                    </div>
-                    <div class="media-body overflow-hidden">
-                      <h5 class="font-size-16 mb-1">{{ quest.title }}</h5>
-                      <p class="text-muted text-wrap mb-0">{{ quest.description }}</p>
-                    </div>
+        <div class="stat-card">
+          <div class="stat-icon stat-icon-success">
+            <i class="bi bi-check-circle-fill"></i>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-value">{{ form.responses?.length || 0 }}</h3>
+            <p class="stat-label">Réponses</p>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon stat-icon-warning">
+            <i class="bi bi-question-circle-fill"></i>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-value">{{ questionsList.length }}</h3>
+            <p class="stat-label">Questions</p>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon stat-icon-info">
+            <i class="bi bi-graph-up"></i>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-value">{{ moyenneReponses }}</h3>
+            <p class="stat-label">Moyenne/Question</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Creator Card -->
+      <div v-if="form.user" class="creator-card-modern">
+        <div class="creator-header">
+          <i class="bi bi-person-badge"></i>
+          <h3>Créateur de l'enquête</h3>
+        </div>
+        <div class="creator-content">
+          <img
+            :src="getAvatarUrl(form.user)"
+            alt="Avatar"
+            class="creator-avatar"
+          />
+          <div class="creator-info">
+            <h4 class="creator-name">{{ getCreatorName(form.user) }}</h4>
+            <div class="creator-details">
+              <div class="detail-item" v-if="form.user.email">
+                <i class="bi bi-envelope"></i>
+                <span>{{ form.user.email }}</span>
+              </div>
+              <div class="detail-item" v-if="getCreatorCompany(form.user)">
+                <i class="bi bi-building"></i>
+                <span>{{ getCreatorCompany(form.user) }}</span>
+              </div>
+              <div class="detail-item" v-if="getCreatorPhone(form.user)">
+                <i class="bi bi-telephone"></i>
+                <span>{{ getCreatorPhone(form.user) }}</span>
+              </div>
+              <div class="detail-item">
+                <i class="bi bi-calendar-event"></i>
+                <span>Créé le {{ formatDate(form.createdAt) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="charts-section">
+        <h2 class="section-title">
+          <i class="bi bi-bar-chart-fill me-2"></i>
+          Statistiques et Analyses
+        </h2>
+
+        <!-- Main Chart -->
+        <div class="chart-card">
+          <h3 class="chart-title">Réponses par question</h3>
+          <apexchart
+            v-if="chartSeries[0].data.length > 0"
+            type="bar"
+            height="350"
+            :options="chartOptions"
+            :series="chartSeries"
+          />
+          <div v-else class="chart-empty">
+            <i class="bi bi-graph-down"></i>
+            <p>Aucune donnée à afficher</p>
+          </div>
+        </div>
+
+        <!-- Demographics Charts -->
+        <div class="demographics-grid">
+          <div class="chart-card">
+            <h3 class="chart-title">Répartition par âge</h3>
+            <apexchart
+              v-if="ageChartSeries[0].data.length > 0"
+              type="bar"
+              height="300"
+              :options="ageChartOptions"
+              :series="ageChartSeries"
+            />
+            <div v-else class="chart-empty">
+              <i class="bi bi-person-x"></i>
+              <p>Aucune donnée démographique</p>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <h3 class="chart-title">Répartition par genre</h3>
+            <apexchart
+              v-if="genderChartSeries.length > 0"
+              type="pie"
+              height="300"
+              :options="genderChartOptions"
+              :series="genderChartSeries"
+            />
+            <div v-else class="chart-empty">
+              <i class="bi bi-gender-ambiguous"></i>
+              <p>Aucune donnée de genre</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Questions & Answers -->
+      <div class="questions-section">
+        <h2 class="section-title">
+          <i class="bi bi-chat-left-text-fill me-2"></i>
+          Questions et Réponses ({{ questionsList.length }})
+        </h2>
+
+        <div class="questions-list">
+          <div
+            v-for="quest in questionsList"
+            :key="quest.id"
+            class="question-card"
+            :class="{ 'question-open': openCollapse[quest.id] }"
+          >
+            <div class="question-header" @click="toggleCollapse(quest.id)">
+              <div class="question-header-left">
+                <div class="question-number">{{ quest.position }}</div>
+                <div class="question-info">
+                  <h4 class="question-title">{{ quest.title }}</h4>
+                  <p class="question-description" v-if="quest.description">
+                    {{ quest.description }}
+                  </p>
+                  <div class="question-meta">
+                    <span class="question-type" :class="`type-${quest.type}`">
+                      {{ getTypeLabel(quest.type) }}
+                    </span>
+                    <span class="question-count">
+                      <i class="bi bi-chat-dots"></i>
+                      {{ quest.answers.length }} réponse{{ quest.answers.length > 1 ? 's' : '' }}
+                    </span>
                   </div>
-                  <i
-                    :class="[
-                      'mdi',
-                      openCollapse[quest.id] ? 'mdi-chevron-up' : 'mdi-chevron-down',
-                      'accor-down-icon',
-                      'font-size-24',
-                    ]"
-                  ></i>
                 </div>
               </div>
-            </a>
-            <BCollapse v-model="openCollapse[quest.id]">
-              <div class="mt-4">
-                <!-- Nombre de réponses -->
-                <div
-                  class="d-flex justify-content-between align-items-center mb-3"
-                  style="padding-left: 10px; padding-right: 10px"
-                >
-                  <h6 class="mb-0 text-primary">
-                    {{ quest.answers.length }} Réponse<span v-if="quest.answers.length > 1">s</span>
-                  </h6>
-                  <span
-                    :class="
-                      quest.type === 'text'
-                        ? 'text-success'
-                        : quest.type === 'single_choice'
-                          ? 'text-primary'
-                          : quest.type === 'multiple_choice'
-                            ? 'text-info'
-                            : quest.type === 'file'
-                              ? 'text-warning'
-                              : 'text-dark'
-                    "
-                  >
-                    {{ quest.type }}
-                  </span>
-                </div>
+              <button class="collapse-btn">
+                <i :class="openCollapse[quest.id] ? 'bi bi-chevron-up' : 'bi bi-chevron-down'"></i>
+              </button>
+            </div>
 
-                <!-- Liste des réponses -->
-                <div v-if="quest.answers.length > 0" class="d-flex flex-column gap-3">
+            <transition name="collapse">
+              <div v-if="openCollapse[quest.id]" class="question-answers">
+                <div v-if="quest.answers.length > 0" class="answers-list">
                   <div
                     v-for="(ans, idx) in getVisibleAnswers(quest)"
                     :key="idx"
-                    class="border rounded shadow-sm p-3 bg-light"
+                    class="answer-card"
                   >
-                    <!-- Header de la réponse -->
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                      <h6 class="mb-0 text-dark">
-                        <b>#{{ idx + 1 }}</b> — Participant
-                      </h6>
-                      <small class="text-muted">
-                        📅
-                        {{
-                          new Date(ans.submittedAt).toLocaleDateString('fr-FR', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric',
-                          })
-                        }}
-                      </small>
+                    <div class="answer-header">
+                      <div class="answer-participant">
+                        <div class="participant-avatar">
+                          <i class="bi bi-person-fill"></i>
+                        </div>
+                        <span>Participant #{{ idx + 1 }}</span>
+                      </div>
+                      <span class="answer-date">
+                        <i class="bi bi-clock"></i>
+                        {{ formatDate(ans.submittedAt) }}
+                      </span>
                     </div>
 
-                    <!-- Contenu de la réponse -->
-                    <p class="mb-2">
-                      <span v-if="quest.type === 'text'" class="text-secondary">
-                        {{ ans.answer }}
-                      </span>
-
-                      <span v-else-if="quest.type === 'single_choice'" class="badge bg-primary">
+                    <div class="answer-content">
+                      <span v-if="quest.type === 'text'">{{ ans.answer }}</span>
+                      
+                      <span v-else-if="quest.type === 'single_choice'" class="badge badge-primary">
                         {{ getSingleChoiceLabel(quest, ans.answer) }}
                       </span>
-
-                      <span v-else-if="quest.type === 'multiple_choice'">
+                      
+                      <div v-else-if="quest.type === 'multiple_choice'" class="badges-group">
                         <span
                           v-for="(choice, i) in getMultipleChoiceLabels(quest, ans.answer)"
                           :key="i"
-                          class="badge bg-info me-1"
+                          class="badge badge-info"
                         >
                           {{ choice }}
                         </span>
-                      </span>
-
-                      <span v-else-if="quest.type === 'file'">
-                        📎
-                        <a href="#" target="_blank" class="text-decoration-none">{{
-                          ans.answer
-                        }}</a>
-                      </span>
-
-                      <span v-else>
+                      </div>
+                      
+                      <a v-else-if="quest.type === 'file'" href="#" class="file-link">
+                        <i class="bi bi-file-earmark"></i>
                         {{ ans.answer }}
-                      </span>
-                    </p>
+                      </a>
+                      
+                      <span v-else>{{ ans.answer }}</span>
+                    </div>
+                  </div>
 
-                    <input
-                      type="checkbox"
-                      v-model="selectedAnswers"
-                      :value="{ questionId: quest.id, answer: ans }"
-                      class="list-inline product-review-link mb-0"
-                    />
-                  </div>
-                  <div
+                  <button
                     v-if="visibleAnswers[quest.id] < quest.answers.length"
-                    class="text-center mt-2"
+                    class="btn-load-more"
+                    @click="toggleMore(quest.id)"
                   >
-                    <button class="btn btn-link p-0" @click="toggleMore(quest.id)">
-                      {{ visibleAnswers[quest.id] ? 'Voir moins' : 'Voir plus' }}
-                    </button>
-                  </div>
+                    Voir plus de réponses
+                    <i class="bi bi-chevron-down ms-2"></i>
+                  </button>
                 </div>
 
-                <!-- Aucun résultat -->
-                <div v-else class="text-muted text-center fst-italic mt-3">
-                  🚫 Aucune réponse pour l’instant
+                <div v-else class="no-answers">
+                  <i class="bi bi-inbox"></i>
+                  <p>Aucune réponse pour cette question</p>
                 </div>
               </div>
-            </BCollapse>
-          </BCard>
+            </transition>
+          </div>
         </div>
-      </BCol>
-    </BRow>
+      </div>
+    </div>
+
+    <!-- Hidden element for PDF export -->
+    <div ref="statDetail" style="position: absolute; top: 0; left: -9999px; width: 210mm; padding: 20px">
+      <TeleDetail v-if="selectedReport" :report="selectedReport" />
+    </div>
   </div>
 </template>
 
 <script>
-import { BRow, BCol, BCard, BCollapse, BBadge, BButton, BTable } from 'bootstrap-vue-next'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, nextTick } from 'vue'
 import ApexCharts from 'vue3-apexcharts'
-import StatDetail from './StatDetail.vue'
-import jsPDF from 'jspdf'
-import html2canvas from 'html2canvas'
 import dayjs from 'dayjs'
-import { nextTick } from 'vue'
 import { api } from 'src/boot/axios'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from 'src/stores/auth'
-import autoTable from 'jspdf-autotable'
 import TeleDetail from '../../enquete/TeleDetail.vue'
+import jsPDF from 'jspdf'
+import html2canvas from 'html2canvas'
+import autoTable from 'jspdf-autotable'
 
 export default {
   components: {
-    BRow,
-    BCol,
-    BCard,
-    BCollapse,
     apexchart: ApexCharts,
-    StatDetail,
     TeleDetail,
-    BButton,
-    BBadge,
-    BTable,
   },
   setup() {
     const form = ref([])
@@ -1128,9 +949,52 @@ export default {
       }
     }
 
+    // Helper functions
+    const formatDate = (date) => {
+      if (!date) return 'N/A'
+      return new Date(date).toLocaleDateString('fr-FR', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })
+    }
+
+    const getAvatarUrl = (user) => {
+      const name = getCreatorName(user)
+      return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`
+    }
+
+    const getCreatorName = (user) => {
+      if (user.businessAccount) {
+        return `${user.businessAccount.firstName} ${user.businessAccount.lastName}`
+      } else if (user.admin) {
+        return `${user.admin.firstName} ${user.admin.lastName}`
+      }
+      return 'Utilisateur'
+    }
+
+    const getCreatorCompany = (user) => {
+      return user.businessAccount?.companyName || null
+    }
+
+    const getCreatorPhone = (user) => {
+      return user.businessAccount?.phone || user.admin?.phone || null
+    }
+
+    const getTypeLabel = (type) => {
+      const types = {
+        text: 'Texte libre',
+        single_choice: 'Choix unique',
+        multiple_choice: 'Choix multiple',
+        file: 'Fichier',
+      }
+      return types[type] || type
+    }
+
     onMounted(() => {
       gets()
     })
+
     return {
       form,
       questionsList,
@@ -1162,63 +1026,17 @@ export default {
       reportvalids,
       tableFields,
       participantStats,
+      formatDate,
+      getAvatarUrl,
+      getCreatorName,
+      getCreatorCompany,
+      getCreatorPhone,
+      getTypeLabel,
     }
-  },
-  methods: {
-    truncate(text, length) {
-      if (!text) return ''
-      return text.length > length ? text.substring(0, length) + '...' : text
-    },
   },
 }
 </script>
 
-<style lang="scss">
-.creator-card {
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
-}
-.creator-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-.btn-success {
-  background: linear-gradient(135deg, #34c38f, #2ea3f2);
-  border: none;
-  border-radius: 50px;
-  transition: all 0.3s ease;
-  font-weight: 600;
-  box-shadow: 0 4px 10px rgba(46, 163, 242, 0.3);
-
-  &:hover {
-    background: linear-gradient(135deg, #2ea3f2, #34c38f);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(46, 163, 242, 0.4);
-  }
-
-  &:active {
-    transform: scale(0.96);
-  }
-}
-.table tbody tr {
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    background: #f9fcff;
-    box-shadow: #1f6bad33 0px 4px 8px;
-    transform: scale(1.01);
-  }
-}
-@keyframes gradientShift {
-  0% {
-    background-position: 0% 0%;
-  }
-  50% {
-    background-position: 100% 0%;
-  }
-  100% {
-    background-position: 0% 0%;
-  }
-}
+<style lang="scss" scoped>
+@import '../../../../css/ultra-modern-detail.scss';
 </style>

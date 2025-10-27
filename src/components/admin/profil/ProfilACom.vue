@@ -4,15 +4,8 @@ import { onMounted, ref, watch } from 'vue'
 import Multiselect from '@vueform/multiselect'
 import Swal from 'sweetalert2'
 import {
-  BRow,
-  BCol,
-  BCard,
-  BCardBody,
-  BCardTitle,
   BForm,
-  BFormGroup,
   BFormInput,
-  BButton,
 } from 'bootstrap-vue-next'
 
 /**
@@ -20,16 +13,9 @@ import {
  */
 export default {
   components: {
-    BRow,
-    BCol,
-    BCard,
-    BCardBody,
-    BCardTitle,
     BForm,
-    BFormGroup,
     BFormInput,
     Multiselect,
-    BButton,
   },
   setup() {
     const formget = ref({
@@ -46,7 +32,7 @@ export default {
     const formUpdate = ref(JSON.parse(JSON.stringify(formget.value)))
 
     const optionl = [
-      { label: 'Françe', value: 'FR' },
+      { label: 'Français', value: 'FR' },
       { label: 'Engletaire', value: 'EN' },
       { label: 'Espagne', value: 'ES' },
       { label: 'Itali', value: 'IT' },
@@ -186,282 +172,160 @@ export default {
 </script>
 
 <template>
-  <div>
-    <BRow class="mb-4">
-      <BCol cols="xl-4">
-        <BCard
-          no-body
-          class="h-100 shadow-lg"
-          style="
-            border-radius: 25px;
-            background: linear-gradient(135deg, #f0f4ff, #e0f7fa);
-            transition: all 0.5s ease;
-          "
-        >
-          <BCardBody>
-            <div class="text-center profile-header">
-              <div>
-                <img
-                  src="/icon.png"
-                  alt="avatar"
-                  class="avatar-lg rounded-circle img-thumbnail profile-avatar"
-                />
-              </div>
-              <h5 class="mt-3 mb-1 fw-bold">
-                {{ formget.admin?.firstName }}
-                {{ formget.admin?.lastName }}
-              </h5>
-              <p class="text-muted">{{ formget.admin?.position }}</p>
+  <div class="modern-admin-page">
+    <!-- Hero Profile Header -->
+    <div class="profile-hero-header">
+      <div class="hero-background"></div>
+      <div class="hero-content">
+        <div class="hero-avatar-wrapper">
+          <img src="/icon.png" alt="avatar" class="hero-avatar" />
+          <div class="avatar-badge">
+            <i class="bi bi-patch-check-fill"></i>
+          </div>
+        </div>
+        <div class="hero-info">
+          <h1 class="hero-name">{{ formget.admin?.firstName }} {{ formget.admin?.lastName }}</h1>
+          <p class="hero-position">
+            <i class="bi bi-briefcase-fill me-2"></i>
+            {{ formget.admin?.position || 'Administrateur' }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="quick-stats-grid">
+      <div class="stat-card-profile">
+        <div class="stat-icon-wrapper stat-purple">
+          <i class="bi bi-envelope-fill"></i>
+        </div>
+        <div class="stat-details">
+          <span class="stat-label">Email</span>
+          <span class="stat-value">{{ formget.email }}</span>
+        </div>
+      </div>
+
+      <div class="stat-card-profile">
+        <div class="stat-icon-wrapper stat-blue">
+          <i class="bi bi-telephone-fill"></i>
+        </div>
+        <div class="stat-details">
+          <span class="stat-label">Mobile</span>
+          <span class="stat-value">{{ formget.admin?.phone || 'Non renseigné' }}</span>
+        </div>
+      </div>
+
+      <div class="stat-card-profile">
+        <div class="stat-icon-wrapper stat-green">
+          <i class="bi bi-geo-alt-fill"></i>
+        </div>
+        <div class="stat-details">
+          <span class="stat-label">Pays</span>
+          <span class="stat-value">{{ formget.admin?.country || 'Non renseigné' }}</span>
+        </div>
+      </div>
+
+      <div class="stat-card-profile">
+        <div class="stat-icon-wrapper stat-orange">
+          <i class="bi bi-gender-ambiguous"></i>
+        </div>
+        <div class="stat-details">
+          <span class="stat-label">Genre</span>
+          <span class="stat-value">{{ formget.admin?.gender || 'Non renseigné' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Profile Section -->
+    <div class="profile-edit-section">
+      <div class="section-header-profile">
+        <div class="section-title-profile">
+          <i class="bi bi-pencil-square me-2"></i>
+          Modifier mes informations
+        </div>
+        <div class="section-subtitle-profile">
+          Mettez à jour vos informations personnelles
+        </div>
+      </div>
+
+      <BForm @submit.prevent="updateProfile" class="profile-form-modern">
+        <div class="form-grid-2">
+          <div class="input-group-profile">
+            <div class="input-icon">
+              <i class="bi bi-person"></i>
             </div>
-
-            <hr class="my-4" />
-
-            <div class="text-muted profile-info">
-              <h5 class="font-size-16 mb-3 fw-bold">Vos informations</h5>
-
-              <div class="table-responsive mt-2">
-                <div class="info-row">
-                  <p class="mb-1">Genre :</p>
-                  <h5 class="font-size-16">{{ formget.admin?.gender }}</h5>
-                </div>
-                <div class="info-row mt-3">
-                  <p class="mb-1">Mobile :</p>
-                  <h5 class="font-size-16">{{ formget.admin?.phone }}</h5>
-                </div>
-                <div class="info-row mt-3">
-                  <p class="mb-1">E-mail :</p>
-                  <h5 class="font-size-16">{{ formget.email }}</h5>
-                </div>
-                <div class="info-row mt-3">
-                  <p class="mb-1">Localisation :</p>
-                  <h5 class="font-size-16">
-                    {{ formget.admin?.country }}
-                  </h5>
-                </div>
-              </div>
+            <div class="input-wrapper">
+              <label for="firstName">Prénom</label>
+              <BFormInput
+                id="firstName"
+                v-model="formUpdate.admin.firstName"
+                placeholder="Votre prénom"
+              />
             </div>
-          </BCardBody>
-        </BCard>
-      </BCol>
+          </div>
 
-      <BCol cols="xl-8">
-        <BCard
-          no-body
-          class="mb-4 shadow-lg"
-          style="
-            border-radius: 25px;
-            background: linear-gradient(135deg, #f0f4ff, #e0f7fa);
-            transition: background 0.5s ease;
-            margin-top: 15px;
-          "
-        >
-          <BCardBody>
-            <BCardTitle class="mb-5 text-center text-primary fw-bold" style="font-size: 1.8rem">
-              Modifier le profil
-            </BCardTitle>
+          <div class="input-group-profile">
+            <div class="input-icon">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <div class="input-wrapper">
+              <label for="lastName">Nom</label>
+              <BFormInput
+                id="lastName"
+                v-model="formUpdate.admin.lastName"
+                placeholder="Votre nom"
+              />
+            </div>
+          </div>
 
-            <BForm @submit.prevent="updateProfile">
-              <BRow class="mb-4">
-                <BCol md="6">
-                  <BFormGroup label-for="firstName" class="floating-label position-relative">
-                    <BFormInput
-                      id="firstName"
-                      v-model="formUpdate.admin.firstName"
-                      placeholder=" "
-                      class="form-control-modern"
-                    />
-                    <label for="firstName">Prénom</label>
-                  </BFormGroup>
-                </BCol>
+          <div class="input-group-profile">
+            <div class="input-icon">
+              <i class="bi bi-telephone"></i>
+            </div>
+            <div class="input-wrapper">
+              <label for="phone">Téléphone</label>
+              <BFormInput
+                id="phone"
+                v-model="formUpdate.admin.phone"
+                placeholder="Votre numéro"
+              />
+            </div>
+          </div>
 
-                <BCol md="6">
-                  <BFormGroup label-for="lastName" class="floating-label position-relative">
-                    <BFormInput
-                      id="lastName"
-                      v-model="formUpdate.admin.lastName"
-                      placeholder=" "
-                      class="form-control-modern"
-                    />
-                    <label for="lastName">Nom</label>
-                  </BFormGroup>
-                </BCol>
-              </BRow>
+          <div class="input-group-profile">
+            <div class="input-icon">
+              <i class="bi bi-globe"></i>
+            </div>
+            <div class="input-wrapper">
+              <label for="country">Pays</label>
+              <Multiselect
+                id="country"
+                :options="optionl"
+                v-model="formUpdate.admin.country"
+                placeholder="Sélectionnez votre pays"
+                track-by="value"
+                label="label"
+              />
+            </div>
+          </div>
+        </div>
 
-              <BRow class="mb-4">
-                <BCol md="12">
-                  <BFormGroup label-for="phone" class="floating-label position-relative">
-                    <BFormInput
-                      id="phone"
-                      v-model="formUpdate.admin.phone"
-                      placeholder=" "
-                      class="form-control-modern"
-                    />
-                    <label for="phone">Mobile</label>
-                  </BFormGroup>
-                </BCol>
-              </BRow>
-
-              <BFormGroup
-                label="Pays"
-                label-for="pays"
-                class="mb-5 floating-label position-relative"
-              >
-                <Multiselect
-                  :options="optionl"
-                  v-model="formUpdate.admin.country"
-                  placeholder=" "
-                  track-by="value"
-                  label="label"
-                  class="form-control-modern"
-                />
-                <label for="pays">Pays</label>
-              </BFormGroup>
-
-              <div class="text-center">
-                <BButton type="submit" class="btn-modern px-5 py-2 fw-bold"> Enregistrer </BButton>
-              </div>
-            </BForm>
-          </BCardBody>
-        </BCard>
-      </BCol>
-    </BRow>
+        <div class="form-actions">
+          <button type="submit" class="btn-save-profile">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            Enregistrer les modifications
+          </button>
+        </div>
+      </BForm>
+    </div>
   </div>
 </template>
 
-<style scoped>
-/* Ton style existant intégré */
-.form-focus:focus {
-  box-shadow: 0 0 8px rgba(13, 110, 253, 0.4);
-  border-color: #0d6efd !important;
-  transition: all 0.3s ease;
-}
+<style lang="scss">
+@import '../../../css/assets/scss/app2.scss';
+@import '../../../css/admin/modern-shared.scss';
+@import '../../../css/admin/profile.scss';
 
-.btn-gradient {
-  background: linear-gradient(135deg, #0d6efd, #6610f2);
-  color: #fff;
-  transition: all 0.3s ease;
-}
-
-.btn-gradient:hover {
-  background: linear-gradient(135deg, #6610f2, #0d6efd);
-  transform: translateY(-2px);
-}
-
-/* Champs modernes avec floating label */
-.floating-label {
-  position: relative;
-  margin-bottom: 1.5rem;
-}
-
-.form-control-modern {
-  border-radius: 50px;
-  border: 1px solid #0d6efd;
-  padding: 0.75rem 1rem 0.75rem 3rem;
-  transition: all 0.3s ease;
-}
-
-.form-control-modern:focus,
-.form-control-modern:not(:placeholder-shown) {
-  border-color: #6610f2;
-  box-shadow: 0 0 10px rgba(102, 16, 242, 0.3);
-}
-
-.floating-label label {
-  position: absolute;
-  top: 50%;
-  left: 3rem;
-  transform: translateY(-50%);
-  color: #6c757d;
-  pointer-events: none;
-  transition: all 0.3s ease;
-}
-
-.form-control-modern:focus + label,
-.form-control-modern:not(:placeholder-shown) + label {
-  top: -10px;
-  left: 2.5rem;
-  font-size: 0.8rem;
-  color: #6610f2;
-  background: #f0f4f8;
-  padding: 0 5px;
-}
-
-/* Icônes animées */
-.icon-field {
-  position: absolute;
-  top: 50%;
-  left: 1rem;
-  transform: translateY(-50%);
-  color: #0d6efd;
-  transition: all 0.3s ease;
-}
-
-.form-control-modern:focus ~ .icon-field {
-  color: #6610f2;
-  transform: translateY(-50%) scale(1.2);
-}
-
-/* Bouton moderne */
-.btn-modern {
-  background: linear-gradient(135deg, #90caf9, #80deea);
-  color: #fff;
-  border-radius: 50px;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-}
-
-.btn-modern:hover {
-  background: linear-gradient(135deg, #80deea, #90caf9);
-  transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-}
-
-.btn-modern:active {
-  transform: translateY(0);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-}
-/*-------------------------------------------*/
-/* Avatar */
-.profile-avatar {
-  width: 120px;
-  height: 120px;
-  border: 4px solid #90caf9;
-  transition: all 0.3s ease;
-}
-
-.profile-avatar:hover {
-  transform: scale(1.05);
-  box-shadow: 0 5px 15px rgba(102, 16, 242, 0.3);
-}
-
-/* Titres */
-.profile-header h5 {
-  color: #0d6efd;
-}
-
-.profile-header p {
-  font-style: italic;
-}
-
-/* Info rows */
-.info-row p {
-  font-weight: 500;
-  color: #6c757d;
-}
-
-.info-row h5 {
-  color: #884de7;
-}
-
-/* Ligne de séparation */
-hr {
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-/* Hover léger sur carte */
-.BCard:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
-}
+// ✅ Tous les styles sont maintenant dans les fichiers SCSS partagés
+// Ajoutez ici uniquement les styles spécifiques à ce composant si nécessaire
 </style>

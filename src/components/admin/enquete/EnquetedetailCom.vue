@@ -2,7 +2,7 @@
 import QuestionDetail from '../dashboard/components/QuestionDetail.vue'
 
 /**
- * Product-detail component
+ * Product-detail component - Version Ultra Moderne
  */
 export default {
   components: {
@@ -10,8 +10,9 @@ export default {
   },
 }
 </script>
-<style>
+<style lang="scss">
 @import '../../../css/assets/scss/app2.scss';
+@import '../../../css/ultra-modern-detail.scss';
 </style>
 
 <template>

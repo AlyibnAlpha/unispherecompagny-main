@@ -124,34 +124,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 @import '../../../../css/assets/scss/app2.scss';
-.stat-card {
-  transition: all 0.4s ease-in-out;
-  border: 2px solid transparent;
-  background: linear-gradient(135deg, #fdfdfd, #f5f5f5);
-  position: relative;
-  overflow: hidden;
-}
-.stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
-  border-radius: 20px;
-}
-
-.shadow-warning:hover {
-  border-color: #f1c40f;
-  background-color: linear-gradient(135deg, #f8dc9f, #fff3cc);
-  box-shadow: 0 0 18px rgba(241, 196, 15, 0.6);
-}
-.shadow-success:hover {
-  border-color: #2ecc71;
-  background: linear-gradient(135deg, #2ecc71, #d4f5e6);
-  box-shadow: 0 0 18px rgba(46, 204, 113, 0.6);
-}
-.shadow-danger:hover {
-  border-color: #e74c3c;
-  background: linear-gradient(135deg, #ffecec, #ffd9d6);
-  box-shadow: 0 0 18px rgba(231, 76, 60, 0.6);
-}
+@import '../../../../css/admin/dashboard.scss';
 </style>

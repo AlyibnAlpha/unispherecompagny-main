@@ -53,7 +53,7 @@ export default {
     const formUpdate = ref(JSON.parse(JSON.stringify(formget.value)))
 
     const optionl = [
-      { label: 'Françe', value: 'FR' },
+      { label: 'Français', value: 'FR' },
       { label: 'Engletaire', value: 'EN' },
       { label: 'Espagne', value: 'ES' },
       { label: 'Itali', value: 'IT' },

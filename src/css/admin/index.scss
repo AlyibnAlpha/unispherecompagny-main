@@ -1,0 +1,28 @@
+/**
+ * Index des styles Admin
+ * Importer ce fichier pour avoir accès à tous les styles admin
+ */
+
+// Variables
+@import './variables';
+
+// Styles partagés
+@import './modern-shared';
+
+// Styles partagés pour les tableaux
+@import './tables-shared';
+
+// Styles spécifiques par module
+@import './contacts';
+@import './reports';
+@import './profile';
+@import './surveys';
+@import './participants';
+@import './categories';
+
+// Badges globaux (en dernier pour priorité maximale)
+@import './badges';
+
+// Vous pouvez ajouter d'autres modules ici :
+// @import './tasks';
+// @import './logs';

@@ -7,12 +7,10 @@ import {
   BPagination,
   BFormSelect,
   BTable,
-  BCardBody,
-  BCard,
 } from 'bootstrap-vue-next'
 import { api } from 'src/boot/axios'
 import CountToComponent from 'src/components/common/CountToComponent.vue'
-
+  
 /**
  * Orders component
  */
@@ -24,8 +22,6 @@ export default {
     BPagination,
     BFormSelect,
     BTable,
-    BCardBody,
-    BCard,
     CountToComponent,
   },
   data() {
@@ -178,47 +174,56 @@ export default {
 </script>
 
 <template>
-  <div>
-    <BRow class="d-flexjustify-content-center">
-      <BCol md="6" cols="xl-6">
-        <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-          <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-            <div>
-              <div class="d-flex align-items-center mb-2">
-                <i class="bi bi-coin text-warning fs-3 me-2"></i>
-                <h4 class="fw-bold mb-0 fs-2">
-                  <CountToComponent :startVal="0" :endVal="totalRecentLog" :duration="2000" />
-                </h4>
-              </div>
+  <div class="modern-admin-page">
+    <!-- En-tête de section moderne -->
+    <div class="section-header-modern mb-4">
+      <div class="section-title-wrapper">
+        <div class="section-icon-modern">
+          <i class="bi bi-journal-text"></i>
+        </div>
+        <div class="section-title-content">
+          <h3 class="section-title-modern">Logs d'Activité</h3>
+          <p class="section-subtitle-modern">Historique complet des actions</p>
+        </div>
+      </div>
+    </div>
 
-              <span class="badge bg-warning-subtle text-warning fw-semibold px-3 py-1 rounded-pill"
-                >Actions récents</span
-              >
-            </div>
-          </BCardBody>
-        </BCard>
+    <!-- Cartes de statistiques modernes -->
+    <BRow class="g-3 mb-4">
+      <BCol md="6">
+        <div class="modern-stat-card stat-info">
+          <div class="stat-icon">
+            <i class="bi bi-clock-history"></i>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-value">
+              <CountToComponent :startVal="0" :endVal="totalRecentLog" :duration="2000" />
+            </h3>
+            <p class="stat-label">Actions Récentes (7 jours)</p>
+          </div>
+        </div>
       </BCol>
-      <BCol md="6" cols="xl-6">
-        <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-          <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-            <div>
-              <div class="d-flex align-items-center mb-2">
-                <i class="bi bi-bookmark-check text-warning fs-3 me-2"></i>
-                <h4 class="fw-bold mb-0 fs-2">
-                  <CountToComponent :startVal="0" :endVal="totalLog" :duration="2000" />
-                </h4>
-              </div>
-
-              <span class="badge bg-warning-subtle text-warning fw-semibold px-3 py-1 rounded-pill"
-                >Actions réalisés</span
-              >
-            </div>
-          </BCardBody>
-        </BCard>
+      <BCol md="6">
+        <div class="modern-stat-card stat-success">
+          <div class="stat-icon">
+            <i class="bi bi-check2-all"></i>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-value">
+              <CountToComponent :startVal="0" :endVal="totalLog" :duration="2000" />
+            </h3>
+            <p class="stat-label">Actions Réalisées (Total)</p>
+          </div>
+        </div>
       </BCol>
     </BRow>
+
+    <!-- Section tableau -->
     <BRow>
       <BCol cols="12">
+        <div class="table-section-card">
+          <!-- Contenu du tableau -->
+          <div class="table-content-section">
         <BRow>
           <BCol sm="12" md="6">
             <div id="tickets-table_length" class="dataTables_length">
@@ -266,10 +271,10 @@ export default {
           @filtered="onFiltered"
         >
           <template v-slot:cell(action)="data">
-            <a href="#" class="text-warning">{{ truncate(data.item.action, 53) }}</a>
+            <span class="text-body">{{ truncate(data.item.action, 53) }}</span>
           </template>
           <template v-slot:cell(timestamp)="data">
-            <a href="#" class="text-body">{{
+            <span class="text-body">{{
               new Date(data.item.timestamp).toLocaleDateString('fr-FR', {
                 day: 'numeric',
                 month: 'long',
@@ -277,22 +282,22 @@ export default {
                 hour: '2-digit',
                 minute: '2-digit',
               })
-            }}</a>
+            }}</span>
           </template>
 
           <template v-slot:cell(entityType)="data">
-            <a href="#" class="text-body">{{
+            <span class="text-body">{{
               data.item.entityType === 'Responses' ? 'Réponse' : data.item.entityType
-            }}</a>
+            }}</span>
           </template>
 
           <template v-slot:cell(actionType)="data">
-            <a href="#" class="text-body">{{
+            <span class="text-body">{{
               data.item.actionType === 'SAVE' ? 'Sauvegarde' : data.item.actionType
-            }}</a>
+            }}</span>
           </template>
           <template v-slot:cell(user)="data">
-            <a href="#" class="text-warning">{{ data.item.user.email }}</a>
+            <span class="text-body">{{ data.item.user.email }}</span>
           </template>
           <template v-slot:cell(actions)="data">
             <ul class="list-inline mb-0">
@@ -309,63 +314,82 @@ export default {
             </ul>
           </template>
         </BTable>
-        <BRow>
-          <BCol>
-            <div class="dataTables_paginate paging_simple_numbers float-end">
-              <ul class="pagination pagination-rounded">
-                <BPagination v-model="currentPage" :total-rows="rows" :per-page="perPage" />
-              </ul>
-            </div>
-          </BCol>
-        </BRow>
+          </div>
+          
+          <!-- Pagination -->
+          <div class="table-footer-section">
+            <BPagination 
+              v-model="currentPage" 
+              :total-rows="rows" 
+              :per-page="perPage"
+              class="modern-pagination"
+            />
+          </div>
+        </div>
       </BCol>
     </BRow>
 
-    <q-dialog v-model="opendMdet">
-      <q-card class="detail-dialog" style="width: 850px; max-width: 90vw">
-        <!-- Header -->
-        <q-card-section class="dialog-header row items-center q-pa-sm text-white">
-          <div class="q-ml-sm">
-            <div class="text-h6 text-primary">{{ selectedTask?.action }}</div>
-            <div class="text-caption text-primary">📋 Détails du log</div>
+    <q-dialog v-model="opendMdet" transition-show="scale" transition-hide="fade">
+      <q-card class="modern-detail-modal">
+        <!-- Header moderne -->
+        <div class="modal-header-modern">
+          <div class="modal-header-content">
+            <div class="modal-icon-wrapper">
+              <i class="bi bi-file-text-fill"></i>
+            </div>
+            <div>
+              <h4 class="modal-title">{{ selectedTask?.action }}</h4>
+              <p class="modal-subtitle">Détails du log d'activité</p>
+            </div>
           </div>
-          <q-space />
-        </q-card-section>
+          <button class="modal-close-btn" @click="opendMdet = false">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
 
         <!-- Contenu -->
-        <q-card-section class="dialog-content">
-          <div class="info-grid">
-            <div class="info-box">
-              <q-icon name="assignment" class="text-primary q-mr-sm" />
-              <div>
-                <div class="label">ID du log</div>
-                <div class="value">{{ selectedTask?.id }}</div>
+        <div class="modal-content-modern">
+          <!-- Grille d'informations -->
+          <div class="info-cards-grid-logs">
+            <div class="info-card-log">
+              <div class="info-card-icon info-icon-blue">
+                <i class="bi bi-hash"></i>
+              </div>
+              <div class="info-card-content">
+                <div class="info-card-label">ID du log</div>
+                <div class="info-card-value">{{ selectedTask?.id }}</div>
               </div>
             </div>
 
-            <div class="info-box">
-              <q-icon name="category" class="text-indigo q-mr-sm" />
-              <div>
-                <div class="label">Type d'action</div>
-                <div class="value">{{ getActionLabel(selectedTask?.actionType) }}</div>
+            <div class="info-card-log">
+              <div class="info-card-icon info-icon-purple">
+                <i class="bi bi-lightning-charge-fill"></i>
+              </div>
+              <div class="info-card-content">
+                <div class="info-card-label">Type d'action</div>
+                <div class="info-card-value">{{ getActionLabel(selectedTask?.actionType) }}</div>
               </div>
             </div>
 
-            <div class="info-box">
-              <q-icon name="event" class="text-indigo q-mr-sm" />
-              <div>
-                <div class="label">Date de l'action</div>
-                <div class="value">
+            <div class="info-card-log">
+              <div class="info-card-icon info-icon-orange">
+                <i class="bi bi-calendar-event"></i>
+              </div>
+              <div class="info-card-content">
+                <div class="info-card-label">Date de l'action</div>
+                <div class="info-card-value">
                   {{ new Date(selectedTask?.timestamp).toLocaleString('fr-FR') }}
                 </div>
               </div>
             </div>
 
-            <div class="info-box col-span-2">
-              <q-icon name="people" class="text-teal q-mr-sm" />
-              <div>
-                <div class="label">Utilisateur</div>
-                <div class="value">
+            <div class="info-card-log">
+              <div class="info-card-icon info-icon-green">
+                <i class="bi bi-person-circle"></i>
+              </div>
+              <div class="info-card-content">
+                <div class="info-card-label">Utilisateur</div>
+                <div class="info-card-value">
                   {{
                     selectedTask?.user?.participantProfile?.firstName ||
                     selectedTask?.user?.businessAccount?.firstName ||
@@ -375,16 +399,19 @@ export default {
                     selectedTask?.user?.participantProfile?.lastName ||
                     selectedTask?.user?.businessAccount?.lastName ||
                     selectedTask?.user?.admin?.lastName
-                  }}({{ selectedTask?.user?.email }})
+                  }}
+                  ({{ selectedTask?.user?.email }})
                 </div>
               </div>
             </div>
 
-            <div class="info-box col-span-2">
-              <q-icon name="verified_user" class="text-green q-mr-sm" />
-              <div>
-                <div class="label">Rôles</div>
-                <div class="value">
+            <div class="info-card-log">
+              <div class="info-card-icon info-icon-purple">
+                <i class="bi bi-shield-check"></i>
+              </div>
+              <div class="info-card-content">
+                <div class="info-card-label">Rôle</div>
+                <div class="info-card-value">
                   {{
                     selectedTask?.user?.roles[0] === ROLEP
                       ? 'Participant'
@@ -396,11 +423,13 @@ export default {
               </div>
             </div>
 
-            <div class="info-box col-span-2">
-              <q-icon name="info" class="text-indigo q-mr-sm" />
-              <div>
-                <div class="label">Entité</div>
-                <div class="value">
+            <div class="info-card-log">
+              <div class="info-card-icon info-icon-blue">
+                <i class="bi bi-folder2-open"></i>
+              </div>
+              <div class="info-card-content">
+                <div class="info-card-label">Entité</div>
+                <div class="info-card-value">
                   {{ selectedTask?.entityType }}
                 </div>
               </div>
@@ -413,390 +442,432 @@ export default {
               selectedTask?.metadata?.survey_title &&
               selectedTask.metadata.survey_title.trim() !== ''
             "
-            class="survey-info q-mt-md q-pa-md bg-grey-1 rounded-borders shadow-1"
+            class="metadata-section"
           >
-            <div class="text-subtitle1 text-primary q-mb-md">🧾 Détails du sondage</div>
-            <table class="table table-sm table-striped table-bordered mb-0">
-              <tbody>
-                <tr>
-                  <th scope="row">Titre du sondage</th>
-                  <td>{{ selectedTask?.metadata?.survey_title }}</td>
-                </tr>
-              </tbody>
-            </table>
+            <h5 class="metadata-title">
+              <i class="bi bi-clipboard-data me-2"></i>
+              Détails du Sondage
+            </h5>
+            <div class="metadata-card">
+              <div class="metadata-label">Titre du sondage</div>
+              <div class="metadata-value">{{ selectedTask?.metadata?.survey_title }}</div>
+            </div>
           </div>
-        </q-card-section>
+        </div>
       </q-card>
     </q-dialog>
   </div>
 </template>
 <style lang="scss">
 @import '../../../css/assets/scss/app2.scss';
-.dialog-header {
-  background: whitesmoke;
 
-  padding: 16px 20px;
+/* === Page moderne === */
+.modern-admin-page {
+  padding: 1.5rem;
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+/* === En-tête de section moderne === */
+.section-header-modern {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+
+  .section-title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .section-icon-modern {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.8rem;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .section-title-content {
+      .section-title-modern {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .section-subtitle-modern {
+        font-size: 0.95rem;
+        color: #64748b;
+        margin: 0;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+/* === Cartes de statistiques modernes === */
+.modern-stat-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid transparent;
   display: flex;
   align-items: center;
-}
-
-/* Grid d'infos */
-.info-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  margin-bottom: 20px;
-}
-
-.info-box {
-  display: flex;
-  align-items: flex-start;
-  padding: 14px;
-  border-radius: 12px;
-  background: #f9fafc;
-  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.08);
-  transition: all 0.2s ease;
-}
-
-.info-box:hover {
-  background: #eef2ff;
-  transform: translateY(-2px);
-}
-
-.label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #4b5563;
-}
-.value {
-  font-size: 0.95rem;
-  color: #111827;
-}
-
-/* Description */
-.description-box {
-  margin-top: 16px;
-  padding: 16px;
-  border-radius: 12px;
-  background: #f0f9ff;
-  display: flex;
-  align-items: flex-start;
-}
-
-.description-text {
-  margin: 4px 0 0;
-  color: #374151;
-  font-size: 0.95rem;
-  line-height: 1.4;
-}
-
-/* Animation d'ouverture */
-.q-dialog__inner {
-  animation: fadeScale 0.35s ease forwards;
-}
-.stat-card {
-  transition: all 0.4s ease-in-out;
-  border: 2px solid transparent;
-  background: linear-gradient(135deg, #fdfdfd, #f5f5f5);
+  gap: 1.25rem;
   position: relative;
   overflow: hidden;
-}
-.stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
-  border-radius: 20px;
-}
 
-.shadow-warning:hover {
-  border-color: #f1c40f;
-  background-color: linear-gradient(135deg, #f8dc9f, #fff3cc);
-  box-shadow: 0 0 18px rgba(241, 196, 15, 0.6);
-}
-.shadow-success:hover {
-  border-color: #2ecc71;
-  background: linear-gradient(135deg, #2ecc71, #d4f5e6);
-  box-shadow: 0 0 18px rgba(46, 204, 113, 0.6);
-}
-.shadow-danger:hover {
-  border-color: #e74c3c;
-  background: linear-gradient(135deg, #ffecec, #ffd9d6);
-  box-shadow: 0 0 18px rgba(231, 76, 60, 0.6);
-}
-.tabs-morphing-container {
-  position: relative;
-  padding: 20px;
-  border-radius: 30px;
-  overflow: hidden;
-  z-index: 0;
-  background: linear-gradient(135deg, #f8f9ff, #eef2ff);
-}
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #667eea, #764ba2);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
 
-/* Les onglets */
-.morph-tabs .nav-tabs {
-  border: none;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 16px;
-  padding: 6px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 
-/* Chaque onglet */
-.morph-tabs .nav-link {
-  border-radius: 12px;
-  padding: 10px 20px;
-  margin: 0 5px;
-  color: #444;
-  transition: all 0.3s ease-in-out;
-}
+    &::before {
+      opacity: 1;
+    }
 
-/* Hover */
-.morph-tabs .nav-link:hover {
-  background: rgba(99, 102, 241, 0.1); /* indigo clair */
-  color: #4f46e5;
-}
+    .stat-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+  }
 
-/* Actif */
-.morph-tabs .nav-link.active {
-  background: linear-gradient(135deg, #4f46e5, #6366f1);
-  color: #fff !important;
-  box-shadow: 0 3px 8px rgba(79, 70, 229, 0.3);
-  transform: scale(1.05);
-}
-
-.progress {
-  width: 100%;
-  position: absolute;
-  height: 4px;
-}
-
-.wizard-steps {
-  position: relative;
-  z-index: 3;
-  width: 100%;
-
-  .wizard-step {
-    height: 60px;
-    width: 60px;
-    border-radius: 50%;
-    border: 3px solid;
+  .stat-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
     display: flex;
+    align-items: center;
     justify-content: center;
-    z-index: 9;
-    position: relative;
-    background: white;
+    font-size: 1.75rem;
+    color: white;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
-}
 
-.step-arrow-nav {
-  .nav-link {
-    background: #f3f2ee;
-    padding: 4px 0;
-    border-radius: 0 !important;
+  .stat-content {
+    flex: 1;
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1;
+      margin: 0 0 0.5rem 0;
+      color: #1e293b;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: #64748b;
+      font-weight: 600;
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
   }
-}
 
-.wizard {
-  .nav-link:not(.active) {
-    color: #f3f2ee;
+  &.stat-info {
+    .stat-icon {
+      background: linear-gradient(135deg, #60a5fa, #3b82f6);
+    }
 
-    .wizard-icon {
-      color: #a5a5a5;
+    &:hover {
+      border-color: #dbeafe;
+      background: linear-gradient(135deg, #ffffff, #eff6ff);
+    }
+  }
+
+  &.stat-success {
+    .stat-icon {
+      background: linear-gradient(135deg, #34d399, #10b981);
+    }
+
+    &:hover {
+      border-color: #d1fae5;
+      background: linear-gradient(135deg, #ffffff, #f0fdf4);
     }
   }
 }
 
-[data-bs-theme='dark'] {
-  .wizard-steps .wizard-step:not(.active) {
-    background: var(--bs-input-bg);
-  }
-
-  .step-arrow-nav {
-    .nav-link:not(.active) {
-      background: var(--bs-input-bg);
-    }
-  }
-}
-/* === Boutons modernes === */
-.btn-success {
-  background: linear-gradient(135deg, #34c38f, #2ea3f2);
-  border: none;
-  border-radius: 50px;
-  transition: all 0.3s ease;
-  font-weight: 600;
-  box-shadow: 0 4px 10px rgba(46, 163, 242, 0.3);
-
-  &:hover {
-    background: linear-gradient(135deg, #2ea3f2, #34c38f);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(46, 163, 242, 0.4);
-  }
-
-  &:active {
-    transform: scale(0.96);
-  }
-}
-
-/* === Table améliorée === */
-.table tbody tr {
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    background: #f9fcff;
-    box-shadow: #1f6bad33 0px 4px 8px;
-    transform: scale(1.01);
-  }
-}
-
-/* Icônes d'action */
-.list-inline-item a {
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    transform: scale(1.2) rotate(-5deg);
-    opacity: 0.8;
-  }
-}
-
-/* === Dialogues avec animation === */
-.q-dialog__inner {
-  animation: fadeScale 0.35s ease forwards;
-}
-
-@keyframes fadeScale {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* === Inputs flottants modernes === */
-.form-control {
-  border-radius: 12px;
-  transition: all 0.3s ease;
-
-  &:focus {
-    border-color: #2ea3f2;
-    box-shadow: 0 0 8px rgba(46, 163, 242, 0.4);
-    transform: scale(1.01);
-  }
-}
-
-.bg-gradient {
-  background: linear-gradient(135deg, #0d6efd, #6610f2);
-}
-
-/* === Champs modernes avec floating label === */
-.floating-label {
-  position: relative;
-}
-
-.form-control.form-control-modern {
-  border-radius: 12px;
-  border: 2px solid #e0e7ff;
-  padding: 0.9rem 1rem;
-  width: 100%;
-  transition: all 0.3s ease;
-  background: #fff;
-}
-
-.form-control.form-control-modern:focus {
-  border-color: #10d0f2;
-  box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
-  transform: scale(1.01);
-}
-
-/* Labels flottants */
-.floating-label label {
-  position: absolute;
-  top: 50%;
-  left: 15px;
-  transform: translateY(-50%);
-  color: #6c757d;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  pointer-events: none;
+/* === Section tableau moderne === */
+.table-section-card {
   background: white;
-  padding: 0 5px;
-}
-
-.form-control-modern:focus + label,
-.form-control-modern:not(:placeholder-shown) + label {
-  top: -10px;
-  left: 10px;
-  font-size: 0.8rem;
-  color: #10d0f2;
-}
-
-/* Multiselect alignement */
-.multiselect {
-  border-radius: 12px !important;
-  border: 2px solid #e0e7ff !important;
-  padding: 6px 10px;
+  border-radius: 20px;
+  padding: 0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border: 2px solid #f1f5f9;
+  overflow: hidden;
   transition: all 0.3s ease;
-}
-.multiselect:focus-within {
-  border-color: #10d0f2 !important;
-  box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
-}
-/* Card principal du dialog */
 
-@keyframes fadeScale {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
+  &:hover {
+    border-color: #e2e8f0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   }
 }
-.skeleton {
-  display: inline-block;
-  height: 1em;
-  background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
-  background-size: 200% 100%;
-  animation: skeleton-loading 1.5s infinite;
-  border-radius: 4px;
+
+.table-content-section {
+  padding: 1.5rem;
 }
-@keyframes skeleton-loading {
-  0% {
-    background-position: 200% 0;
+
+.table-footer-section {
+  padding: 1.25rem 1.5rem;
+  background: #fafbfc;
+  border-top: 2px solid #f1f5f9;
+  display: flex;
+  justify-content: center;
+
+  .modern-pagination {
+    margin: 0;
+    
+    .page-item {
+      margin: 0 0.25rem;
+
+      .page-link {
+        border-radius: 8px;
+        border: 2px solid #e2e8f0;
+        color: #64748b;
+        font-weight: 600;
+        padding: 0.5rem 0.75rem;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: #f1f5f9;
+          border-color: #cbd5e1;
+          color: #475569;
+        }
+      }
+
+      &.active .page-link {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-color: #667eea;
+        color: white;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+      }
+    }
   }
-  100% {
-    background-position: -200% 0;
+}
+
+/* === Modal de détail moderne === */
+.modern-detail-modal {
+  width: 60vw !important;
+  max-width: 950px !important;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  background: white;
+
+  @media (max-width: 768px) {
+    width: 90vw !important;
   }
 }
-.skeleton-title {
-  width: 60%;
-  height: 24px;
-}
-.skeleton-text {
-  width: 100%;
-  height: 16px;
-  margin: 6px 0;
-}
-.bg-pink {
-  background-color: #ff69b4; /* rose */
-  color: white; /* texte blanc pour le contraste */
+
+.modal-header-modern {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .modal-header-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .modal-icon-wrapper {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .modal-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: white;
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .modal-subtitle {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.8);
+      margin: 0.25rem 0 0 0;
+    }
+  }
+
+  .modal-close-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1);
+    }
+
+    i {
+      font-size: 1rem;
+    }
+  }
 }
 
-.bg-gold {
-  background-color: #ffd700 !important;
-  color: #fff !important; /* texte blanc pour contraste */
+.modal-content-modern {
+  padding: 1.5rem;
 }
 
-.bg-silver {
-  background-color: #c0c0c0 !important;
-  color: #000 !important; /* texte noir pour contraste */
+.info-cards-grid-logs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
 }
 
-.bg-bronze {
-  background-color: #cd7f32 !important;
-  color: #fff !important; /* texte blanc */
+.info-card-log {
+  background: white;
+  border: 2px solid #f1f5f9;
+  border-radius: 16px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+
+  .info-card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+
+    &.info-icon-orange {
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    }
+
+    &.info-icon-purple {
+      background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+    }
+
+    &.info-icon-blue {
+      background: linear-gradient(135deg, #60a5fa, #3b82f6);
+    }
+
+    &.info-icon-green {
+      background: linear-gradient(135deg, #34d399, #10b981);
+    }
+  }
+
+  .info-card-content {
+    flex: 1;
+
+    .info-card-label {
+      font-size: 0.8rem;
+      color: #64748b;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.5rem;
+    }
+
+    .info-card-value {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1e293b;
+      line-height: 1.3;
+    }
+  }
+}
+
+.metadata-section {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+  border-radius: 16px;
+  border: 2px solid #bae6fd;
+
+  .metadata-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0c4a6e;
+    margin: 0 0 1rem 0;
+    display: flex;
+    align-items: center;
+
+    i {
+      color: #0284c7;
+    }
+  }
+
+  .metadata-card {
+    background: white;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 2px solid #e0f2fe;
+
+    .metadata-label {
+      font-size: 0.8rem;
+      color: #64748b;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.5rem;
+    }
+
+    .metadata-value {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #0c4a6e;
+    }
+  }
 }
 </style>

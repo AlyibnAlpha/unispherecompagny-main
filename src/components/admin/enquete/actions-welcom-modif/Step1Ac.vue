@@ -1,30 +1,18 @@
 <template>
-  <q-card class="shadow-lg rounded-3" style="height: auto" bordered>
-    <!-- Titre -->
-    <q-card-section
-      class="q-pa-md flex items-center justify-center"
-      style="
-        background: linear-gradient(135deg, #f0f4ff, #e0f7fa);
-        transition: background 0.5s ease;
-        color: #10d0f2;
-      "
-    >
-      <div class="text-h5 text-center text-weight-bold">Créer Votre Sondage</div>
-    </q-card-section>
-
-    <!-- Formulaire -->
-    <q-card-section class="q-pa-lg">
-      <q-inner-loading v-if="loading" :showing="loading" background-color="rgba(0,0,0,0.4)">
-        <q-spinner-bars color="green" size="50px" />
-      </q-inner-loading>
-      <BForm v-else>
+  <div class="step-form-container">
+    <p class="text-muted mb-4" style="font-size: 0.9375rem;">Renseignez les informations de base de votre enquête de bienvenue</p>
+    
+    <q-inner-loading v-if="loading" :showing="loading" background-color="rgba(0,0,0,0.4)">
+      <q-spinner-bars color="green" size="50px" />
+    </q-inner-loading>
+    <BForm v-else>
         <!-- Titre -->
         <BCol cols="12" class="mb-4 floating-label">
           <input
             id="title"
             v-model="form.title"
             type="text"
-            class="form-control form-control-modern"
+            class="form-control-modern"
             placeholder=" "
           />
           <label for="title">Titre de l'enquête</label>
@@ -35,14 +23,14 @@
           <textarea
             id="desc"
             v-model="form.description"
-            class="form-control form-control-modern"
+            class="form-control-modern"
             rows="3"
             placeholder=" "
           ></textarea>
           <label for="desc">Description</label>
         </BCol>
 
-        <!-- Langues supportées -->
+        <!-- Langues supportées et Points de bonus -->
         <BRow class="mb-4">
           <BCol cols="6" class="floating-label">
             <Multiselect
@@ -58,50 +46,48 @@
           <BCol cols="6" class="floating-label">
             <input
               id="points"
-              v-model="form.bonusPoints"
+              v-model="form.welcomeBonusPoints"
               type="number"
-              class="form-control form-control-modern"
+              class="form-control-modern"
               placeholder=" "
             />
             <label for="points">Points de bonus</label>
           </BCol>
         </BRow>
 
+        <!-- Ordre d'affichage -->
         <BRow class="mb-4">
           <BCol md="12" class="floating-label">
             <input
               id="orde"
               v-model="form.displayOrder"
               type="number"
-              class="form-control form-control-modern"
+              class="form-control-modern"
               placeholder=" "
             />
             <label for="orde">Ordre d'affichage</label>
           </BCol>
         </BRow>
 
+
         <!-- Bouton Suivant -->
-        <div v-if="loadings" class="d-flex justify-content-end mt-4">
-          <q-spinner-dots color="green" size="20px" class="q-mr-sm" />
-        </div>
-        <div v-else class="d-flex justify-content-end mt-4">
-          <BButton variant="success" size="lg" class="px-5 rounded-3 shadow-sm" @click="handleNext">
-            Suivant →
+        <div class="d-flex justify-content-end mt-4 w-100">
+          <q-spinner-dots v-if="loadings" color="green" size="20px" class="q-mr-sm" />
+          <BButton v-else class="btn-modern btn-success-modern" @click="handleNext">
+            Suivant
+            <i class="bi bi-arrow-right ms-2"></i>
           </BButton>
         </div>
       </BForm>
-    </q-card-section>
-  </q-card>
+  </div>
 </template>
 <script>
 import { BButton, BCol, BRow } from 'bootstrap-vue-next'
 import Multiselect from '@vueform/multiselect'
-import { getCurrentInstance, onMounted, ref } from 'vue'
-import '@vuepic/vue-datepicker/dist/main.css'
+import { getCurrentInstance, ref } from 'vue'
 import { api } from 'src/boot/axios'
 import { Notify } from 'quasar'
 import { useRegisterStore } from 'src/stores/useRegisterStore'
-import { useRoute } from 'vue-router'
 export default {
   components: {
     BButton,
@@ -109,7 +95,7 @@ export default {
     BRow,
     Multiselect,
   },
-  emits: ['onNext'],
+  emits: ['refreshTable', 'onNext'],
   setup() {
     const optionl = [
       { label: 'Français', value: 'FR' },
@@ -118,79 +104,79 @@ export default {
       { label: 'Italiano', value: 'IT' },
       { label: 'Português', value: 'PT' },
     ]
+
     const { emit } = getCurrentInstance()
     const levals = ref([])
-    const store = useRegisterStore()
-    const categories = ref([])
     const loading = ref(false)
     const loadings = ref(false)
-    const route = useRoute()
+    const store = useRegisterStore()
     const originalForm = ref({})
-    const optionl3 = [
-      { label: 'Public', value: 'PUBLIC' },
-      { label: 'Business', value: 'BUSINESS' },
-    ]
     const form = ref({
       title: '',
       description: '',
       supportedLanguages: '',
+      welcomeBonusPoints: '',
       status: 'draft',
       displayOrder: '',
-      bonusPoints: '',
       isPublished: false,
     })
 
-    const gets = async () => {
-      try {
-        const id = route.params.id
 
-        const response = await api.get('/admin/welcome-surveys')
-        const survey = response.data.find((s) => s.slug === id)
-        levals.value = survey.supportedLanguages
-        form.value = {
-          id: survey.id,
-          title: survey.title,
-          description: survey.description,
-          supportedLanguages: survey.supportedLanguages,
-          displayOrder: survey.displayOrder,
-          bonusPoints: survey.bonusPoints,
-          isPublished: survey.isPublished,
-        }
-        originalForm.value = JSON.parse(JSON.stringify(form.value))
-      } catch (error) {
-        console.error('Status:', error.response?.status)
-        console.error('Headers:', error.response?.headers)
-        console.error('er:', error.response?.data.message)
-      } finally {
-        loading.value = false
-      }
-    }
     const formule = async () => {
       try {
         loadings.value = true
-        form.value.supportedLanguages = levals.value
+        if (
+          !form.value.title ||
+          !form.value.description ||
+          levals.value.length === 0 ||
+          !form.value.displayOrder ||
+          !form.value.welcomeBonusPoints
+        ) {
+          Notify.create({
+            type: 'warning',
+            message: 'Veuillez remplir tous les champs obligatoires.',
+            timeout: 3000,
+          })
+
+          return false
+        }
         const hasChanged = JSON.stringify(form.value) !== JSON.stringify(originalForm.value)
         if (!hasChanged) {
-          return true // On laisse passer pour "Suivant →"
+          return true
         }
-        const responses = await api.put(`/admin/welcome-surveys/${form.value.id}`, {
-          title: form.value.title,
-          description: form.value.description,
-          supportedLanguages: form.value.supportedLanguages,
-          isPublished: form.value.isPublished,
-          bonusPoints: form.value.bonusPoints,
-          displayOrder: form.value.displayOrder,
-        })
-        Notify.create({
-          type: 'positive',
-          message: 'Opération effectuée avec succès !',
-          timeout: 5000, // durée en ms
-        })
-        store.setIdSurveyw(responses.data.id)
 
-        emit('refreshTable')
+        if (!store.idsurveyw) {
+          form.value.supportedLanguages = levals.value
+          const response = await api.post('/admin/welcome-surveys', form.value)
+          store.setIdSurveyw(response.data.id)
+
+          Notify.create({
+            type: 'positive',
+            message: 'Opération effectuée avec succès !',
+            timeout: 5000,
+          })
+          const responseS = await api.get('/admin/welcome-surveys')
+          store.setSurveyDataw(responseS.data.find((s) => s.id === store.idsurveyw))
+          emit('refreshTable')
+        } else {
+          form.value.supportedLanguages = levals.value
+          await api.put(`/admin/welcome-surveys/${form.value.id}`, {
+            title: form.value.title,
+            description: form.value.description,
+            supportedLanguages: form.value.supportedLanguages,
+            welcomeBonusPoints: form.value.welcomeBonusPoints,
+            displayOrder: form.value.displayOrder,
+            isPublished: form.value.isPublished,
+          })
+          Notify.create({
+            type: 'positive',
+            message: 'Opération effectuée avec succès !',
+            timeout: 5000,
+          })
+        }
         const response = await api.get('/admin/welcome-surveys')
         store.setSurveyDataw(response.data.find((s) => s.id === store.idsurveyw))
+        emit('refreshTable')
         originalForm.value = JSON.parse(JSON.stringify(form.value))
         return true
       } catch (error) {
@@ -201,7 +187,7 @@ export default {
         Notify.create(
           {
             type: 'negative',
-            message: error.response?.data.message || 'une erreur est survenue',
+            message: error.response?.data.message,
           },
           5000,
         )
@@ -209,9 +195,6 @@ export default {
         loadings.value = false
       }
     }
-    onMounted(() => {
-      gets()
-    })
     const handleNext = async () => {
       const success = await formule()
       if (success) {
@@ -223,15 +206,15 @@ export default {
       optionl,
       handleNext,
       levals,
-      categories,
-      optionl3,
       loading,
       loadings,
     }
   },
 }
 </script>
-<style>
+
+<style scoped>
+/* Les styles sont maintenant dans le fichier SCSS global _enquetes.scss */
 .btn-success {
   background: linear-gradient(135deg, #34c38f, #2ea3f2);
   border: none;
@@ -250,41 +233,6 @@ export default {
     transform: scale(0.96);
   }
 }
-/* Floating labels modernes */
-.floating-label {
-  position: relative;
-
-  input,
-  textarea,
-  .form-control.form-control-modern,
-  .multiselect {
-    border-radius: 10px;
-    transition: all 0.3s ease;
-  }
-
-  label {
-    position: absolute;
-    top: 50%;
-    left: 15px;
-    transform: translateY(-50%);
-    transition: all 0.2s ease;
-    color: #6c757d;
-    pointer-events: none;
-  }
-
-  input:focus + label,
-  input:not(:placeholder-shown) + label,
-  textarea:focus + label,
-  textarea:not(:placeholder-shown) + label,
-  .multiselect:focus + label,
-  .multiselect:not(:empty) + label {
-    top: -10px;
-    font-size: 0.8rem;
-    color: #10d0f2;
-    background: white;
-    padding: 0 5px;
-  }
-}
 .form-control {
   border-radius: 12px;
   transition: all 0.3s ease;
@@ -294,5 +242,51 @@ export default {
     box-shadow: 0 0 8px rgba(46, 163, 242, 0.4);
     transform: scale(1.01);
   }
+}
+
+.bg-gradient {
+  background: linear-gradient(135deg, #0d6efd, #6610f2);
+}
+
+/* === Champs modernes avec floating label === */
+.floating-label {
+  position: relative;
+}
+
+.form-control.form-control-modern {
+  border-radius: 12px;
+  border: 2px solid #e0e7ff;
+  padding: 0.9rem 1rem;
+  width: 100%;
+  transition: all 0.3s ease;
+  background: #fff;
+}
+
+.form-control.form-control-modern:focus {
+  border-color: #10d0f2;
+  box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
+  transform: scale(1.01);
+}
+
+/* Labels flottants */
+.floating-label label {
+  position: absolute;
+  top: 50%;
+  left: 15px;
+  transform: translateY(-50%);
+  color: #6c757d;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  background: white;
+  padding: 0 5px;
+}
+
+.form-control-modern:focus + label,
+.form-control-modern:not(:placeholder-shown) + label {
+  top: -10px;
+  left: 10px;
+  font-size: 0.8rem;
+  color: #10d0f2;
 }
 </style>

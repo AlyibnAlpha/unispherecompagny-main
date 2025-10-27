@@ -1,130 +1,168 @@
 <template>
-  <BRow class="justify-content-center py-8">
+  <div class="step-form-container">
+    <p class="text-muted mb-4" style="font-size: 0.9375rem;">Vérifiez et publiez votre enquête</p>
+    
     <q-inner-loading v-if="loading" :showing="loading" background-color="rgba(0,0,0,0.4)">
       <q-spinner-bars color="green" size="50px" />
     </q-inner-loading>
-    <BCol v-else cols="12" md="12" lg="8">
-      <div v-if="orderData" class="p-4 bg-light border-0 shadow rounded">
-        <div class="text-center mb-4">
-          <h2 class="fw-bold text-primary mb-2">{{ orderData.title }}</h2>
-          <p class="text-secondary fs-6 mx-auto" style="max-width: 600px">
+    <div v-else>
+      <div v-if="orderData" class="finalization-card">
+        <!-- Header avec titre et description -->
+        <div class="finalization-header">
+          <div class="header-icon">
+            <i class="bi bi-clipboard-check-fill"></i>
+          </div>
+          <h2 class="header-title">{{ orderData.title }}</h2>
+          <p class="header-description">
             {{ orderData.description }}
           </p>
-        </div>
-
-        <div class="d-flex justify-content-center gap-5 mb-4 flex-wrap">
-          <div>
-            <strong class="text-success">Date de début:</strong>
-            {{
-              new Date(orderData.startDate).toLocaleDateString('fr-FR', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric',
-              })
-            }}
+          
+          <!-- Badges de dates -->
+          <div class="dates-badges">
+            <div class="date-badge start-badge">
+              <i class="bi bi-calendar-check"></i>
+              <span class="date-badge-label">Début:</span>
+              <span class="date-badge-value">
+                {{
+                  new Date(orderData.startDate).toLocaleDateString('fr-FR', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                  })
+                }}
+              </span>
+            </div>
+            <div class="date-badge end-badge">
+              <i class="bi bi-calendar-x"></i>
+              <span class="date-badge-label">Fin:</span>
+              <span class="date-badge-value">
+                {{
+                  new Date(orderData.endDate).toLocaleDateString('fr-FR', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                  })
+                }}
+              </span>
+            </div>
           </div>
-          <div>
-            <strong class="text-danger">Date de fin:</strong>
-            {{
-              new Date(orderData.endDate).toLocaleDateString('fr-FR', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric',
-              })
-            }}
-          </div>
         </div>
-
-        <hr />
 
         <!-- Groupes de questions -->
-        <div v-for="group in orderData.question_groups" :key="group.id" class="mb-4">
-          <h5 class="text-primary">Groupe: {{ group.title }}</h5>
-          <p class="text-muted mb-2">description: {{ group.description }}</p>
-
-          <ul class="list-group">
-            <li
-              v-for="question in group.questions"
-              :key="question.id"
-              class="list-group-item mb-2 p-3 border rounded"
-            >
-              <div class="d-flex flex-wrap align-items-center gap-2">
-                <strong>Position {{ question.position }} - {{ question.title }}</strong>
-                <span
-                  class="badge"
-                  :class="{
-                    'bg-info': question.type === 'single_choice',
-                    'bg-primary': question.type === 'multiple_choice',
-                    'bg-warning text-dark': question.type === 'text',
-                  }"
-                >
-                  {{
-                    question.type === 'single_choice'
-                      ? 'Choix unique'
-                      : question.type === 'multiple_choice'
-                        ? 'Choix multiple'
-                        : 'Réponse texte'
-                  }}
-                </span>
+        <div class="groups-section">
+          <h3 class="section-title">
+            <i class="bi bi-collection me-2"></i>
+            Groupes et Questions
+          </h3>
+          <div v-for="group in orderData.question_groups" :key="group.id" class="group-summary mb-4">
+            <div class="group-summary-header">
+              <i class="bi bi-folder2-open"></i>
+              <div>
+                <h5 class="group-summary-title">{{ group.title }}</h5>
+                <p class="group-summary-description">{{ group.description }}</p>
               </div>
-              <p class="text-muted mb-1">{{ question.description }}</p>
-              <ul
-                v-if="question.type === 'single_choice' || question.type === 'multiple_choice'"
-                class="ps-4 mt-2"
+            </div>
+
+            <div class="questions-list">
+              <div
+                v-for="question in group.questions"
+                :key="question.id"
+                class="question-summary"
               >
-                <li v-for="choice in question.choices" :key="choice.id">{{ choice.label }}</li>
-              </ul>
-            </li>
-          </ul>
+                <div class="question-summary-header">
+                  <span class="question-position">{{ question.position }}</span>
+                  <div class="question-info">
+                    <strong class="question-summary-title">{{ question.title }}</strong>
+                    <span
+                      class="question-type-badge"
+                      :class="{
+                        'type-single': question.type === 'single_choice',
+                        'type-multiple': question.type === 'multiple_choice',
+                        'type-text': question.type === 'text',
+                      }"
+                    >
+                      {{
+                        question.type === 'single_choice'
+                          ? 'Choix unique'
+                          : question.type === 'multiple_choice'
+                            ? 'Choix multiple'
+                            : 'Réponse texte'
+                      }}
+                    </span>
+                  </div>
+                </div>
+                <p class="question-summary-description">{{ question.description }}</p>
+                <ul
+                  v-if="question.type === 'single_choice' || question.type === 'multiple_choice'"
+                  class="choices-list"
+                >
+                  <li v-for="choice in question.choices" :key="choice.id">
+                    <i class="bi bi-check-circle me-2"></i>
+                    {{ choice.label }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="form-check form-switch mb-4 gap-2 d-flex align-items-center">
-          <input
-            class="form-check-input"
-            type="checkbox"
-            id="publishCheck"
-            v-model="isPublished"
-            style="width: 50px; height: 25px"
-          />
-          <label class="form-check-label fw-semibold" for="publishCheck">
-            Publier ce sondage
-          </label>
-        </div>
-
-        <div class="d-flex justify-content-end justify-content-md-between">
-          <BButton variant="outline-secondary" class="px-4" @click="$emit('onBack')">
-            ⬅ Retour
-          </BButton>
-          <q-spinner-dots v-if="loadings" color="green" size="20px" class="q-mr-sm" />
-          <BButton v-else variant="success" class="ms-2" @click.prevent="handleNext">
-            <span class="px-4">Finish</span>
-          </BButton>
+        <!-- Publication -->
+        <div class="publish-section">
+          <div class="publish-card">
+            <div class="publish-icon">
+              <i class="bi bi-rocket-takeoff-fill"></i>
+            </div>
+            <div class="publish-content">
+              <h4>Publier l'enquête</h4>
+              <p>Rendre cette enquête accessible aux participants</p>
+            </div>
+            <div class="publish-toggle">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="publishCheck"
+                v-model="isPublished"
+              />
+              <label class="form-check-label" for="publishCheck">
+                {{ isPublished ? 'Publié' : 'Non publié' }}
+              </label>
+            </div>
+          </div>
         </div>
       </div>
-    </BCol>
-  </BRow>
+
+      <!-- Navigation -->
+      <div class="step-navigation-footer">
+        <button class="btn-nav-back" @click="$emit('onBack')">
+          <i class="bi bi-arrow-left"></i>
+          <span>Retour</span>
+        </button>
+        <q-spinner-dots v-if="loadings" color="green" size="20px" class="q-mr-sm" />
+        <button v-else class="btn-nav-next finish" @click.prevent="handleNext">
+          <span>Terminer et enregistrer</span>
+          <i class="bi bi-check-circle-fill"></i>
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import { BButton, BCol, BRow } from 'bootstrap-vue-next'
 import { getCurrentInstance, onMounted, ref, watch } from 'vue'
 import { api } from 'src/boot/axios'
 import { useRegisterStore } from 'src/stores/useRegisterStore'
 import Swal from 'sweetalert2'
 import { useAuthStore } from 'src/stores/auth'
+import { useRouter } from 'vue-router'
 
 export default {
-  components: {
-    BButton,
-    BCol,
-    BRow,
-  },
+  components: {},
   setup() {
     const orderData = ref({})
     const store = useRegisterStore()
     const isPublished = ref(false)
     const { emit } = getCurrentInstance()
-
+    const router = useRouter()
     const aurh = useAuthStore()
 
     const gets = async () => {
@@ -163,6 +201,7 @@ export default {
                   }).then(() => {
                     store.setIdSurvey('')
                     store.setSurveyData({})
+                    router.push('/admin/enquetes')
                   })
                 })
               } catch (error) {
@@ -196,6 +235,7 @@ export default {
                   }).then(() => {
                     store.setIdSurvey('')
                     store.setSurveyData({})
+                    router.push('/admin/enquetes')
                   })
                 })
               } catch (error) {
@@ -222,6 +262,7 @@ export default {
           }).then(() => {
             store.setIdSurvey('')
             store.setSurveyData({})
+            router.push('/admin/enquetes')
           })
         }
       }

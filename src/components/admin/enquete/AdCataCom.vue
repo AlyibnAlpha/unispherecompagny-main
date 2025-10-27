@@ -8,8 +8,6 @@ import {
   BPagination,
   BFormSelect,
   BForm,
-  BCardBody,
-  BCard,
 } from 'bootstrap-vue-next'
 
 import { api } from 'src/boot/axios'
@@ -28,8 +26,6 @@ export default {
     BPagination,
     BFormSelect,
     BForm,
-    BCardBody,
-    BCard,
     CountToComponent,
   },
   data() {
@@ -255,80 +251,105 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div class="modern-admin-page">
+    <!-- En-tête moderne -->
+    <div class="section-header-modern mb-4">
+      <div class="section-title-wrapper">
+        <div class="section-icon-modern">
+          <i class="bi bi-gift-fill"></i>
+        </div>
+        <div class="section-title-content">
+          <h3 class="section-title-modern">Catalogue des Récompenses</h3>
+          <p class="section-subtitle-modern">Gérez les récompenses disponibles pour les participants</p>
+        </div>
+      </div>
+      <BButton class="btn-add-gradient" @click="ajout = true">
+        <i class="bi bi-plus-circle me-2"></i>
+        Créer une Récompense
+      </BButton>
+    </div>
+
     <BRow>
       <BCol cols="12">
         <div class="d-flex justify-content-between">
-          <BButton
-            variant="success"
-            class="waves-effect waves-light mb-3 btn-success"
-            @click="ajout = true"
-            >Créer vos Catalogues</BButton
-          >
 
           <q-dialog v-model="ajout" transition-show="scale" transition-hide="fade">
-            <q-card
-              style="width: 800px; max-width: 90vw; border-radius: 20px; overflow: hidden"
-              class="shadow-lg"
-            >
-              <!-- Titre -->
-              <q-card-section
-                class="q-pa-md text-white flex items-center justify-center"
-                style="background: linear-gradient(135deg, #0d6efd, #6610f2)"
-              >
-                <q-icon name="group_add" size="28px" class="q-mr-sm" />
-                <div class="text-h6 text-center">Catalogue</div>
+            <q-card class="modern-dialog-card">
+              <!-- En-tête moderne -->
+              <q-card-section class="modern-dialog-header">
+                <div class="dialog-header-content">
+                  <div class="dialog-icon">
+                    <i class="bi bi-gift-fill"></i>
+                  </div>
+                  <div class="dialog-title-wrapper">
+                    <h5 class="dialog-title">Créer une Récompense</h5>
+                    <p class="dialog-subtitle">Ajoutez une nouvelle récompense au catalogue</p>
+                  </div>
+                </div>
+                <q-btn flat round dense icon="close" v-close-popup class="dialog-close-btn" />
               </q-card-section>
 
               <!-- Formulaire -->
-              <div class="q-pa-lg">
+              <div class="q-pa-lg modern-form-content">
                 <BForm>
-                  <BRow>
-                    <!-- Nom -->
-                    <BCol cols="12" class="mb-4 floating-label">
-                      <input
-                        id="title"
-                        v-model="form.name"
-                        type="text"
-                        class="form-control form-control-modern"
-                        placeholder=" "
-                      />
-                      <label for="title">Titre</label>
-                    </BCol>
+                  <!-- Section Informations -->
+                  <div class="form-section mb-4">
+                    <h6 class="form-section-title">
+                      <i class="bi bi-info-circle-fill me-2"></i>
+                      Informations de la récompense
+                    </h6>
+                    <BRow>
+                      <BCol cols="12" class="mb-4 floating-label">
+                        <input
+                          id="title"
+                          v-model="form.name"
+                          type="text"
+                          class="form-control form-control-modern"
+                          placeholder=" "
+                        />
+                        <label for="title">Titre de la récompense</label>
+                      </BCol>
 
-                    <!-- Description -->
-                    <BCol cols="12" class="mb-4 floating-label">
-                      <textarea
-                        id="desc"
-                        v-model="form.description"
-                        class="form-control form-control-modern"
-                        rows="3"
-                        placeholder=" "
-                      ></textarea>
-                      <label for="desc">Description</label>
-                    </BCol>
+                      <BCol cols="12" class="mb-4 floating-label">
+                        <textarea
+                          id="desc"
+                          v-model="form.description"
+                          class="form-control form-control-modern"
+                          rows="3"
+                          placeholder=" "
+                        ></textarea>
+                        <label for="desc">Description</label>
+                      </BCol>
 
-                    <!-- Ville -->
-                    <BCol cols="12" class="mb-4 floating-label">
-                      <input
-                        class="form-control form-control-modern"
-                        type="number"
-                        id="publishCheck"
-                        v-model="form.pointsRequired"
-                        placeholder=" "
-                      />
-                      <label class="form-check-label fw-semibold" for="publishCheck">
-                        Points requits
-                      </label>
-                    </BCol>
-                  </BRow>
-
-                  <!-- Bouton -->
-                  <div v-if="loadings" class="d-flex justify-content-end mt-4">
-                    <q-spinner-dots color="green" size="20px" class="q-mr-sm" />
+                      <BCol cols="12" class="mb-4 floating-label">
+                        <input
+                          class="form-control form-control-modern"
+                          type="number"
+                          id="publishCheck"
+                          v-model="form.pointsRequired"
+                          placeholder=" "
+                        />
+                        <label class="form-check-label fw-semibold" for="publishCheck">
+                          Points requis
+                        </label>
+                      </BCol>
+                    </BRow>
                   </div>
-                  <div v-else class="d-flex justify-content-end mt-4">
-                    <BButton variant="success" class="px-5" @click="Add"> Enregistrer </BButton>
+
+                  <!-- Boutons -->
+                  <div class="d-flex justify-content-end gap-2 mt-4">
+                    <BButton @click="ajout = false" class="px-4 btn-cancel-modern">
+                      <i class="bi bi-x-circle me-2"></i>
+                      Annuler
+                    </BButton>
+                    <BButton v-if="loadings" variant="success" class="px-5 btn-submit-modern" disabled>
+                      <q-spinner-dots color="white" size="20px" class="me-2" />
+                      Enregistrement...
+                    </BButton>
+                    <BButton v-else variant="success" class="px-5 btn-submit-modern" @click="Add">
+                      <i class="bi bi-check-circle me-2"></i>
+                      Enregistrer
+                    </BButton>
                   </div>
                 </BForm>
               </div>
@@ -370,280 +391,295 @@ export default {
           <p class="mt-3 text-muted">Aucune Catégories d'enquêtes</p>
         </div>
         <BRow v-else>
-          <BCol v-for="reward in paginatedData" :key="reward.id" cols="12" md="4" lg="4">
-            <BCard class="reward-card shadow-sm" style="height: 190px">
-              <!-- Header: points et titre -->
-              <BCardBody
-                class="d-flex justify-content-between align-items-center py-2 px-3 card-header"
-              >
-                <div class="title fw-bold text-truncate">{{ reward.name }}</div>
-              </BCardBody>
-
-              <div class="header-separator"></div>
-
-              <!-- Description -->
-              <BCardBody class="p-3 description">
-                <div class="d-flex align-items-center justify-content-between">
-                  <div class="d-flex align-items-center">
-                    <i class="bi bi-cash text-success fs-3 me-2"></i>
-                    <div class="fw-bold fs-3 text-success me-2">
-                      <CountToComponent
-                        :startVal="0"
-                        :endVal="reward.pointsRequired"
-                        :duration="1500"
-                      />
-                    </div>
-                    <span class="fw-bold text-muted fs-3">pts</span>
-                  </div>
+          <BCol v-for="reward in paginatedData" :key="reward.id" cols="12" md="6" lg="4" class="mb-4">
+            <div class="reward-card-premium">
+              <!-- Badge points en haut à droite -->
+              <div class="points-badge">
+                <div class="points-badge-inner">
+                  <i class="bi bi-star-fill"></i>
+                  <CountToComponent
+                    :startVal="0"
+                    :endVal="reward.pointsRequired"
+                    :duration="1500"
+                  />
                 </div>
-              </BCardBody>
+              </div>
 
-              <div class="header-separator"></div>
-
-              <!-- Actions -->
-              <BCardBody class="d-flex justify-content-end align-items-center py-2 px-3 actions">
-                <ul class="list-inline mb-0 d-flex align-items-center">
-                  <li class="list-inline-item d-flex align-items-center">
-                    <a
-                      href="#"
-                      class="text-info"
-                      @click.prevent="openDetailModals(reward)"
-                      title="Détails"
-                    >
-                      <i class="bi bi-eye fs-5"></i>
-                    </a>
-                  </li>
-                  <li class="list-inline-item mx-2">|</li>
-                  <li class="list-inline-item d-flex align-items-center">
-                    <a
-                      href="#"
-                      class="text-primary"
-                      @click.prevent="openEditModal(reward)"
-                      title="Edit"
-                    >
-                      <i class="uil uil-pen fs-5"></i>
-                    </a>
-                  </li>
-                  <li class="list-inline-item mx-2">|</li>
-                  <li class="list-inline-item d-flex align-items-center">
-                    <a
-                      href="#"
-                      class="text-danger"
-                      @click.prevent="deleteRow(reward.id)"
-                      title="Delete"
-                    >
-                      <i class="uil uil-trash-alt fs-5"></i>
-                    </a>
-                  </li>
-                </ul>
-              </BCardBody>
-            </BCard>
+              <!-- Boutons d'action en haut à gauche -->
+              <div class="card-actions-overlay">
+                <button 
+                  class="action-btn-circle action-info" 
+                  @click.prevent="openDetailModals(reward)"
+                  title="Voir les détails"
+                >
+                  <i class="bi bi-eye-fill"></i>
+                </button>
+                <button 
+                  class="action-btn-circle action-edit" 
+                  @click.prevent="openEditModal(reward)"
+                  title="Modifier"
+                >
+                  <i class="bi bi-pencil-fill"></i>
+                </button>
+                <button 
+                  class="action-btn-circle action-delete" 
+                  @click.prevent="deleteRow(reward.id)"
+                  title="Supprimer"
+                >
+                  <i class="bi bi-trash-fill"></i>
+                </button>
+              </div>
+              
+              <!-- Icône centrale -->
+              <div class="reward-icon-large">
+                <div class="icon-circle">
+                  <i class="bi bi-gift-fill"></i>
+                </div>
+              </div>
+              
+              <!-- Contenu -->
+              <div class="reward-content">
+                <h4 class="reward-name">{{ reward.name }}</h4>
+                <p class="reward-desc" v-if="reward.description">
+                  {{ reward.description }}
+                </p>
+                <p class="reward-desc-empty" v-else>
+                  Aucune description disponible
+                </p>
+              </div>
+            </div>
           </BCol>
         </BRow>
         <q-dialog v-model="edit" transition-show="scale" transition-hide="fade">
-          <q-card
-            style="width: 800px; max-width: 90vw; border-radius: 20px; overflow: hidden"
-            class="shadow-lg"
-          >
-            <!-- Titre -->
-            <q-card-section
-              class="q-pa-md text-white flex items-center justify-center"
-              style="background: linear-gradient(135deg, #0d6efd, #6610f2)"
-            >
-              <div class="text-h6 text-center">Modifier</div>
+          <q-card class="modern-dialog-card">
+            <!-- En-tête moderne -->
+            <q-card-section class="modern-dialog-header">
+              <div class="dialog-header-content">
+                <div class="dialog-icon dialog-icon-edit">
+                  <i class="bi bi-pencil-fill"></i>
+                </div>
+                <div class="dialog-title-wrapper">
+                  <h5 class="dialog-title">Modifier la Récompense</h5>
+                  <p class="dialog-subtitle">Modifiez les informations de la récompense</p>
+                </div>
+              </div>
+              <q-btn flat round dense icon="close" v-close-popup class="dialog-close-btn" />
             </q-card-section>
 
             <!-- Formulaire -->
-            <div class="q-pa-lg">
+            <div class="q-pa-lg modern-form-content">
               <BForm>
-                <BRow>
-                  <!-- Nom -->
-                  <BCol cols="12" class="mb-4 floating-label">
-                    <input
-                      id="title"
-                      v-model="formu.name"
-                      type="text"
-                      class="form-control form-control-modern"
-                      placeholder=" "
-                    />
-                    <label for="title">Titre</label>
-                  </BCol>
+                <!-- Section Informations -->
+                <div class="form-section mb-4">
+                  <h6 class="form-section-title">
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    Informations de la récompense
+                  </h6>
+                  <BRow>
+                    <BCol cols="12" class="mb-4 floating-label">
+                      <input
+                        id="title-edit"
+                        v-model="formu.name"
+                        type="text"
+                        class="form-control form-control-modern"
+                        placeholder=" "
+                      />
+                      <label for="title-edit">Titre de la récompense</label>
+                    </BCol>
 
-                  <!-- Description -->
-                  <BCol cols="12" class="mb-4 floating-label">
-                    <textarea
-                      id="desc"
-                      v-model="formu.description"
-                      class="form-control form-control-modern"
-                      rows="3"
-                      placeholder=" "
-                    ></textarea>
-                    <label for="desc">Description</label>
-                  </BCol>
+                    <BCol cols="12" class="mb-4 floating-label">
+                      <textarea
+                        id="desc-edit"
+                        v-model="formu.description"
+                        class="form-control form-control-modern"
+                        rows="3"
+                        placeholder=" "
+                      ></textarea>
+                      <label for="desc-edit">Description</label>
+                    </BCol>
 
-                  <BCol cols="12" class="mb-4 floating-label">
-                    <input
-                      class="form-control form-control-modern"
-                      type="number"
-                      id="publishCheck"
-                      v-model="formu.pointsRequired"
-                      placeholder=" "
-                    />
-                    <label class="form-check-label fw-semibold" for="publishCheck">
-                      Points requits
-                    </label>
-                  </BCol>
-                </BRow>
-
-                <!-- Bouton -->
-                <div v-if="loadings" class="d-flex justify-content-end mt-4">
-                  <q-spinner-dots color="green" size="20px" class="q-mr-sm" />
+                    <BCol cols="12" class="mb-4 floating-label">
+                      <input
+                        class="form-control form-control-modern"
+                        type="number"
+                        id="points-edit"
+                        v-model="formu.pointsRequired"
+                        placeholder=" "
+                      />
+                      <label class="form-check-label fw-semibold" for="points-edit">
+                        Points requis
+                      </label>
+                    </BCol>
+                  </BRow>
                 </div>
-                <div v-else class="d-flex justify-content-end mt-4">
-                  <BButton variant="success" class="px-5" @click="Edit"> Enregistrer </BButton>
+
+                <!-- Boutons -->
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                  <BButton @click="edit = false" class="px-4 btn-cancel-modern">
+                    <i class="bi bi-x-circle me-2"></i>
+                    Annuler
+                  </BButton>
+                  <BButton v-if="loadings" variant="success" class="px-5 btn-submit-modern" disabled>
+                    <q-spinner-dots color="white" size="20px" class="me-2" />
+                    Enregistrement...
+                  </BButton>
+                  <BButton v-else variant="success" class="px-5 btn-submit-modern" @click="Edit">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Enregistrer
+                  </BButton>
                 </div>
               </BForm>
             </div>
           </q-card>
         </q-dialog>
         <q-dialog v-model="ajouts">
-          <q-card
-            class="modern-dialog"
-            style="width: 800px; max-width: 90vw; height: 500px; max-height: 80vw"
-          >
-            <!-- Header -->
-            <q-card-section class="dialog-header row items-center q-pa-sm">
-              <div class="q-ml-sm">
-                <span v-if="loadingx" class="skeleton skeleton-title"></span>
-                <div v-else class="text-h6 text-warning">{{ detailData.reward?.name }}</div>
-                <div class="text-caption text-warning">Détails du catalogue</div>
+          <q-card class="modern-dialog-card modern-dialog-details">
+            <!-- En-tête moderne -->
+            <q-card-section class="modern-dialog-header">
+              <div class="dialog-header-content">
+                <div class="dialog-icon dialog-icon-info">
+                  <i class="bi bi-info-circle-fill"></i>
+                </div>
+                <div class="dialog-title-wrapper">
+                  <span v-if="loadingx" class="skeleton skeleton-title"></span>
+                  <h5 v-else class="dialog-title">{{ detailData.reward?.name }}</h5>
+                  <p class="dialog-subtitle">Détails de la récompense</p>
+                </div>
               </div>
-              <q-space />
+              <q-btn flat round dense icon="close" v-close-popup class="dialog-close-btn" />
             </q-card-section>
 
-            <q-separator color="grey-3" />
-            <q-card-section>
-              <BRow class="d-flexjustify-content-center">
-                <BCol md="4" cols="xl-4">
-                  <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-                    <BCardBody
-                      class="d-flex justify-content-between align-items-center p-3 bg-light"
-                    >
-                      <div>
-                        <div class="d-flex align-items-center mb-2">
-                          <i class="bi bi-people text-warning fs-3 me-2"></i>
-                          <h4 v-if="loadingx" class="skeleton skeleton-title"></h4>
-                          <h4 v-else class="fw-bold mb-0 fs-2">
-                            <CountToComponent
-                              :startVal="0"
-                              :endVal="detailData.stats.totalRedemptions"
-                              :duration="2000"
-                            />
-                          </h4>
-                        </div>
-
-                        <span
-                          class="badge bg-warning-subtle text-warning fw-semibold px-3 py-1 rounded-pill"
-                          >Récomponses</span
-                        >
+            <!-- Statistiques -->
+            <q-card-section class="stats-section">
+              <BRow class="g-3">
+                <BCol cols="12" md="4">
+                  <div class="stat-card-modern stat-warning">
+                    <div class="stat-icon">
+                      <i class="bi bi-gift-fill"></i>
+                    </div>
+                    <div class="stat-content">
+                      <div class="stat-value">
+                        <span v-if="loadingx" class="skeleton skeleton-title"></span>
+                        <CountToComponent
+                          v-else
+                          :startVal="0"
+                          :endVal="detailData.stats.totalRedemptions"
+                          :duration="2000"
+                        />
                       </div>
-                    </BCardBody>
-                  </BCard>
+                      <div class="stat-label">Total Récompenses</div>
+                    </div>
+                  </div>
                 </BCol>
 
-                <BCol md="4" cols="xl-4">
-                  <BCard no-body class="shadow-sm rounded-4 stat-card shadow-success">
-                    <BCardBody
-                      class="d-flex justify-content-between align-items-center p-3 bg-light"
-                    >
-                      <div>
-                        <div class="d-flex align-items-center mb-2">
-                          <i class="bi bi-people text-success fs-3 me-2"></i>
-                          <h4 v-if="loadingx" class="skeleton skeleton-title"></h4>
-                          <h4 v-else class="fw-bold mb-0 fs-2">
-                            <CountToComponent
-                              :startVal="0"
-                              :endVal="detailData.stats.deliveredRedemptions"
-                              :duration="2000"
-                            />
-                          </h4>
-                        </div>
-                        <span
-                          class="badge bg-success-subtle text-success fw-semibold px-3 py-1 rounded-pill"
-                          >Récomponses Delivrer</span
-                        >
+                <BCol cols="12" md="4">
+                  <div class="stat-card-modern stat-success">
+                    <div class="stat-icon">
+                      <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <div class="stat-content">
+                      <div class="stat-value">
+                        <span v-if="loadingx" class="skeleton skeleton-title"></span>
+                        <CountToComponent
+                          v-else
+                          :startVal="0"
+                          :endVal="detailData.stats.deliveredRedemptions"
+                          :duration="2000"
+                        />
                       </div>
-                    </BCardBody>
-                  </BCard>
+                      <div class="stat-label">Livrées</div>
+                    </div>
+                  </div>
                 </BCol>
 
-                <BCol md="4" cols="xl-4">
-                  <BCard no-body class="shadow-sm rounded-4 stat-card shadow-success">
-                    <BCardBody
-                      class="d-flex justify-content-between align-items-center p-3 bg-light"
-                    >
-                      <div>
-                        <div class="d-flex align-items-center mb-2">
-                          <i class="bi bi-people text-success fs-3 me-2"></i>
-                          <h4 v-if="loadingx" class="skeleton skeleton-title"></h4>
-                          <h4 v-else class="fw-bold mb-0 fs-2">
-                            <CountToComponent
-                              :startVal="0"
-                              :endVal="detailData.stats.pendingRedemptions"
-                              :duration="2000"
-                            />
-                          </h4>
-                        </div>
-                        <span
-                          class="badge bg-success-subtle text-success fw-semibold px-3 py-1 rounded-pill"
-                          >En attente</span
-                        >
+                <BCol cols="12" md="4">
+                  <div class="stat-card-modern stat-info">
+                    <div class="stat-icon">
+                      <i class="bi bi-clock-fill"></i>
+                    </div>
+                    <div class="stat-content">
+                      <div class="stat-value">
+                        <span v-if="loadingx" class="skeleton skeleton-title"></span>
+                        <CountToComponent
+                          v-else
+                          :startVal="0"
+                          :endVal="detailData.stats.pendingRedemptions"
+                          :duration="2000"
+                        />
                       </div>
-                    </BCardBody>
-                  </BCard>
+                      <div class="stat-label">En attente</div>
+                    </div>
+                  </div>
                 </BCol>
               </BRow>
             </q-card-section>
 
-            <!-- Content -->
-            <q-card-section class="dialog-content">
-              <div class="info-row">
-                <span class="label">Description :</span>
-                <span v-if="loadingx" class="skeleton skeleton-title"></span>
-                <span v-else class="value">{{ detailData.reward?.description }} </span>
-              </div>
-              <div class="info-row">
-                <span class="label">Points Requits:</span>
-                <span v-if="loadingx" class="skeleton skeleton-title"></span>
-                <span v-else class="value">{{ detailData.reward?.pointsRequired }} pts</span>
-              </div>
-              <div class="info-row">
-                <span class="label">récompenses :</span>
-                <span v-if="loadingx" class="skeleton skeleton-title"></span>
-                <span v-else class="value">{{
-                  detailData.reward?.rewardRedemptions.length === 0
-                    ? 0
-                    : detailData.reward?.rewardRedemptions
-                }}</span>
-              </div>
-              <div class="info-row">
-                <span class="label">Date de création :</span>
-                <span v-if="loadingx" class="skeleton skeleton-title"></span>
-                <span v-else class="value">
-                  {{
-                    new Date(detailData.reward?.createdAt).toLocaleDateString('fr-FR', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric',
-                    })
-                  }}</span
-                >
-              </div>
+            <!-- Informations détaillées -->
+            <q-card-section class="details-section">
+              <BRow class="g-3">
+                <BCol cols="12" md="6">
+                  <div class="info-card-modern">
+                    <div class="info-label">
+                      <i class="bi bi-text-left me-2"></i>
+                      Description
+                    </div>
+                    <div class="info-value">
+                      <span v-if="loadingx" class="skeleton skeleton-text"></span>
+                      <span v-else>{{ detailData.reward?.description || 'Aucune description' }}</span>
+                    </div>
+                  </div>
+                </BCol>
+
+                <BCol cols="12" md="6">
+                  <div class="info-card-modern">
+                    <div class="info-label">
+                      <i class="bi bi-coin me-2"></i>
+                      Points Requis
+                    </div>
+                    <div class="info-value">
+                      <span v-if="loadingx" class="skeleton skeleton-text"></span>
+                      <span v-else class="text-warning fw-bold">{{ detailData.reward?.pointsRequired }} pts</span>
+                    </div>
+                  </div>
+                </BCol>
+
+                <BCol cols="12" md="6">
+                  <div class="info-card-modern">
+                    <div class="info-label">
+                      <i class="bi bi-calendar-event me-2"></i>
+                      Date de création
+                    </div>
+                    <div class="info-value">
+                      <span v-if="loadingx" class="skeleton skeleton-text"></span>
+                      <span v-else>
+                        {{
+                          new Date(detailData.reward?.createdAt).toLocaleDateString('fr-FR', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
+                          })
+                        }}
+                      </span>
+                    </div>
+                  </div>
+                </BCol>
+
+                <BCol cols="12" md="6">
+                  <div class="info-card-modern">
+                    <div class="info-label">
+                      <i class="bi bi-list-check me-2"></i>
+                      Nombre de rachats
+                    </div>
+                    <div class="info-value">
+                      <span v-if="loadingx" class="skeleton skeleton-text"></span>
+                      <span v-else>
+                        {{ detailData.reward?.rewardRedemptions?.length || 0 }}
+                      </span>
+                    </div>
+                  </div>
+                </BCol>
+              </BRow>
             </q-card-section>
-
-            <q-separator color="grey-3" />
-
-            <!-- Actions -->
           </q-card>
         </q-dialog>
 
@@ -1047,6 +1083,561 @@ export default {
   background: linear-gradient(135deg, #2ecc71, #d4f5e6);
   box-shadow: 0 0 18px rgba(46, 204, 113, 0.6);
 }
+
+/* === Page moderne === */
+.modern-admin-page {
+  padding: 1.5rem;
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+/* === En-tête de section moderne === */
+.section-header-modern {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+
+  .section-title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .section-icon-modern {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.8rem;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .section-title-content {
+      .section-title-modern {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .section-subtitle-modern {
+        font-size: 0.95rem;
+        color: #64748b;
+        margin: 0;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .btn-add-gradient {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+      background: linear-gradient(135deg, #764ba2, #667eea);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    i {
+      font-size: 1.1rem;
+    }
+  }
+}
+
+/* === Cartes de récompenses premium === */
+.reward-card-premium {
+  position: relative;
+  background: white;
+  border-radius: 24px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  border: 2px solid #f1f5f9;
+  overflow: visible;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 40px rgba(102, 126, 234, 0.12);
+    border-color: #667eea;
+
+    .icon-circle {
+      transform: scale(1.08);
+      background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    .card-actions-overlay {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .points-badge {
+      transform: scale(1.05);
+    }
+  }
+
+  /* Badge points en haut à droite */
+  .points-badge {
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    z-index: 10;
+    transition: all 0.4s ease;
+
+    .points-badge-inner {
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      color: white;
+      padding: 0.75rem 1.25rem;
+      border-radius: 50px;
+      font-weight: 800;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 8px 24px rgba(251, 191, 36, 0.4);
+      border: 3px solid white;
+
+      i {
+        font-size: 1rem;
+      }
+    }
+  }
+
+  /* Boutons d'action en overlay */
+  .card-actions-overlay {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.4s ease;
+    z-index: 5;
+
+    .action-btn-circle {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      font-size: 1rem;
+
+      &:hover {
+        transform: scale(1.1);
+      }
+
+      &.action-info {
+        background: rgba(59, 130, 246, 0.9);
+        color: white;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+
+        &:hover {
+          background: #3b82f6;
+          box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+        }
+      }
+
+      &.action-edit {
+        background: rgba(102, 126, 234, 0.9);
+        color: white;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+
+        &:hover {
+          background: #667eea;
+          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+      }
+
+      &.action-delete {
+        background: rgba(239, 68, 68, 0.9);
+        color: white;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+
+        &:hover {
+          background: #ef4444;
+          box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
+        }
+      }
+    }
+  }
+
+  /* Icône centrale grande */
+  .reward-icon-large {
+    margin-bottom: 1.5rem;
+
+    .icon-circle {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: #667eea;
+      transition: all 0.4s ease;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      position: relative;
+
+      &::before {
+        content: '';
+        position: absolute;
+        inset: -4px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        z-index: -1;
+      }
+    }
+  }
+
+  /* Contenu */
+  .reward-content {
+    text-align: center;
+    width: 100%;
+
+    .reward-name {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0 0 0.75rem 0;
+      line-height: 1.3;
+    }
+
+    .reward-desc {
+      font-size: 0.9rem;
+      color: #64748b;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .reward-desc-empty {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      font-style: italic;
+      margin: 0;
+    }
+  }
+}
+
+/* === Modaux modernes === */
+.modern-dialog-card {
+  width: 70vw !important;
+  max-width: 1000px !important;
+  margin: 20px auto;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modern-dialog-header {
+  background: linear-gradient(135deg, rgb(240, 244, 255), rgb(224, 247, 250));
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+
+  .dialog-header-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+
+    .dialog-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      flex-shrink: 0;
+
+      &.dialog-icon-edit {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+      }
+    }
+
+    .dialog-title-wrapper {
+      .dialog-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0 0 0.25rem 0;
+      }
+
+      .dialog-subtitle {
+        font-size: 0.9rem;
+        color: #64748b;
+        margin: 0;
+      }
+    }
+  }
+
+  .dialog-close-btn {
+    color: #64748b;
+    transition: all 0.3s ease;
+
+    &:hover {
+      color: #ef4444;
+      transform: rotate(90deg);
+    }
+  }
+}
+
+/* === Formulaire moderne === */
+.modern-form-content {
+  background: #f8fafc;
+  border-radius: 0 0 24px 24px;
+}
+
+.form-section {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+  }
+
+  .form-section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+
+    i {
+      color: #667eea;
+    }
+  }
+}
+
+.btn-cancel-modern {
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-weight: 700;
+  color: #64748b;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: #cbd5e1;
+    background: #f8fafc;
+    color: #475569;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.btn-submit-modern {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+    background: linear-gradient(135deg, #059669, #10b981);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+/* === Modal de détails === */
+.modern-dialog-card.modern-dialog-details {
+  width: 55vw !important;
+  max-width: 900px !important;
+  max-height: 90vh !important;
+  overflow-y: auto;
+
+  .dialog-icon-info {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+  }
+
+  .stats-section {
+    background: #f8fafc;
+    padding: 1.5rem;
+
+    .stat-card-modern {
+      background: white;
+      border-radius: 16px;
+      padding: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+      border-left: 4px solid;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      &.stat-warning {
+        border-left-color: #f59e0b;
+
+        .stat-icon {
+          background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        }
+
+        .stat-value {
+          color: #f59e0b;
+        }
+      }
+
+      &.stat-success {
+        border-left-color: #10b981;
+
+        .stat-icon {
+          background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .stat-value {
+          color: #10b981;
+        }
+      }
+
+      &.stat-info {
+        border-left-color: #3b82f6;
+
+        .stat-icon {
+          background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .stat-value {
+          color: #3b82f6;
+        }
+      }
+
+      .stat-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.3rem;
+        flex-shrink: 0;
+      }
+
+      .stat-content {
+        flex: 1;
+
+        .stat-value {
+          font-size: 1.5rem;
+          font-weight: 800;
+          line-height: 1;
+          margin-bottom: 0.4rem;
+        }
+
+        .stat-label {
+          font-size: 0.75rem;
+          color: #64748b;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+      }
+    }
+  }
+
+  .details-section {
+    background: white;
+    padding: 1.5rem;
+
+    .info-card-modern {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 1rem;
+      border: 2px solid #e2e8f0;
+      transition: all 0.3s ease;
+
+      &:hover {
+        border-color: #667eea;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+      }
+
+      .info-label {
+        font-size: 0.75rem;
+        color: #64748b;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.6rem;
+        display: flex;
+        align-items: center;
+
+        i {
+          color: #667eea;
+        }
+      }
+
+      .info-value {
+        font-size: 0.9rem;
+        color: #1e293b;
+        font-weight: 600;
+        line-height: 1.5;
+      }
+    }
+  }
+}
+
 .shadow-danger:hover {
   border-color: #e74c3c;
   background: linear-gradient(135deg, #ffecec, #ffd9d6);

@@ -1,28 +1,34 @@
 <template>
-  <BRow style="height: auto">
-    <BCol cols="12" class="mb-3">
-      <h3 class="mb-4 text-success fw-bold">
-        Ajouter votre question par rapport aux groupes de question
-      </h3>
-    </BCol>
+  <div class="step-form-container">
+    <p class="text-muted mb-4" style="font-size: 0.9375rem;">Créez vos questions et associez-les aux groupes</p>
+    
+    <q-inner-loading v-if="loading" :showing="loading" background-color="rgba(0,0,0,0.4)">
+      <q-spinner-bars color="green" size="50px" />
+    </q-inner-loading>
 
-    <BCol cols="12">
+    <div v-else>
       <BRow v-for="(field, index) in fields" :key="field.id" class="mb-4">
         <!-- Carte pour chaque question -->
-        <BCard class="shadow-sm rounded-3 border-1 w-100">
-          <BCardHeader class="bg-light d-flex justify-content-between align-items-center">
-            <h6 class="mb-0">Question {{ index + 1 }}</h6>
-            <div>
-              <BButton size="sm" class="btn-success me-1 rounded-circle" @click="AddFormData">
-                <i class="bi bi-file-earmark-plus"></i>
-              </BButton>
-              <BButton size="sm" class="btn-danger rounded-circle" @click="deleteRow(index)">
-                <i class="bi bi-file-earmark-minus"></i>
-              </BButton>
+        <BCard class="question-card w-100">
+          <BCardHeader class="question-card-header">
+            <div class="question-header-left">
+              <div class="question-number">
+                <i class="bi bi-question-circle-fill"></i>
+                <span>Question {{ index + 1 }}</span>
+              </div>
+              <div class="question-title-preview" v-if="field.title">
+                <span>{{ field.title }}</span>
+              </div>
+            </div>
+            <div class="question-actions">
+              <button class="btn-delete-question" @click="deleteRow(index)" title="Supprimer cette question">
+                <i class="bi bi-trash"></i>
+              </button>
             </div>
           </BCardHeader>
 
           <BCardBody>
+            <BRow>
             <!-- Sélection du groupe -->
             <BFormGroup class="form-group mb-3 floating-label">
               <Multiselect
@@ -102,32 +108,50 @@
                 </BListGroupItem>
               </BListGroup>
             </div>
-            <div class="form-check form-switch mb-4 gap-2 d-flex align-items-center">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                id="publishCheck"
-                v-model="field.isRequired"
-                style="width: 50px; height: 25px"
-              />
-              <label class="form-check-label fw-semibold" for="publishCheck"> Obligatoire </label>
-            </div>
+            
+            <!-- Obligatoire -->
+            <BCol cols="12" class="mb-3">
+              <div class="form-check form-switch gap-2 d-flex align-items-center">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="publishCheck"
+                  v-model="field.isRequired"
+                  style="width: 50px; height: 25px"
+                />
+                <label class="form-check-label fw-semibold" for="publishCheck"> Obligatoire </label>
+              </div>
+            </BCol>
+            </BRow>
           </BCardBody>
         </BCard>
+        
+        <!-- Bouton Ajouter une question (uniquement sur la dernière question) -->
+        <div v-if="index === fields.length - 1" class="btn-add-question-container">
+          <button class="btn-add-question-outline" @click="AddFormData">
+            <i class="bi bi-plus-circle me-2"></i>
+            Ajouter une question
+          </button>
+        </div>
       </BRow>
-    </BCol>
 
-    <!-- Navigation -->
-    <div class="d-flex justify-content-between mt-4 w-100">
-      <BButton variant="outline-secondary" class="px-4 rounded-3 shadow-sm" @click="handleBack">
-        ⬅ Retour
-      </BButton>
-      <q-spinner-dots v-if="loadings" color="green" size="20px" class="q-mr-sm" />
-      <BButton v-else class="btn-success px-4 rounded-3 shadow-sm" @click="handleNext">
-        Suivant ➡
-      </BButton>
+      <!-- Navigation -->
+      <div class="d-flex justify-content-between mt-4 w-100">
+        <BButton
+          class="btn-modern btn-secondary-modern"
+          @click="$emit('onBack')"
+        >
+          <i class="bi bi-arrow-left me-2"></i>
+          Retour
+        </BButton>
+        <q-spinner-dots v-if="loadings" color="green" size="20px" class="q-mr-sm" />
+        <BButton v-else class="btn-modern btn-success-modern" @click="handleNext">
+          Suivant
+          <i class="bi bi-arrow-right ms-2"></i>
+        </BButton>
+      </div>
     </div>
-  </BRow>
+  </div>
 </template>
 <script>
 import {

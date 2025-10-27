@@ -1,145 +1,182 @@
 <template>
-  <BRow style="height: auto">
-    <BCol cols="12" class="mb-3">
-      <h3 class="mb-4 text-success fw-bold">
-        Ajouter votre question par rapport aux groupes de question
-      </h3>
-    </BCol>
+  <div class="step-form-container">
+    <p class="text-muted mb-4" style="font-size: 0.9375rem;">Créez vos questions et associez-les aux groupes</p>
+    
+    <q-inner-loading v-if="loading" :showing="loading" background-color="rgba(0,0,0,0.4)">
+      <q-spinner-bars color="green" size="50px" />
+    </q-inner-loading>
 
-    <BCol cols="12">
+    <div v-else>
       <BRow v-for="(field, index) in fields" :key="field.id" class="mb-4">
         <!-- Carte pour chaque question -->
-        <BCard class="shadow-sm rounded-3 border-1 w-100">
-          <BCardHeader class="bg-light d-flex justify-content-between align-items-center">
-            <h6 class="mb-0">Question {{ index + 1 }}</h6>
-            <div>
-              <BButton size="sm" class="btn-success me-1 rounded-circle" @click="AddFormData">
-                <i class="bi bi-file-earmark-plus"></i>
-              </BButton>
-              <BButton size="sm" class="btn-danger rounded-circle" @click="deleteRow(index)">
-                <i class="bi bi-file-earmark-minus"></i>
-              </BButton>
+        <BCard class="question-card w-100">
+          <BCardHeader class="question-card-header">
+            <div class="question-header-left">
+              <div class="question-number">
+                <i class="bi bi-question-circle-fill"></i>
+                <span>Question {{ index + 1 }}</span>
+              </div>
+              <div class="question-title-preview" v-if="field.title">
+                <span>{{ field.title }}</span>
+              </div>
+            </div>
+            <div class="question-actions">
+              <button class="btn-delete-question" @click="deleteRow(index)" title="Supprimer cette question">
+                <i class="bi bi-trash"></i>
+              </button>
             </div>
           </BCardHeader>
 
           <BCardBody>
-            <!-- Sélection du groupe -->
-            <BFormGroup class="form-group mb-3 floating-label">
-              <Multiselect
-                square
-                outlined
-                v-model="field.group"
-                :options="optionl2"
-                placeholder=" "
-                class="form-control-modern"
-              />
-              <label>Choisir le groupe de question</label>
-            </BFormGroup>
-
-            <!-- Titre -->
-            <BFormGroup class="form-group mb-3 floating-label">
-              <BFormInput v-model="field.title" placeholder=" " class="form-control-modern" />
-              <label>Titre de la question</label>
-            </BFormGroup>
-
-            <!-- Description -->
-            <BFormGroup class="form-group mb-3 floating-label">
-              <BFormTextarea
-                v-model="field.description"
-                placeholder=" "
-                class="form-control-modern"
-                rows="3"
-              />
-              <label>Description de la question</label>
-            </BFormGroup>
-
-            <!-- Position -->
-            <BFormGroup class="form-group mb-3 floating-label">
-              <BFormInput
-                type="number"
-                v-model="field.position"
-                placeholder=" "
-                class="form-control-modern"
-              />
-              <label>Position de la question</label>
-            </BFormGroup>
-
-            <!-- Type de réponses -->
-            <BFormGroup class="form-group mb-3 floating-label">
-              <Multiselect
-                square
-                outlined
-                v-model="field.type"
-                :options="options"
-                placeholder=" "
-                class="form-control-modern"
-              />
-              <label>Type de réponses</label>
-            </BFormGroup>
-
-            <!-- Options de réponses -->
-            <div v-if="field.type === 'single_choice' || field.type === 'multiple_choice'">
-              <label class="form-label">Options de réponses</label>
-              <BListGroup flush>
-                <BListGroupItem
-                  v-for="(option, idx) in field.choices"
-                  :key="option.id"
-                  class="d-flex justify-content-between align-items-center gap-2"
-                >
-                  <BFormInput
-                    v-model="option.value"
-                    placeholder="Option de réponse"
+            <BRow>
+              <!-- Sélection du groupe -->
+              <BCol cols="12" md="6" class="mb-3">
+                <BFormGroup class="form-group floating-label">
+                  <Multiselect
+                    square
+                    outlined
+                    v-model="field.group"
+                    :options="optionl2"
+                    placeholder=" "
                     class="form-control-modern"
                   />
-                  <div class="d-flex align-items-center gap-2">
-                    <BButton size="sm" class="btn-success me-1" @click="AddFormDataM(index)">
-                      <i class="bi bi-file-earmark-plus"></i>
-                    </BButton>
-                    <BButton size="sm" class="btn-danger" @click="deleteRow2(index, idx)">
-                      <i class="bi bi-file-earmark-minus"></i>
-                    </BButton>
+                  <label>Choisir le groupe de question</label>
+                </BFormGroup>
+              </BCol>
+
+              <!-- Titre -->
+              <BCol cols="12" md="6" class="mb-3">
+                <BFormGroup class="form-group floating-label">
+                  <BFormInput v-model="field.title" placeholder=" " class="form-control-modern" />
+                  <label>Titre de la question</label>
+                </BFormGroup>
+              </BCol>
+
+              <!-- Description -->
+              <BCol cols="12" class="mb-3">
+                <BFormGroup class="form-group floating-label">
+                  <BFormTextarea
+                    v-model="field.description"
+                    placeholder=" "
+                    class="form-control-modern"
+                    rows="3"
+                  />
+                  <label>Description de la question</label>
+                </BFormGroup>
+              </BCol>
+
+              <!-- Position -->
+              <BCol cols="12" md="6" class="mb-3">
+                <BFormGroup class="form-group floating-label">
+                  <BFormInput
+                    type="number"
+                    v-model="field.position"
+                    placeholder=" "
+                    class="form-control-modern"
+                  />
+                  <label>Position de la question</label>
+                </BFormGroup>
+              </BCol>
+
+              <!-- Type de réponses -->
+              <BCol cols="12" md="6" class="mb-3">
+                <BFormGroup class="form-group floating-label">
+                  <Multiselect
+                    square
+                    outlined
+                    v-model="field.type"
+                    :options="options"
+                    placeholder=" "
+                    class="form-control-modern"
+                  />
+                  <label>Type de réponses</label>
+                </BFormGroup>
+              </BCol>
+
+              <!-- Options de réponses -->
+              <BCol cols="12" v-if="field.type === 'single_choice' || field.type === 'multiple_choice'">
+                <label class="form-label fw-semibold mb-3">
+                  <i class="bi bi-list-ul me-2"></i>
+                  Options de réponses
+                </label>
+                <div class="options-list">
+                  <div
+                    v-for="(option, idx) in field.choices"
+                    :key="option.id"
+                    class="option-item mb-3"
+                  >
+                    <div class="option-input-wrapper">
+                      <span class="option-number">{{ idx + 1 }}</span>
+                      <BFormInput
+                        v-model="option.value"
+                        placeholder="Entrez une option de réponse"
+                        class="form-control-modern"
+                      />
+                    </div>
+                    <div class="option-actions">
+                      <button class="btn-add-option" @click="AddFormDataM(index)" title="Ajouter une option">
+                        <i class="bi bi-plus-circle"></i>
+                      </button>
+                      <button class="btn-delete-option" @click="deleteRow2(index, idx)" title="Supprimer cette option">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
                   </div>
-                </BListGroupItem>
-              </BListGroup>
-            </div>
-            <div class="form-check form-switch mb-4 gap-2 d-flex align-items-center">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                id="publishCheck"
-                v-model="field.isRequired"
-                style="width: 50px; height: 25px"
-              />
-              <label class="form-check-label fw-semibold" for="publishCheck"> Obligatoire </label>
-            </div>
+                </div>
+              </BCol>
+
+              <!-- Obligatoire -->
+              <BCol cols="12" class="mb-3">
+                <div class="form-check form-switch gap-2 d-flex align-items-center">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="publishCheck"
+                    v-model="field.isRequired"
+                    style="width: 50px; height: 25px"
+                  />
+                  <label class="form-check-label fw-semibold" for="publishCheck"> Obligatoire </label>
+                </div>
+              </BCol>
+            </BRow>
           </BCardBody>
         </BCard>
+        
+        <!-- Bouton Ajouter une question (uniquement sur la dernière question) -->
+        <div v-if="index === fields.length - 1" class="btn-add-question-container">
+          <button class="btn-add-question-outline" @click="AddFormData">
+            <i class="bi bi-plus-circle me-2"></i>
+            Ajouter une question
+          </button>
+        </div>
       </BRow>
-    </BCol>
 
-    <!-- Navigation -->
-    <div class="d-flex justify-content-between mt-4 w-100">
-      <BButton variant="outline-secondary" class="px-4 rounded-3 shadow-sm" @click="handleBack">
-        ⬅ Retour
-      </BButton>
-      <q-spinner-dots v-if="loadings" color="green" size="20px" class="q-mr-sm" />
-      <BButton v-else class="btn-success px-4 rounded-3 shadow-sm" @click="handleNext">
-        Suivant ➡
-      </BButton>
+      <!-- Navigation -->
+      <div class="d-flex justify-content-between mt-4 w-100">
+        <BButton
+          class="btn-modern btn-secondary-modern"
+          @click="$emit('onBack')"
+        >
+          ⬅ Retour
+        </BButton>
+        <q-spinner-dots v-if="loadings" color="green" size="20px" class="q-mr-sm" />
+        <BButton v-else class="btn-modern btn-success-modern" @click="handleNext">
+          Suivant ➡
+        </BButton>
+      </div>
     </div>
-  </BRow>
+  </div>
 </template>
+
 <script>
 import {
   BButton,
-  BCol,
   BRow,
+  BCol,
   BCard,
   BCardBody,
   BCardHeader,
   BFormGroup,
-  BListGroupItem,
-  BListGroup,
   BFormTextarea,
   BFormInput,
 } from 'bootstrap-vue-next'
@@ -148,24 +185,21 @@ import { getCurrentInstance, onMounted, ref, watch } from 'vue'
 import { api } from 'src/boot/axios'
 import Multiselect from '@vueform/multiselect'
 import { Notify } from 'quasar'
-import { useRoute } from 'vue-router'
 export default {
   props: {
     refreshTrigger: Number,
   },
   components: {
     BButton,
-    BCol,
     BRow,
+    BCol,
     BCard,
     Multiselect,
+    BFormGroup,
+    BFormInput,
+    BFormTextarea,
     BCardBody,
     BCardHeader,
-    BFormGroup,
-    BListGroupItem,
-    BListGroup,
-    BFormTextarea,
-    BFormInput,
   },
   emits: ['onBack', 'onNext'],
   setup(props) {
@@ -188,10 +222,9 @@ export default {
     const add = ref([])
     const store = useRegisterStore()
     const { emit } = getCurrentInstance()
-    const optionl2 = ref([])
-    const route = useRoute()
     const loading = ref(false)
     const loadings = ref(false)
+    const optionl2 = ref([])
     const options = [
       {
         label: 'à une choix',
@@ -252,14 +285,14 @@ export default {
         if (fields.value[index].choices[indexs].label !== '') {
           await api
             .delete(
-              `/admin/welcome-surveys/${store.idsurveyw}/question-groups/${fields.value[index].group.id}/choices/${fields.value[index].choices[indexs].id}`,
+              `/surveys/${store.idsurvey}/question-groups/${fields.value[index].group.id}/choices/${fields.value[index].choices[indexs].id}`,
             )
             .then(() => {
               console.log('Choice deleted successfully')
             })
-          const response = await api.get('/admin/welcome-surveys') // récupère le sondage mis à jour
+          const response = await api.get('/admin/dashboard/overview')
           store
-            .setSurveyDataw(response.data.find((s) => s.id === store.idsurveyw))
+            .setSurveyData(response.data.surveys.find((s) => s.id === store.idsurvey))
             .catch((error) => {
               console.error('Error deleting choice:', error)
             })
@@ -274,10 +307,6 @@ export default {
       try {
         loading.value = true
         optionl2.value = []
-        const id = route.params.id
-        const sch = await api.get(`/admin/welcome-surveys`)
-        const surveys = sch.data.find((s) => s.slug === id)
-        store.setIdSurveyw(surveys.id)
         const response = await api.get(`/admin/welcome-surveys/${store.idsurveyw}/question-groups`)
         response.data.map((group) => {
           const fieldData = {
@@ -287,50 +316,49 @@ export default {
           optionl2.value.push({ ...fieldData })
         })
       } catch (error) {
-        console.error('Error fetching question groups:', error)
+        console.error('Erreur lors de la récupération des groupes de questions:', error)
       } finally {
         loading.value = false
       }
     }
     const getz = async () => {
-      loading.value = true
-      originalFields.value = []
+      try {
+        loading.value = true
+        originalFields.value = []
 
-      // Pour chaque group.id, on récupère les questions et les ajoute à originalFields
-      for (const option of optionl2.value) {
-        const groupId = option.value
-
-        try {
-          const response = await api.get(
-            `/admin/welcome-surveys/${store.idsurveyw}/question-groups/${groupId}/questions`,
-          )
-
-          const questions = response.data.map((question) => ({
-            id: question.id,
-            title: question.title,
-            description: question.description,
-            group: parseInt(question.questionGroups.id),
-            type: question.type,
-            position: question.position,
-            isRequired: question.isRequired,
-            choices: question.choices || [{ id: 1, label: '', value: '', isNew: true }],
-            isNew: false,
-          }))
-          originalFields.value.push(...questions)
-        } catch (error) {
-          console.error(`Erreur lors de la récupération des questions du groupe ${groupId}:`, error)
-        } finally {
-          loading.value = false
+        // Pour chaque group.id, on récupère les questions et les ajoute à originalFields
+        for (const option of optionl2.value) {
+          const groupId = option.value
+          try {
+            const response = await api.get(
+              `/admin/welcome-surveys/${store.idsurveyw}/question-groups/${groupId}/questions`,
+            )
+            const questions = response.data.map((question) => ({
+              id: question.id,
+              title: question.title,
+              description: question.description,
+              group: parseInt(question.questionGroups.id),
+              type: question.type,
+              position: question.position,
+              isRequired: question.isRequired,
+              choices: question.choices || [{ id: 1, label: '', value: '', isNew: true }],
+              isNew: false,
+            }))
+            originalFields.value.push(...questions)
+          } catch (error) {
+            console.error(
+              `Erreur lors de la récupération des questions du groupe ${groupId}:`,
+              error,
+            )
+          }
         }
-      }
 
-      // Mettre à jour fields si nécessaire
-      if (originalFields.value.length !== 0) {
-        fields.value = JSON.parse(JSON.stringify(originalFields.value))
-      } else {
-        fields.value = [
-          {
-            id: idCounter,
+        // Mettre à jour fields si nécessaire
+        if (originalFields.value.length !== 0) {
+          fields.value = JSON.parse(JSON.stringify(originalFields.value))
+        } else {
+          fields.value = {
+            id: 1,
             title: '',
             description: '',
             group: null,
@@ -339,8 +367,12 @@ export default {
             isRequired: false,
             choices: [{ id: 1, label: '', value: '' }],
             isNew: true,
-          },
-        ]
+          }
+        }
+      } catch (error) {
+        console.error('Erreur lors de la récupération des groupes de questions:', error)
+      } finally {
+        loading.value = false
       }
     }
     const deleteRow = async (index) => {
@@ -352,15 +384,15 @@ export default {
           .then(() => {
             Notify.create({
               type: 'success',
-              message: 'Question supprimmer avec success.',
+              message: 'Question supprimée avec succès.',
             })
           })
           .catch((error) => {
             console.error('Error deleting question group:', error)
           })
         fields.value.splice(index, 1)
-        const response = await api.get('/admin/dashboard/overview') // récupère le sondage mis à jour
-        store.setSurveyDataw(response.data.welcome_surveys.find((s) => s.id === store.idsurveyw))
+        const response = await api.get('/admin/welcome-surveys')
+        store.setSurveyDataw(response.data.find((s) => s.id === store.idsurveyw))
       } else {
         fields.value.splice(index, 1)
       }
@@ -426,7 +458,6 @@ export default {
       if (add.value.length > 0) {
         try {
           loadings.value = true
-
           for (const t of add.value) {
             await api.post(
               `/admin/welcome-surveys/${store.idsurveyw}/question-groups/${t.group}/questions`,
@@ -444,21 +475,18 @@ export default {
             )
           }
           const response = await api.get('/admin/welcome-surveys')
-          store.setSurveyDataw(response.data.welcome_surveys.find((s) => s.id === store.idsurveyw))
+          store.setSurveyDataw(response.data.find((s) => s.id === store.idsurveyw))
+          Notify.create({
+            type: 'positive',
+            message: 'Opération effectuée avec succès !',
+            timeout: 5000,
+          })
         } catch (error) {
-          Notify.create(
-            {
-              type: 'negative',
-              message: 'une erreur est survenue',
-            },
-            5000,
-          )
           console.error('Erreur POST:', error)
         } finally {
           loadings.value = false
         }
       }
-
       for (const t of updates) {
         try {
           loadings.value = true
@@ -477,6 +505,13 @@ export default {
             },
           )
         } catch (error) {
+          Notify.create(
+            {
+              type: 'negative',
+              message: 'une erreur est survenue',
+            },
+            5000,
+          )
           console.error(`Erreur PUT id=${t.id}:`, error)
         } finally {
           loadings.value = false
@@ -484,11 +519,6 @@ export default {
       }
       const response = await api.get('/admin/welcome-surveys')
       store.setSurveyDataw(response.data.find((s) => s.id === store.idsurveyw))
-      Notify.create({
-        type: 'positive',
-        message: 'Opération effectuée avec succès !',
-        timeout: 5000, // durée en ms
-      })
 
       await getz()
       return true
@@ -499,24 +529,21 @@ export default {
         emit('onNext')
       }
     }
-    const handleBack = () => {
-      emit('onBack')
-    }
+
     watch(
       () => props.refreshTrigger,
-      () => {
-        console.log('Step4Ac rafraîchi !')
-        getss() // ta fonction de refresh interne
+      async () => {
+        await getss() // ta fonction de refresh interne
       },
     )
 
     onMounted(async () => {
       await getss()
       await getz()
+      AddFormData()
     })
     return {
       handleNext,
-      handleBack,
       Add,
       AddFormData,
       deleteRow,

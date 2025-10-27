@@ -60,7 +60,7 @@ export default {
     const showPasswordModal = ref(false)
 
     const optionl = [
-      { label: 'Françe', value: 'FR' },
+      { label: 'Français', value: 'FR' },
       { label: 'Engletaire', value: 'EN' },
       { label: 'Espagne', value: 'ES' },
       { label: 'Itali', value: 'IT' },

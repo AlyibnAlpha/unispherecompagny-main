@@ -1,0 +1,70 @@
+/**
+ * Styles globaux pour les badges (style exact de /admin/tache)
+ * S'applique à tous les tableaux et modales
+ */
+@import './variables';
+
+/* === Badges modernes === */
+.badge-modern,
+.badge,
+.badge-pill,
+a.badge,
+span.badge {
+  display: inline-block !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  text-transform: capitalize !important;
+  letter-spacing: 0.3px !important;
+  border: none !important;
+  transition: all 0.2s ease !important;
+}
+
+.badge-modern-success,
+.badge.bg-soft-success,
+.badge-pill.bg-soft-success,
+a.badge.bg-soft-success,
+span.badge.bg-soft-success {
+  background: #d1fae5 !important;
+  color: #059669 !important;
+}
+
+.badge-modern-warning,
+.badge.bg-soft-warning,
+.badge-pill.bg-soft-warning,
+a.badge.bg-soft-warning,
+span.badge.bg-soft-warning {
+  background: #fef3c7 !important;
+  color: #d97706 !important;
+}
+
+.badge-modern-info,
+.badge.bg-soft-info,
+.badge.bg-soft-primary,
+.badge-pill.bg-soft-info,
+.badge-pill.bg-soft-primary,
+a.badge.bg-soft-info,
+a.badge.bg-soft-primary,
+span.badge.bg-soft-info,
+span.badge.bg-soft-primary {
+  background: #dbeafe !important;
+  color: #2563eb !important;
+}
+
+.badge-modern-danger,
+.badge.bg-soft-danger,
+.badge-pill.bg-soft-danger,
+a.badge.bg-soft-danger,
+span.badge.bg-soft-danger {
+  background: #fee2e2 !important;
+  color: #dc2626 !important;
+}
+
+.badge.bg-soft-secondary,
+.badge-pill.bg-soft-secondary,
+a.badge.bg-soft-secondary,
+span.badge.bg-soft-secondary {
+  background: #f3f4f6 !important;
+  color: #6b7280 !important;
+}

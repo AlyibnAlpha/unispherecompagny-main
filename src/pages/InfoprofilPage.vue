@@ -230,7 +230,7 @@ export default {
       { label: 'Português', value: 'pt', flag: '🇵🇹' },
     ]
     const optionl = [
-      { label: 'Françe', value: 'FR' },
+      { label: 'Français', value: 'FR' },
       { label: 'Engletaire', value: 'EN' },
       { label: 'Espagne', value: 'ES' },
       { label: 'Itali', value: 'IT' },

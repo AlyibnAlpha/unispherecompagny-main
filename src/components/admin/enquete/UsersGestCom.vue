@@ -373,8 +373,100 @@ export default {
 </script>
 
 <template>
-  <div>
-    <BRow class="d-flexjustify-content-center">
+  <div class="modern-admin-page">
+    <!-- Header moderne -->
+    <div class="modern-page-header">
+      <div class="header-left">
+        <h1 class="page-title-modern">
+          <i class="bi bi-people-fill"></i>
+          Gestion des Utilisateurs
+        </h1>
+        <p class="page-subtitle-modern">Gérez les comptes Business et Participants</p>
+      </div>
+    </div>
+
+    <!-- Cartes de statistiques modernes -->
+    <div class="stats-grid-modern stats-grid-6">
+      <div class="stat-card-modern stat-card-warning">
+        <div class="stat-icon-wrapper">
+          <i class="bi bi-person-fill"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-value">
+            <CountToComponent :startVal="0" :endVal="totalParticipants" :duration="2000" />
+          </h3>
+          <p class="stat-label">Participants</p>
+        </div>
+        <div class="stat-progress-bar"></div>
+      </div>
+
+      <div class="stat-card-modern stat-card-info">
+        <div class="stat-icon-wrapper">
+          <i class="bi bi-building-fill"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-value">
+            <CountToComponent :startVal="0" :endVal="totalBusinnes" :duration="2000" />
+          </h3>
+          <p class="stat-label">Business</p>
+        </div>
+        <div class="stat-progress-bar"></div>
+      </div>
+
+      <div class="stat-card-modern stat-card-success">
+        <div class="stat-icon-wrapper">
+          <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-value">
+            <CountToComponent :startVal="0" :endVal="totalParticipantsA" :duration="2000" />
+          </h3>
+          <p class="stat-label">Participants Activés</p>
+        </div>
+        <div class="stat-progress-bar"></div>
+      </div>
+
+      <div class="stat-card-modern stat-card-danger">
+        <div class="stat-icon-wrapper">
+          <i class="bi bi-x-circle-fill"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-value">
+            <CountToComponent :startVal="0" :endVal="totalParticipantsAN" :duration="2000" />
+          </h3>
+          <p class="stat-label">Participants Non Activés</p>
+        </div>
+        <div class="stat-progress-bar"></div>
+      </div>
+
+      <div class="stat-card-modern stat-card-success">
+        <div class="stat-icon-wrapper">
+          <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-value">
+            <CountToComponent :startVal="0" :endVal="totalBusinnesA" :duration="2000" />
+          </h3>
+          <p class="stat-label">Business Activés</p>
+        </div>
+        <div class="stat-progress-bar"></div>
+      </div>
+
+      <div class="stat-card-modern stat-card-danger">
+        <div class="stat-icon-wrapper">
+          <i class="bi bi-x-circle-fill"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-value">
+            <CountToComponent :startVal="0" :endVal="totalBusinnesAN" :duration="2000" />
+          </h3>
+          <p class="stat-label">Business Non Activés</p>
+        </div>
+        <div class="stat-progress-bar"></div>
+      </div>
+    </div>
+
+    <BRow class="d-none">
       <BCol md="2" cols="xl-2">
         <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
           <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
@@ -496,36 +588,21 @@ export default {
               <template #title>
                 <i class="bi bi-people text-warning fs-3 me-2"></i>Participants</template
               >
-              <div
-                class="ttable table-centered datatable dt-responsive nowrap table-card-list dataTable no-footer dtr-inline"
-              >
-                <BRow>
-                  <BCol sm="12" md="6">
-                    <div id="tickets-table_length" class="dataTables_length">
-                      <label class="d-inline-flex align-items-center">
-                        Trier:
-                        <BFormSelect
-                          v-model="perPage"
-                          size="sm"
-                          :options="pageOptions"
-                        ></BFormSelect>
-                      </label>
-                    </div>
-                  </BCol>
-                  <BCol sm="12" md="6">
-                    <div id="tickets-table_filter" class="dataTables_filter text-md-end">
-                      <label class="d-inline-flex align-items-center">
-                        Recherche:
-                        <BFormInput
-                          v-model="filter"
-                          type="search"
-                          placeholder="Recherche..."
-                          class="form-control form-control-sm ms-2"
-                        ></BFormInput>
-                      </label>
-                    </div>
-                  </BCol>
-                </BRow>
+              <div class="table-container-modern">
+                <div class="table-toolbar">
+                  <div class="table-control-item">
+                    <BFormSelect v-model="perPage" :options="pageOptions" class="modern-select"></BFormSelect>
+                  </div>
+                  <div class="search-wrapper-table">
+                    <i class="bi bi-search search-icon-table"></i>
+                    <BFormInput
+                      v-model="filter"
+                      type="search"
+                      placeholder="Rechercher un participant..."
+                      class="search-input-table"
+                    ></BFormInput>
+                  </div>
+                </div>
                 <div v-if="loading" class="text-center my-5">
                   <q-spinner-ball color="green" size="50px" />
                 </div>
@@ -536,19 +613,19 @@ export default {
                   <i class="uil uil-folder-open text-muted" style="font-size: 3rem"></i>
                   <p class="mt-3 text-muted">Aucun Participants</p>
                 </div>
-                <BTable
-                  v-else
-                  table-class="table table-centered datatable table-card-list"
-                  thead-tr-class="bg-transparent"
-                  :items="orderData"
-                  :fields="fields"
-                  responsive="sm"
-                  :per-page="perPage"
-                  :current-page="currentPage"
-                  :filter="filter"
-                  :filter-included-fields="filterOn"
-                  @filtered="onFiltered"
-                >
+                <div v-else class="table-wrapper">
+                  <BTable
+                    table-class="modern-table"
+                    thead-tr-class="table-header"
+                    :items="orderData"
+                    :fields="fields"
+                    responsive="sm"
+                    :per-page="perPage"
+                    :current-page="currentPage"
+                    :filter="filter"
+                    :filter-included-fields="filterOn"
+                    @filtered="onFiltered"
+                  >
                   <template v-slot:cell(check)="data">
                     <div class="custom-control custom-checkbox text-center">
                       <input
@@ -573,16 +650,15 @@ export default {
                   </template>
 
                   <template v-slot:cell(gender)="data">
-                    <a
-                      href="#"
-                      class="badge"
+                    <span
+                      class="badge badge-pill font-size-12"
                       :class="{
-                        'bg-info': data.item.participantProfile.gender === 'M',
-
-                        'bg-pink': data.item.participantProfile.gender === 'F',
+                        'bg-soft-primary': data.item.participantProfile.gender === 'M',
+                        'bg-soft-danger': data.item.participantProfile.gender === 'F',
                       }"
-                      >{{ data.item.participantProfile.gender === 'M' ? 'Homme' : 'Femme' }}</a
                     >
+                      {{ data.item.participantProfile.gender === 'M' ? 'Homme' : 'Femme' }}
+                    </span>
                   </template>
 
                   <template v-slot:cell(country)="data">
@@ -593,20 +669,19 @@ export default {
                     }}</a>
                   </template>
                   <template v-slot:cell(enabled)="data">
-                    <a
-                      href="#"
-                      class="badge"
+                    <span
+                      class="badge badge-pill font-size-12"
                       :class="{
-                        'bg-success': data.item.enabled === true,
-
-                        'bg-danger': data.item.enabled === null || data.item.enabled === false,
+                        'bg-soft-success': data.item.enabled === true,
+                        'bg-soft-danger': data.item.enabled === null || data.item.enabled === false,
                       }"
-                      >{{
+                    >
+                      {{
                         data.item.enabled === null || data.item.enabled === false
                           ? 'Non Activé'
                           : 'Activé'
-                      }}</a
-                    >
+                      }}
+                    </span>
                   </template>
                   <template v-slot:cell(action)="data">
                     <ul class="list-inline mb-0">
@@ -648,140 +723,113 @@ export default {
                       </li>
                     </ul>
                   </template>
-                </BTable>
+                  </BTable>
+                </div>
+
+                <!-- Pagination moderne -->
+                <div class="pagination-container">
+                  <BPagination v-model="currentPage" :total-rows="rows" :per-page="perPage" class="modern-pagination" />
+                </div>
+              </div>
                 <q-dialog v-model="ajout">
-                  <q-card
-                    class="contact-dashboard-dialog"
-                    style="width: 800px; max-width: 90vw; height: 550px; max-height: 80vw"
-                  >
+                  <q-card class="modern-modal-card">
                     <!-- Header -->
-                    <q-card-section
-                      class="dialog-header row items-center"
-                      style="background: white"
-                    >
+                    <q-card-section class="dialog-header row items-center">
                       <div class="header-text q-ml-md">
                         <div v-if="loadingx" class="skeleton skeleton-title"></div>
-                        <div v-else class="name text-warning">{{ detailData?.email }}</div>
-                        <div class="subtitle text-warning">Détail</div>
+                        <div v-else class="name">{{ detailData?.email }}</div>
+                        <div class="subtitle">Détails du Participant</div>
                       </div>
                       <q-space />
                     </q-card-section>
 
                     <q-separator />
-                    <q-card-section>
-                      <BRow class="d-flex justify-content-center">
-                        <BCol md="6" cols="xl-6">
-                          <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-                            <BCardBody
-                              class="d-flex justify-content-between align-items-center p-3 bg-light"
-                            >
-                              <div>
-                                <div class="d-flex align-items-center mb-2">
-                                  <i class="bi bi-building text-warning fs-3 me-2"></i>
-                                  <h4 v-if="loadingx" class="skeleton skeleton-title"></h4>
-                                  <h4 v-else class="fw-bold mb-0 fs-2">
-                                    <CountToComponent
-                                      :startVal="0"
-                                      :endVal="statss.sondage"
-                                      :duration="2000"
-                                    />
-                                  </h4>
-                                </div>
+                    <q-card-section class="modal-stats-section">
+                      <div class="modal-stats-grid">
+                        <div class="modal-stat-card modal-stat-warning">
+                          <div class="modal-stat-icon">
+                            <i class="bi bi-clipboard-data-fill"></i>
+                          </div>
+                          <div class="modal-stat-content">
+                            <div v-if="loadingx" class="skeleton skeleton-title"></div>
+                            <div v-else class="modal-stat-value">
+                              <CountToComponent
+                                :startVal="0"
+                                :endVal="statss.sondage"
+                                :duration="2000"
+                              />
+                            </div>
+                            <div class="modal-stat-label">Sondages</div>
+                          </div>
+                        </div>
 
-                                <span
-                                  class="badge bg-warning-subtle text-warning fw-semibold px-3 py-1 rounded-pill"
-                                  >Sondages</span
-                                >
-                              </div>
-                            </BCardBody>
-                          </BCard>
-                        </BCol>
-
-                        <BCol md="6" cols="xl-6">
-                          <BCard no-body class="shadow-sm rounded-4 stat-card shadow-success">
-                            <BCardBody
-                              class="d-flex justify-content-between align-items-center p-3 bg-light"
-                            >
-                              <div>
-                                <div class="d-flex align-items-center mb-2">
-                                  <i class="bi bi-building text-success fs-3 me-2"></i>
-                                  <h4 v-if="loadingx" class="skeleton skeleton-title"></h4>
-                                  <h4 v-else class="fw-bold mb-0 fs-2">
-                                    <CountToComponent
-                                      :startVal="0"
-                                      :endVal="statss.sondageP"
-                                      :duration="2000"
-                                    />
-                                  </h4>
-                                </div>
-                                <span
-                                  class="badge bg-success-subtle text-success fw-semibold px-3 py-1 rounded-pill"
-                                  >Réponses</span
-                                >
-                              </div>
-                            </BCardBody>
-                          </BCard>
-                        </BCol>
-                      </BRow>
+                        <div class="modal-stat-card modal-stat-success">
+                          <div class="modal-stat-icon">
+                            <i class="bi bi-check-circle-fill"></i>
+                          </div>
+                          <div class="modal-stat-content">
+                            <div v-if="loadingx" class="skeleton skeleton-title"></div>
+                            <div v-else class="modal-stat-value">
+                              <CountToComponent
+                                :startVal="0"
+                                :endVal="statss.sondageP"
+                                :duration="2000"
+                              />
+                            </div>
+                            <div class="modal-stat-label">Réponses</div>
+                          </div>
+                        </div>
+                      </div>
                     </q-card-section>
 
                     <!-- Content -->
                     <q-card-section class="dialog-content">
-                      <BRow class="d-flex">
-                        <BCol md="6" cols="xl-6">
-                          <div class="info-card">
-                            <q-icon name="badge" size="20px" class="icon" />
-                            <div class="info-text">
-                              <div class="label">Nom</div>
-                              <div v-if="loadingx" class="skeleton skeleton-text"></div>
-                              <div v-else class="value">
-                                {{ detailData.participantProfile?.lastName }}
-                                {{ detailData.participantProfile?.firstName }}
-                              </div>
-                            </div>
+                      <div class="info-card">
+                        <q-icon name="badge" size="20px" class="icon" />
+                        <div class="info-text">
+                          <div class="label">Nom</div>
+                          <div v-if="loadingx" class="skeleton skeleton-text"></div>
+                          <div v-else class="value">
+                            {{ detailData.participantProfile?.lastName }}
+                            {{ detailData.participantProfile?.firstName }}
                           </div>
-                        </BCol>
-                        <BCol md="6" cols="xl-6">
-                          <div class="info-card">
-                            <q-icon name="cake" size="20px" class="icon" />
-                            <div class="info-text">
-                              <div class="label">Âge</div>
-                              <div v-if="loadingx" class="skeleton skeleton-text"></div>
-                              <div v-else class="value">
-                                {{ getAge(detailData.participantProfile?.birthDate) }}
-                              </div>
-                            </div>
+                        </div>
+                      </div>
+
+                      <div class="info-card">
+                        <q-icon name="cake" size="20px" class="icon" />
+                        <div class="info-text">
+                          <div class="label">Âge</div>
+                          <div v-if="loadingx" class="skeleton skeleton-text"></div>
+                          <div v-else class="value">
+                            {{ getAge(detailData.participantProfile?.birthDate) }}
                           </div>
-                        </BCol>
-                      </BRow>
-                      <BRow>
-                        <BCol md="6" cols="xl-6">
-                          <div class="info-card">
-                            <q-icon name="phone" size="20px" class="icon" />
-                            <div class="info-text">
-                              <div class="label">Téléphone</div>
-                              <div v-if="loadingx" class="skeleton skeleton-text"></div>
-                              <div v-else class="value">
-                                {{ detailData.participantProfile?.phone }}
-                              </div>
-                            </div>
+                        </div>
+                      </div>
+
+                      <div class="info-card">
+                        <q-icon name="phone" size="20px" class="icon" />
+                        <div class="info-text">
+                          <div class="label">Téléphone</div>
+                          <div v-if="loadingx" class="skeleton skeleton-text"></div>
+                          <div v-else class="value">
+                            {{ detailData.participantProfile?.phone }}
                           </div>
-                        </BCol>
-                        <BCol md="6" cols="xl-6">
-                          <div class="info-card">
-                            <q-icon name="wc" size="20px" class="icon" />
-                            <div class="info-text">
-                              <div class="label">Genre</div>
-                              <div v-if="loadingx" class="skeleton skeleton-text"></div>
-                              <div v-else class="value">
-                                {{
-                                  detailData.participantProfile?.gender === 'M' ? 'Homme' : 'Femme'
-                                }}
-                              </div>
-                            </div>
+                        </div>
+                      </div>
+
+                      <div class="info-card">
+                        <q-icon name="wc" size="20px" class="icon" />
+                        <div class="info-text">
+                          <div class="label">Genre</div>
+                          <div v-if="loadingx" class="skeleton skeleton-text"></div>
+                          <div v-else class="value">
+                            {{
+                              detailData.participantProfile?.gender === 'M' ? 'Homme' : 'Femme'
+                            }}
                           </div>
-                        </BCol>
-                      </BRow>
+                        </div>
+                      </div>
 
                       <div class="info-card">
                         <q-icon name="place" size="20px" class="icon" />
@@ -797,51 +845,26 @@ export default {
                     </q-card-section>
                   </q-card>
                 </q-dialog>
-              </div>
-              <BRow>
-                <BCol>
-                  <div class="dataTables_paginate paging_simple_numbers float-end">
-                    <ul class="pagination pagination-rounded">
-                      <BPagination v-model="currentPage" :total-rows="rows" :per-page="perPage" />
-                    </ul>
-                  </div>
-                </BCol>
-              </BRow>
             </BTab>
             <BTab title-item-class="d-flex align-items-center">
               <template #title>
                 <i class="bi bi-building text-warning fs-3 me-2"></i>Business</template
               >
-              <div
-                class="ttable table-centered datatable dt-responsive nowrap table-card-list dataTable no-footer dtr-inline"
-              >
-                <BRow>
-                  <BCol sm="12" md="6">
-                    <div id="tickets-table_length" class="dataTables_length">
-                      <label class="d-inline-flex align-items-center">
-                        Trier:
-                        <BFormSelect
-                          v-model="perPages"
-                          size="sm"
-                          :options="pageOptionss"
-                        ></BFormSelect>
-                      </label>
-                    </div>
-                  </BCol>
-                  <BCol sm="12" md="6">
-                    <div id="tickets-table_filter" class="dataTables_filter text-md-end">
-                      <label class="d-inline-flex align-items-center">
-                        Recherche:
-                        <BFormInput
-                          v-model="filters"
-                          type="search"
-                          placeholder="Recherche..."
-                          class="form-control form-control-sm ms-2"
-                        ></BFormInput>
-                      </label>
-                    </div>
-                  </BCol>
-                </BRow>
+              <div class="table-container-modern">
+                <div class="table-toolbar">
+                  <div class="table-control-item">
+                    <BFormSelect v-model="perPages" :options="pageOptionss" class="modern-select"></BFormSelect>
+                  </div>
+                  <div class="search-wrapper-table">
+                    <i class="bi bi-search search-icon-table"></i>
+                    <BFormInput
+                      v-model="filters"
+                      type="search"
+                      placeholder="Rechercher un business..."
+                      class="search-input-table"
+                    ></BFormInput>
+                  </div>
+                </div>
                 <div v-if="loading" class="text-center my-5">
                   <q-spinner-ball color="green" size="50px" />
                 </div>
@@ -852,10 +875,10 @@ export default {
                   <i class="uil uil-folder-open text-muted" style="font-size: 3rem"></i>
                   <p class="mt-3 text-muted">Aucun Businnes</p>
                 </div>
-                <BTable
-                  v-else
-                  table-class="table table-centered datatable table-card-list"
-                  thead-tr-class="bg-transparent"
+                <div v-else class="table-wrapper">
+                  <BTable
+                    table-class="modern-table"
+                    thead-tr-class="table-header"
                   :items="orderDatas"
                   :fields="fieldss"
                   responsive="sm"
@@ -887,16 +910,15 @@ export default {
                   </template>
 
                   <template v-slot:cell(gender)="data">
-                    <a
-                      href="#"
-                      class="badge"
+                    <span
+                      class="badge badge-pill font-size-12"
                       :class="{
-                        'bg-info': data.item.businessAccount.gender === 'M',
-
-                        'bg-pink': data.item.businessAccount.gender === 'F',
+                        'bg-soft-primary': data.item.businessAccount.gender === 'M',
+                        'bg-soft-danger': data.item.businessAccount.gender === 'F',
                       }"
-                      >{{ data.item.businessAccount.gender === 'M' ? 'Homme' : 'Femme' }}</a
                     >
+                      {{ data.item.businessAccount.gender === 'M' ? 'Homme' : 'Femme' }}
+                    </span>
                   </template>
 
                   <template v-slot:cell(position)="data">
@@ -907,20 +929,19 @@ export default {
                     <a href="#" class="text-body">{{ data.item.businessAccount.country }}</a>
                   </template>
                   <template v-slot:cell(enabled)="data">
-                    <a
-                      href="#"
-                      class="badge"
+                    <span
+                      class="badge badge-pill font-size-12"
                       :class="{
-                        'bg-success': data.item.enabled === true,
-
-                        'bg-danger': data.item.enabled === null || data.item.enabled === false,
+                        'bg-soft-success': data.item.enabled === true,
+                        'bg-soft-danger': data.item.enabled === null || data.item.enabled === false,
                       }"
-                      >{{
+                    >
+                      {{
                         data.item.enabled === null || data.item.enabled === false
                           ? 'Non Activé'
                           : 'Activé'
-                      }}</a
-                    >
+                      }}
+                    </span>
                   </template>
                   <template v-slot:cell(action)="data">
                     <ul class="list-inline mb-0">
@@ -962,200 +983,162 @@ export default {
                       </li>
                     </ul>
                   </template>
-                </BTable>
+                  </BTable>
+                </div>
+
+                <!-- Pagination moderne -->
+                <div class="pagination-container">
+                  <BPagination v-model="currentPages" :total-rows="rowss" :per-page="perPages" class="modern-pagination" />
+                </div>
+              </div>
                 <q-dialog v-model="ajouts">
-                  <q-card
-                    class="business-dashboard-dialog"
-                    style="width: 800px; max-width: 90vw; height: 500px; max-height: 80vw"
-                  >
+                  <q-card class="modern-modal-card">
                     <!-- Header -->
-                    <q-card-section class="dialog-header row items-center q-pa-sm">
-                      <div class="q-ml-sm">
-                        <span v-if="loadingx" class="skeleton skeleton-title"></span>
-                        <div v-else class="text-h6 text-warning">{{ detailData?.email }}</div>
-                        <div class="text-caption text-warning">Détails de l'utilisateur</div>
+                    <q-card-section class="dialog-header row items-center">
+                      <div class="header-text q-ml-md">
+                        <div v-if="loadingx" class="skeleton skeleton-title"></div>
+                        <div v-else class="name">{{ detailData?.email }}</div>
+                        <div class="subtitle">Détails du Business</div>
                       </div>
                       <q-space />
                     </q-card-section>
 
                     <q-separator color="grey-3" />
-                    <q-card-section>
-                      <BRow class="d-flex justify-content-center">
-                        <BCol md="4" cols="xl-4">
-                          <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-                            <BCardBody
-                              class="d-flex justify-content-between align-items-center p-3 bg-light"
-                            >
-                              <div>
-                                <div class="d-flex align-items-center mb-2">
-                                  <i class="bi bi-people text-warning fs-3 me-2"></i>
-                                  <h4 v-if="loadingx" class="skeleton skeleton-title"></h4>
-                                  <h4 v-else class="fw-bold mb-0 fs-2">
-                                    <CountToComponent
-                                      :startVal="0"
-                                      :endVal="stats.sondage"
-                                      :duration="2000"
-                                    />
-                                  </h4>
-                                </div>
+                    <q-card-section class="modal-stats-section">
+                      <div class="modal-stats-grid modal-stats-grid-3">
+                        <div class="modal-stat-card modal-stat-warning">
+                          <div class="modal-stat-icon">
+                            <i class="bi bi-clipboard-data-fill"></i>
+                          </div>
+                          <div class="modal-stat-content">
+                            <div v-if="loadingx" class="skeleton skeleton-title"></div>
+                            <div v-else class="modal-stat-value">
+                              <CountToComponent
+                                :startVal="0"
+                                :endVal="stats.sondage"
+                                :duration="2000"
+                              />
+                            </div>
+                            <div class="modal-stat-label">Sondages</div>
+                          </div>
+                        </div>
 
-                                <span
-                                  class="badge bg-warning-subtle text-warning fw-semibold px-3 py-1 rounded-pill"
-                                  >Sondages</span
-                                >
-                              </div>
-                            </BCardBody>
-                          </BCard>
-                        </BCol>
+                        <div class="modal-stat-card modal-stat-success">
+                          <div class="modal-stat-icon">
+                            <i class="bi bi-check-circle-fill"></i>
+                          </div>
+                          <div class="modal-stat-content">
+                            <div v-if="loadingx" class="skeleton skeleton-title"></div>
+                            <div v-else class="modal-stat-value">
+                              <CountToComponent
+                                :startVal="0"
+                                :endVal="stats.sondageP"
+                                :duration="2000"
+                              />
+                            </div>
+                            <div class="modal-stat-label">Sondages Publiés</div>
+                          </div>
+                        </div>
 
-                        <BCol md="4" cols="xl-4">
-                          <BCard no-body class="shadow-sm rounded-4 stat-card shadow-success">
-                            <BCardBody
-                              class="d-flex justify-content-between align-items-center p-3 bg-light"
-                            >
-                              <div>
-                                <div class="d-flex align-items-center mb-2">
-                                  <i class="bi bi-people text-success fs-3 me-2"></i>
-                                  <h4 v-if="loadingx" class="skeleton skeleton-title"></h4>
-                                  <h4 v-else class="fw-bold mb-0 fs-2">
-                                    <CountToComponent
-                                      :startVal="0"
-                                      :endVal="stats.sondageP"
-                                      :duration="2000"
-                                    />
-                                  </h4>
-                                </div>
-                                <span
-                                  class="badge bg-success-subtle text-success fw-semibold px-3 py-1 rounded-pill"
-                                  >Sondages Publier</span
-                                >
-                              </div>
-                            </BCardBody>
-                          </BCard>
-                        </BCol>
-
-                        <BCol md="4" cols="xl-4">
-                          <BCard no-body class="shadow-sm rounded-4 stat-card shadow-success">
-                            <BCardBody
-                              class="d-flex justify-content-between align-items-center p-3 bg-light"
-                            >
-                              <div>
-                                <div class="d-flex align-items-center mb-2">
-                                  <i class="bi bi-people text-success fs-3 me-2"></i>
-                                  <h4 v-if="loadingx" class="skeleton skeleton-title"></h4>
-                                  <h4 v-else class="fw-bold mb-0 fs-2">
-                                    <CountToComponent
-                                      :startVal="0"
-                                      :endVal="stats.ReponseN"
-                                      :duration="2000"
-                                    />
-                                  </h4>
-                                </div>
-                                <span
-                                  class="badge bg-success-subtle text-success fw-semibold px-3 py-1 rounded-pill"
-                                  >Réponses</span
-                                >
-                              </div>
-                            </BCardBody>
-                          </BCard>
-                        </BCol>
-                      </BRow>
+                        <div class="modal-stat-card modal-stat-info">
+                          <div class="modal-stat-icon">
+                            <i class="bi bi-chat-dots-fill"></i>
+                          </div>
+                          <div class="modal-stat-content">
+                            <div v-if="loadingx" class="skeleton skeleton-title"></div>
+                            <div v-else class="modal-stat-value">
+                              <CountToComponent
+                                :startVal="0"
+                                :endVal="stats.ReponseN"
+                                :duration="2000"
+                              />
+                            </div>
+                            <div class="modal-stat-label">Réponses</div>
+                          </div>
+                        </div>
+                      </div>
                     </q-card-section>
 
-                    <q-card-section class="dialog-content">
-                      <BRow>
-                        <BCol md="4" cols="xl-4">
-                          <div class="info-card">
-                            <q-icon name="corporate_fare" size="20px" class="icon" />
-                            <div class="info-text">
-                              <div class="label">Compagnie</div>
-                              <div v-if="loadingx" class="skeleton skeleton-text"></div>
-                              <div v-else class="value">
-                                {{ detailData.businessAccount?.companyName }}
-                              </div>
-                            </div>
+                    <q-card-section class="dialog-content dialog-content-3col">
+                      <div class="info-card">
+                        <q-icon name="corporate_fare" size="20px" class="icon" />
+                        <div class="info-text">
+                          <div class="label">Compagnie</div>
+                          <div v-if="loadingx" class="skeleton skeleton-text"></div>
+                          <div v-else class="value">
+                            {{ detailData.businessAccount?.companyName }}
                           </div>
-                        </BCol>
-                        <BCol md="4" cols="xl-4">
-                          <div class="info-card">
-                            <q-icon name="person" size="20px" class="icon" />
-                            <div class="info-text">
-                              <div class="label">Nom d'utilisateur</div>
-                              <div v-if="loadingx" class="skeleton skeleton-text"></div>
-                              <div v-else class="value">
-                                {{ detailData.businessAccount?.lastName }}
-                                {{ detailData.businessAccount?.firstName }}
-                              </div>
-                            </div>
-                          </div>
-                        </BCol>
-                        <BCol md="4" cols="xl-4">
-                          <div class="info-card">
-                            <i class="bi bi-postcard-fill icon" style="font-size: 20px"></i>
-                            <div class="info-text">
-                              <div class="label">Métier</div>
-                              <div v-if="loadingx" class="skeleton skeleton-text"></div>
-                              <div v-else class="value">
-                                {{ detailData.businessAccount?.position }}
-                              </div>
-                            </div>
-                          </div>
-                        </BCol>
-                      </BRow>
+                        </div>
+                      </div>
 
-                      <BRow>
-                        <BCol md="4" cols="xl-4">
-                          <div class="info-card">
-                            <q-icon name="phone" size="20px" class="icon" />
-                            <div class="info-text">
-                              <div class="label">Téléphone</div>
-                              <div v-if="loadingx" class="skeleton skeleton-text"></div>
-                              <div v-else class="value">
-                                {{ detailData.businessAccount?.phone }}
-                              </div>
-                            </div>
+                      <div class="info-card">
+                        <q-icon name="person" size="20px" class="icon" />
+                        <div class="info-text">
+                          <div class="label">Nom d'utilisateur</div>
+                          <div v-if="loadingx" class="skeleton skeleton-text"></div>
+                          <div v-else class="value">
+                            {{ detailData.businessAccount?.lastName }}
+                            {{ detailData.businessAccount?.firstName }}
                           </div>
-                        </BCol>
-                        <BCol md="4" cols="xl-4">
-                          <div class="info-card">
-                            <q-icon name="wc" size="20px" class="icon" />
-                            <div class="info-text">
-                              <div class="label">Genre</div>
-                              <div v-if="loadingx" class="skeleton skeleton-text"></div>
-                              <div v-else class="value">
-                                {{ detailData.businessAccount?.gender === 'M' ? 'Homme' : 'Femme' }}
-                              </div>
-                            </div>
+                        </div>
+                      </div>
+
+                      <div class="info-card">
+                        <i class="bi bi-postcard-fill icon" style="font-size: 20px"></i>
+                        <div class="info-text">
+                          <div class="label">Métier</div>
+                          <div v-if="loadingx" class="skeleton skeleton-text"></div>
+                          <div v-else class="value">
+                            {{ detailData.businessAccount?.position }}
                           </div>
-                        </BCol>
-                        <BCol md="4" cols="xl-4">
-                          <div class="info-card">
-                            <i class="bi bi-geo-alt icon" style="font-size: 20px"></i>
-                            <div class="info-text">
-                              <div class="label">Localité</div>
-                              <div v-if="loadingx" class="skeleton skeleton-text"></div>
-                              <div v-else class="value">
-                                {{ detailData.businessAccount?.country }}
-                              </div>
-                            </div>
+                        </div>
+                      </div>
+
+                      <div class="info-card">
+                        <q-icon name="phone" size="20px" class="icon" />
+                        <div class="info-text">
+                          <div class="label">Téléphone</div>
+                          <div v-if="loadingx" class="skeleton skeleton-text"></div>
+                          <div v-else class="value">
+                            {{ detailData.businessAccount?.phone }}
                           </div>
-                        </BCol>
-                      </BRow>
+                        </div>
+                      </div>
+
+                      <div class="info-card">
+                        <q-icon name="wc" size="20px" class="icon" />
+                        <div class="info-text">
+                          <div class="label">Genre</div>
+                          <div v-if="loadingx" class="skeleton skeleton-text"></div>
+                          <div v-else class="value">
+                            {{ detailData.businessAccount?.gender === 'M' ? 'Homme' : 'Femme' }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="info-card">
+                        <i class="bi bi-geo-alt icon" style="font-size: 20px"></i>
+                        <div class="info-text">
+                          <div class="label">Localité</div>
+                          <div v-if="loadingx" class="skeleton skeleton-text"></div>
+                          <div v-else class="value">
+                            {{ detailData.businessAccount?.country }}
+                          </div>
+                        </div>
+                      </div>
                     </q-card-section>
 
                     <!-- Actions -->
+                    <q-card-actions align="right">
+                      <q-btn
+                        v-close-popup
+                        flat
+                        label="Fermer"
+                        color="primary"
+                      />
+                    </q-card-actions>
                   </q-card>
                 </q-dialog>
-              </div>
-              <BRow>
-                <BCol>
-                  <div class="dataTables_paginate paging_simple_numbers float-end">
-                    <ul class="pagination pagination-rounded">
-                      <BPagination v-model="currentPage" :total-rows="rows" :per-page="perPage" />
-                    </ul>
-                  </div>
-                </BCol>
-              </BRow>
             </BTab>
           </BTabs>
         </div>
@@ -1164,479 +1147,10 @@ export default {
   </div>
 </template>
 <style lang="scss">
-.stat-card {
-  transition: all 0.4s ease-in-out;
-  border: 2px solid transparent;
-  background: linear-gradient(135deg, #fdfdfd, #f5f5f5);
-  position: relative;
-  overflow: hidden;
-}
-.stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
-  border-radius: 20px;
-}
+@import '../../../css/admin/users-management.scss';
+@import '../../../css/admin/tables-shared.scss';
+@import '../../../css/admin/badges.scss';
 
-.shadow-warning:hover {
-  border-color: #f1c40f;
-  background-color: linear-gradient(135deg, #f8dc9f, #fff3cc);
-  box-shadow: 0 0 18px rgba(241, 196, 15, 0.6);
-}
-.shadow-success:hover {
-  border-color: #2ecc71;
-  background: linear-gradient(135deg, #2ecc71, #d4f5e6);
-  box-shadow: 0 0 18px rgba(46, 204, 113, 0.6);
-}
-.shadow-danger:hover {
-  border-color: #e74c3c;
-  background: linear-gradient(135deg, #ffecec, #ffd9d6);
-  box-shadow: 0 0 18px rgba(231, 76, 60, 0.6);
-}
-.business-dashboard-dialog {
-  width: 800px;
-  max-width: 90vw;
-  max-height: 80vh;
-  border-radius: 14px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-
-  .dialog-header {
-    padding: 16px;
-
-    .header-text {
-      .name {
-        font-weight: 700;
-        font-size: 1.3rem;
-      }
-      .subtitle {
-        font-size: 0.85rem;
-        opacity: 0.85;
-      }
-    }
-
-    q-btn {
-      &:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-      }
-    }
-  }
-
-  .stat-card {
-    transition: all 0.4s ease-in-out;
-    border: 2px solid transparent;
-    background: linear-gradient(135deg, #fdfdfd, #f5f5f5);
-    position: relative;
-    overflow: hidden;
-  }
-  .stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
-    border-radius: 20px;
-  }
-
-  .shadow-warning:hover {
-    border-color: #f1c40f;
-    background-color: linear-gradient(135deg, #f8dc9f, #fff3cc);
-    box-shadow: 0 0 18px rgba(241, 196, 15, 0.6);
-  }
-  .shadow-success:hover {
-    border-color: #2ecc71;
-    background: linear-gradient(135deg, #2ecc71, #d4f5e6);
-    box-shadow: 0 0 18px rgba(46, 204, 113, 0.6);
-  }
-  .shadow-danger:hover {
-    border-color: #e74c3c;
-    background: linear-gradient(135deg, #ffecec, #ffd9d6);
-    box-shadow: 0 0 18px rgba(231, 76, 60, 0.6);
-  }
-
-  .dialog-content {
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-
-    .info-card {
-      display: flex;
-      align-items: center;
-      background: #f8f9fa;
-      border-radius: 8px;
-      padding: 10px 14px;
-      transition: all 0.2s;
-
-      &:hover {
-        background: #e9ecef;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-      }
-
-      .icon {
-        color: #0d6efd;
-        margin-right: 12px;
-      }
-
-      .info-text {
-        display: flex;
-        flex-direction: column;
-
-        .label {
-          font-size: 0.8rem;
-          color: #6c757d;
-        }
-
-        .value {
-          font-weight: 600;
-          font-size: 1rem;
-          color: #212529;
-        }
-
-        .skeleton {
-          height: 18px;
-          width: 130px;
-        }
-      }
-    }
-  }
-}
-
-.tabs-morphing-container {
-  position: relative;
-  padding: 20px;
-  border-radius: 30px;
-  overflow: hidden;
-  z-index: 0;
-  background: linear-gradient(135deg, #f8f9ff, #eef2ff);
-}
-
-/* Les onglets */
-.morph-tabs .nav-tabs {
-  border: none;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 16px;
-  padding: 6px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
-
-/* Chaque onglet */
-.morph-tabs .nav-link {
-  border-radius: 12px;
-  padding: 10px 20px;
-  margin: 0 5px;
-  color: #444;
-  transition: all 0.3s ease-in-out;
-}
-
-/* Hover */
-.morph-tabs .nav-link:hover {
-  background: rgba(99, 102, 241, 0.1); /* indigo clair */
-  color: #4f46e5;
-}
-
-/* Actif */
-.morph-tabs .nav-link.active {
-  background: linear-gradient(135deg, #4f46e5, #6366f1);
-  color: #fff !important;
-  box-shadow: 0 3px 8px rgba(79, 70, 229, 0.3);
-  transform: scale(1.05);
-}
-
-.progress {
-  width: 100%;
-  position: absolute;
-  height: 4px;
-}
-
-.wizard-steps {
-  position: relative;
-  z-index: 3;
-  width: 100%;
-
-  .wizard-step {
-    height: 60px;
-    width: 60px;
-    border-radius: 50%;
-    border: 3px solid;
-    display: flex;
-    justify-content: center;
-    z-index: 9;
-    position: relative;
-    background: white;
-  }
-}
-
-.step-arrow-nav {
-  .nav-link {
-    background: #f3f2ee;
-    padding: 4px 0;
-    border-radius: 0 !important;
-  }
-}
-
-.wizard {
-  .nav-link:not(.active) {
-    color: #f3f2ee;
-
-    .wizard-icon {
-      color: #a5a5a5;
-    }
-  }
-}
-
-[data-bs-theme='dark'] {
-  .wizard-steps .wizard-step:not(.active) {
-    background: var(--bs-input-bg);
-  }
-
-  .step-arrow-nav {
-    .nav-link:not(.active) {
-      background: var(--bs-input-bg);
-    }
-  }
-}
-/* === Boutons modernes === */
-.btn-success {
-  background: linear-gradient(135deg, #34c38f, #2ea3f2);
-  border: none;
-  border-radius: 50px;
-  transition: all 0.3s ease;
-  font-weight: 600;
-  box-shadow: 0 4px 10px rgba(46, 163, 242, 0.3);
-
-  &:hover {
-    background: linear-gradient(135deg, #2ea3f2, #34c38f);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(46, 163, 242, 0.4);
-  }
-
-  &:active {
-    transform: scale(0.96);
-  }
-}
-
-/* === Table améliorée === */
-.table tbody tr {
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    background: #f9fcff;
-    box-shadow: #1f6bad33 0px 4px 8px;
-    transform: scale(1.01);
-  }
-}
-
-/* Icônes d'action */
-.list-inline-item a {
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    transform: scale(1.2) rotate(-5deg);
-    opacity: 0.8;
-  }
-}
-
-/* === Dialogues avec animation === */
-.q-dialog__inner {
-  animation: fadeScale 0.35s ease forwards;
-}
-
-@keyframes fadeScale {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* === Inputs flottants modernes === */
-.form-control {
-  border-radius: 12px;
-  transition: all 0.3s ease;
-
-  &:focus {
-    border-color: #2ea3f2;
-    box-shadow: 0 0 8px rgba(46, 163, 242, 0.4);
-    transform: scale(1.01);
-  }
-}
-
-.bg-gradient {
-  background: linear-gradient(135deg, #0d6efd, #6610f2);
-}
-
-/* === Champs modernes avec floating label === */
-.floating-label {
-  position: relative;
-}
-
-.form-control.form-control-modern {
-  border-radius: 12px;
-  border: 2px solid #e0e7ff;
-  padding: 0.9rem 1rem;
-  width: 100%;
-  transition: all 0.3s ease;
-  background: #fff;
-}
-
-.form-control.form-control-modern:focus {
-  border-color: #10d0f2;
-  box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
-  transform: scale(1.01);
-}
-
-/* Labels flottants */
-.floating-label label {
-  position: absolute;
-  top: 50%;
-  left: 15px;
-  transform: translateY(-50%);
-  color: #6c757d;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  pointer-events: none;
-  background: white;
-  padding: 0 5px;
-}
-
-.form-control-modern:focus + label,
-.form-control-modern:not(:placeholder-shown) + label {
-  top: -10px;
-  left: 10px;
-  font-size: 0.8rem;
-  color: #10d0f2;
-}
-
-/* Multiselect alignement */
-.multiselect {
-  border-radius: 12px !important;
-  border: 2px solid #e0e7ff !important;
-  padding: 6px 10px;
-  transition: all 0.3s ease;
-}
-.multiselect:focus-within {
-  border-color: #10d0f2 !important;
-  box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
-}
-/* Card principal du dialog */
-.contact-dashboard-dialog {
-  width: 460px;
-  max-width: 90vw;
-  border-radius: 14px;
-  overflow: hidden;
-
-  .dialog-header {
-    padding: 16px;
-    .header-text {
-      .name {
-        font-weight: 700;
-        font-size: 1.3rem;
-      }
-      .subtitle {
-        font-size: 0.85rem;
-        opacity: 0.8;
-      }
-    }
-    q-btn {
-      &:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-      }
-    }
-  }
-
-  .dialog-content {
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-
-    .info-card {
-      display: flex;
-      align-items: center;
-      background: #f8f9fa;
-      border-radius: 8px;
-      padding: 10px 14px;
-      transition: all 0.2s;
-      cursor: default;
-
-      &:hover {
-        background: #e9ecef;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      }
-
-      .icon {
-        color: #0d6efd;
-        margin-right: 12px;
-      }
-
-      .info-text {
-        display: flex;
-        flex-direction: column;
-
-        .label {
-          font-size: 0.8rem;
-          color: #6c757d;
-        }
-
-        .value {
-          font-weight: 600;
-          font-size: 1rem;
-          color: #212529;
-        }
-
-        .skeleton {
-          height: 18px;
-          width: 130px;
-        }
-      }
-    }
-  }
-}
-
-/* Animation d'ouverture */
-.q-dialog__inner {
-  animation: fadeScale 0.35s ease forwards;
-}
-
-@keyframes fadeScale {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-.skeleton {
-  display: inline-block;
-  height: 1em;
-  background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
-  background-size: 200% 100%;
-  animation: skeleton-loading 1.5s infinite;
-  border-radius: 4px;
-}
-@keyframes skeleton-loading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-.skeleton-title {
-  width: 60%;
-  height: 24px;
-}
-.skeleton-text {
-  width: 100%;
-  height: 16px;
-  margin: 6px 0;
-}
-.bg-pink {
-  background-color: #ff69b4; /* rose */
-  color: white; /* texte blanc pour le contraste */
-}
+// ✅ Tous les styles sont maintenant dans users-management.scss
 </style>
+

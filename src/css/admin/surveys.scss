@@ -1,0 +1,216 @@
+/**
+ * Styles pour les pages de sondages/enquêtes
+ * Pages: enquetes-mes, enquetes-bienvenue, sondage-rapide
+ */
+@import './variables';
+
+/* === Survey Card (si utilisé) === */
+.survey-card {
+  background: white;
+  border: 2px solid $admin-border-light;
+  border-radius: $admin-radius-lg;
+  padding: 1.5rem;
+  transition: all $admin-transition-normal;
+  box-shadow: $admin-shadow-sm;
+
+  &:hover {
+    border-color: $admin-border-medium;
+    box-shadow: $admin-shadow-md;
+    transform: translateY(-4px);
+  }
+
+  .survey-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+
+    .survey-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: $admin-text-primary;
+      margin: 0;
+    }
+
+    .survey-status {
+      padding: 0.375rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+
+      &.status-active {
+        background: #d1fae5;
+        color: #065f46;
+      }
+
+      &.status-draft {
+        background: #fef3c7;
+        color: #92400e;
+      }
+
+      &.status-closed {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+    }
+  }
+
+  .survey-meta {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: $admin-text-secondary;
+
+      i {
+        color: $admin-primary;
+        font-size: 1rem;
+      }
+    }
+  }
+
+  .survey-description {
+    font-size: 0.9rem;
+    color: $admin-text-secondary;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .survey-actions {
+    display: flex;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid $admin-border-light;
+  }
+}
+
+/* === Survey Stats === */
+.survey-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+
+  .stat-box {
+    background: white;
+    border: 2px solid $admin-border-light;
+    border-radius: $admin-radius-md;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: $admin-radius-sm;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: white;
+
+      &.stat-primary {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+      }
+
+      &.stat-success {
+        background: linear-gradient(135deg, #34c38f, #2ea3f2);
+      }
+
+      &.stat-warning {
+        background: linear-gradient(135deg, #ffc107, #ff9800);
+      }
+
+      &.stat-danger {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+      }
+    }
+
+    .stat-content {
+      flex: 1;
+
+      .stat-label {
+        font-size: 0.8rem;
+        color: $admin-text-secondary;
+        font-weight: 600;
+        text-transform: uppercase;
+        margin-bottom: 0.25rem;
+      }
+
+      .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: $admin-text-primary;
+      }
+    }
+  }
+}
+
+/* === Survey Form (création/édition) === */
+.survey-form-section {
+  background: white;
+  border: 2px solid $admin-border-light;
+  border-radius: $admin-radius-xl;
+  padding: 2rem;
+  box-shadow: $admin-shadow-md;
+  margin-bottom: 1.5rem;
+
+  .form-section-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: $admin-text-primary;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid $admin-border-light;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    i {
+      color: $admin-primary;
+      font-size: 1.5rem;
+    }
+  }
+}
+
+/* === Question Builder === */
+.question-item {
+  background: $admin-bg-light;
+  border: 2px solid $admin-border-light;
+  border-radius: $admin-radius-md;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  transition: all $admin-transition-normal;
+
+  &:hover {
+    border-color: $admin-border-medium;
+    box-shadow: $admin-shadow-sm;
+  }
+
+  .question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+
+    .question-number {
+      font-weight: 700;
+      color: $admin-primary;
+      font-size: 1.1rem;
+    }
+
+    .question-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+  }
+}

@@ -1,20 +1,15 @@
 <script>
 import { onMounted, ref } from 'vue'
-import { BRow, BCol, BFormInput, BPagination, BFormSelect, BTable } from 'bootstrap-vue-next'
+import { BFormInput, BPagination } from 'bootstrap-vue-next'
 import { api } from 'src/boot/axios'
 import Swal from 'sweetalert2'
 /**
- * Orders component
+ * Corporate Contacts component - Modern version
  */
 export default {
   components: {
-    BRow,
-    BCol,
-
     BFormInput,
     BPagination,
-    BFormSelect,
-    BTable,
   },
   data() {
     const orderData = ref([])
@@ -82,6 +77,28 @@ export default {
         }
       })
     }
+    const truncateMessage = (message, length = 120) => {
+      if (!message) return ''
+      return message.length > length ? message.substring(0, length) + '...' : message
+    }
+
+    const formatDate = (date) => {
+      if (!date) return ''
+      return new Date(date).toLocaleDateString('fr-FR', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })
+    }
+
+    const formatTime = (date) => {
+      if (!date) return ''
+      return new Date(date).toLocaleTimeString('fr-FR', {
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    }
+
     onMounted(() => {
       gets()
     })
@@ -95,76 +112,43 @@ export default {
       editingSurvey,
       totalRows: 1,
       currentPage: 1,
-      perPage: 10,
+      perPage: 12,
       pageOptions: [10, 25, 50, 100],
       filter: null,
       filterOn: [],
       sortBy: 'age',
       sortDesc: false,
-
       chat: ref(false),
-      fields: [
-        {
-          key: 'check',
-          label: '',
-        },
-        {
-          key: 'email',
-          label: 'Email',
-          sortable: true,
-        },
-        {
-          key: 'phone_number',
-          label: 'Numéro',
-          sortable: true,
-        },
-        {
-          key: 'role',
-          label: 'Role',
-          sortable: true,
-        },
-        {
-          key: 'companyName',
-          label: 'Nom de la compagny',
-          sortable: true,
-        },
-        {
-          key: 'planSize',
-          label: 'Object',
-          sortable: true,
-        },
-
-        {
-          key: 'responses',
-          label: 'Message',
-        },
-
-        'action',
-      ],
-      progressBarValue: 15,
-      activeTab: 1,
-      activeTabArrow: 2,
       loading,
+      truncateMessage,
+      formatDate,
+      formatTime,
     }
   },
   computed: {
-    /**
-     * Total no. of records
-     */
-    rows() {
-      return this.orderData.length
+    filteredContacts() {
+      if (!this.filter) return this.orderData
+      const search = this.filter.toLowerCase()
+      return this.orderData.filter(
+        (contact) =>
+          contact.email?.toLowerCase().includes(search) ||
+          contact.companyName?.toLowerCase().includes(search) ||
+          contact.role?.toLowerCase().includes(search) ||
+          contact.responses?.toLowerCase().includes(search) ||
+          `${contact.firstName} ${contact.lastName}`.toLowerCase().includes(search)
+      )
+    },
+    paginatedContacts() {
+      const start = (this.currentPage - 1) * this.perPage
+      const end = start + this.perPage
+      return this.filteredContacts.slice(start, end)
     },
   },
   mounted() {
-    // Set the initial number of items
     this.totalRows = this.orderData.length
   },
   methods: {
-    /**
-     * Search the table data with search input
-     */
     onFiltered(filteredItems) {
-      // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length
       this.currentPage = 1
     },
@@ -173,211 +157,212 @@ export default {
 </script>
 
 <template>
-  <div>
-    <BRow>
-      <BCol cols="12">
-        <div
-          class="ttable table-centered datatable dt-responsive nowrap table-card-list dataTable no-footer dtr-inline"
-        >
-          <BRow>
-            <BCol sm="12" md="6">
-              <div id="tickets-table_length" class="dataTables_length">
-                <label class="d-inline-flex align-items-center">
-                  Show
-                  <BFormSelect v-model="perPage" size="sm" :options="pageOptions"></BFormSelect
-                  >entries
-                </label>
-              </div>
-            </BCol>
-            <BCol sm="12" md="6">
-              <div id="tickets-table_filter" class="dataTables_filter text-md-end">
-                <label class="d-inline-flex align-items-center">
-                  Recherche:
-                  <BFormInput
-                    v-model="filter"
-                    type="search"
-                    placeholder="Search..."
-                    class="form-control form-control-sm ms-2"
-                  ></BFormInput>
-                </label>
-              </div>
-            </BCol>
-          </BRow>
-          <div v-if="loading" class="text-center my-5">
-            <q-spinner-ball color="green" size="50px" />
+  <div class="modern-admin-page">
+    <!-- Header Section -->
+    <div class="header-card mb-4">
+      <div class="section-header-modern">
+        <div class="section-title-wrapper">
+          <div class="section-icon-modern">
+            <i class="bi bi-building"></i>
           </div>
-          <div
-            v-else-if="Array.isArray(orderData) && orderData.length === 0"
-            class="text-center py-5"
-          >
-            <i class="uil uil-folder-open text-muted" style="font-size: 3rem"></i>
-            <p class="mt-3 text-muted">Aucune Conatct de collaboration</p>
+          <div class="section-title-content">
+            <h3 class="section-title-modern">Contacts Collaborations</h3>
+            <p class="section-subtitle-modern">Gérez les demandes de collaboration d'entreprises</p>
           </div>
-          <BTable
-            v-else
-            table-class="table table-centered datatable table-card-list"
-            thead-tr-class="bg-transparent"
-            :items="orderData"
-            :fields="fields"
-            responsive="sm"
-            :per-page="perPage"
-            :current-page="currentPage"
-            :filter="filter"
-            :filter-included-fields="filterOn"
-            @filtered="onFiltered"
-          >
-            <template v-slot:cell(check)="data">
-              <div class="custom-control custom-checkbox text-center">
-                <input
-                  type="checkbox"
-                  class="form-check-input"
-                  :id="`contacusercheck${data.item.id}`"
-                />
-              </div>
-            </template>
-
-            <template v-slot:cell(email)="data">
-              <a href="#" class="text-body">{{ data.item.email }}</a>
-            </template>
-            <template v-slot:cell(phone_number)="data">
-              <a href="#" class="text-body">{{ data.item.phone_number }}</a>
-            </template>
-            <template v-slot:cell(role)="data">
-              <a href="#" class="text-body">{{ data.item.role }}</a>
-            </template>
-            <template v-slot:cell(companyName)="data">
-              <a href="#" class="text-body">{{ data.item.companyName }}</a>
-            </template>
-
-            <template v-slot:cell(planSize)="data">
-              <a href="#" class="text-body">{{ data.item.planSize }}</a>
-            </template>
-            <template v-slot:cell(responses)="data">
-              <a href="#" class="text-body">{{ data.item.responses }}</a>
-            </template>
-            >
-
-            <template v-slot:cell(action)="data">
-              <ul class="list-inline mb-0">
-                <li class="list-inline-item">
-                  <a
-                    href="#"
-                    class="px-2 text-primary"
-                    @click.prevent="openEditModal(data.item)"
-                    title="détails"
-                  >
-                    <i class="uil uil-book font-size-18"></i>
-                  </a>
-                </li>
-
-                <li class="list-inline-item">
-                  <a
-                    href="#"
-                    class="px-2 text-danger"
-                    @click.prevent="deleteRow(data.item.id)"
-                    title="Delete"
-                  >
-                    <i class="uil uil-trash-alt font-size-18"></i>
-                  </a>
-                </li>
-              </ul>
-            </template>
-          </BTable>
         </div>
-        <BRow>
-          <BCol>
-            <div class="dataTables_paginate paging_simple_numbers float-end">
-              <ul class="pagination pagination-rounded">
-                <BPagination v-model="currentPage" :total-rows="rows" :per-page="perPage" />
-              </ul>
-            </div>
-          </BCol>
-        </BRow>
-      </BCol>
-    </BRow>
-    <q-dialog v-model="edit">
-      <q-card
-        style="
-          width: 750px;
-          max-width: 95vw;
-          border-radius: 14px;
-          overflow: hidden;
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-        "
-      >
-        <!-- Bandeau entête -->
-        <q-card-section
-          class="row items-center q-pa-sm"
-          style="background: linear-gradient(135deg, #2e7d32, #43a047); color: white"
+      </div>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="contacts-section-card">
+      <div class="contacts-toolbar">
+        <div class="search-wrapper">
+          <i class="bi bi-search search-icon"></i>
+          <BFormInput
+            v-model="filter"
+            type="search"
+            placeholder="Rechercher par entreprise, email, rôle..."
+            class="modern-search-input"
+          />
+        </div>
+        <div class="toolbar-actions">
+          <span class="results-count">{{ filteredContacts.length }} contact(s)</span>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div v-if="loading" class="loading-state">
+        <q-spinner-dots color="primary" size="50px" />
+        <p>Chargement des contacts...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div v-else-if="filteredContacts.length === 0" class="empty-state-modern">
+        <i class="bi bi-inbox empty-icon"></i>
+        <h3>Aucun contact</h3>
+        <p v-if="filter">Aucun résultat pour votre recherche</p>
+        <p v-else>Vous n'avez reçu aucune demande de collaboration pour le moment</p>
+      </div>
+
+      <!-- Contacts Grid -->
+      <div v-else class="contacts-grid">
+        <div
+          v-for="contact in paginatedContacts"
+          :key="contact.id"
+          class="corporate-card"
+          @click="openEditModal(contact)"
         >
-          <div>
-            <div class="text-h6 text-bold">{{ formu.firstName }} {{ formu.lastName }}</div>
-            <div class="text-caption">
-              <q-icon name="work" size="16px" class="q-mr-xs" /> {{ formu.role }}
-              <span class="q-mx-sm">•</span>
-              <q-icon name="business" size="16px" class="q-mr-xs" /> {{ formu.companyName }}
+          <div class="corporate-card-header">
+            <div class="corporate-avatar">
+              <span>{{ getInitials(contact.firstName, contact.lastName) }}</span>
+            </div>
+            <div class="corporate-info">
+              <h4 class="corporate-name">{{ contact.firstName }} {{ contact.lastName }}</h4>
+              <div class="corporate-company">
+                <i class="bi bi-building me-1"></i>
+                {{ contact.companyName }}
+              </div>
+            </div>
+            <button class="btn-delete-contact" @click.stop="deleteRow(contact.id)" title="Supprimer">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+
+          <div class="corporate-card-body">
+            <div class="corporate-meta-grid">
+              <div class="meta-item">
+                <i class="bi bi-person-badge"></i>
+                <span>{{ contact.role }}</span>
+              </div>
+              <div class="meta-item">
+                <i class="bi bi-envelope"></i>
+                <span>{{ contact.email }}</span>
+              </div>
+              <div class="meta-item">
+                <i class="bi bi-telephone"></i>
+                <span>{{ contact.phone_number }}</span>
+              </div>
+              <div class="meta-item">
+                <i class="bi bi-globe"></i>
+                <span>{{ contact.country }}</span>
+              </div>
+            </div>
+            <div class="corporate-plan">
+              <i class="bi bi-box me-2"></i>
+              <strong>{{ contact.planSize }}</strong>
+            </div>
+            <p class="corporate-message">{{ truncateMessage(contact.responses) }}</p>
+          </div>
+
+          <div class="corporate-card-footer">
+            <span class="corporate-date">
+              <i class="bi bi-calendar3 me-1"></i>
+              {{ formatDate(contact.createdAt) }}
+            </span>
+            <span class="corporate-time">
+              <i class="bi bi-clock me-1"></i>
+              {{ formatTime(contact.createdAt) }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div v-if="!loading && filteredContacts.length > 0" class="pagination-wrapper">
+        <BPagination
+          v-model="currentPage"
+          :total-rows="filteredContacts.length"
+          :per-page="perPage"
+          class="modern-pagination"
+        />
+      </div>
+    </div>
+
+    <!-- Modal de détails moderne -->
+    <q-dialog v-model="edit" transition-show="scale" transition-hide="fade">
+      <q-card class="corporate-detail-modal">
+        <!-- Header -->
+        <div class="modal-header-corporate">
+          <div class="modal-header-left">
+            <div class="modal-avatar-large">
+              <span>{{ getInitials(formu.firstName, formu.lastName) }}</span>
+            </div>
+            <div class="modal-user-info">
+              <h3 class="modal-user-name">{{ formu.firstName }} {{ formu.lastName }}</h3>
+              <div class="modal-company">
+                <i class="bi bi-building me-2"></i>
+                {{ formu.companyName }}
+              </div>
             </div>
           </div>
-        </q-card-section>
+          <button class="modal-close-btn-corporate" @click="edit = false">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
 
-        <!-- Infos principales -->
-        <q-card-section class="q-pa-md">
-          <div class="row q-col-gutter-md text-body2">
-            <div class="col-6">
-              <q-icon name="email" size="18px" class="q-mr-xs text-primary" />
-              <strong>Email:</strong> {{ formu.email }}
-            </div>
-            <div class="col-6">
-              <q-icon name="phone" size="18px" class="q-mr-xs text-primary" />
-              <strong>Téléphone:</strong> {{ formu.phone_number }}
-            </div>
-            <div class="col-6 q-mt-sm">
-              <q-icon name="public" size="18px" class="q-mr-xs text-primary" />
-              <strong>Pays:</strong> {{ formu.country }}
-            </div>
-            <div class="col-6 q-mt-sm">
-              <q-icon name="event" size="18px" class="q-mr-xs text-primary" />
-              <strong>Date:</strong> {{ new Date(formu.createdAt).toLocaleString() }}
+        <!-- Info Grid -->
+        <div class="modal-info-grid">
+          <div class="info-item">
+            <i class="bi bi-person-badge"></i>
+            <div>
+              <span class="info-label">Rôle</span>
+              <span class="info-value">{{ formu.role }}</span>
             </div>
           </div>
-        </q-card-section>
-
-        <q-separator />
-
-        <!-- Sujet -->
-        <q-card-section class="q-pa-md">
-          <div class="text-subtitle1 text-bold text-green-9">
-            <q-icon name="chat" size="20px" class="q-mr-sm text-grey-8" />
-            {{ formu.planSize }}
+          <div class="info-item">
+            <i class="bi bi-envelope"></i>
+            <div>
+              <span class="info-label">Email</span>
+              <a :href="`mailto:${formu.email}`" class="info-value">{{ formu.email }}</a>
+            </div>
           </div>
-        </q-card-section>
+          <div class="info-item">
+            <i class="bi bi-telephone"></i>
+            <div>
+              <span class="info-label">Téléphone</span>
+              <span class="info-value">{{ formu.phone_number }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <i class="bi bi-globe"></i>
+            <div>
+              <span class="info-label">Pays</span>
+              <span class="info-value">{{ formu.country }}</span>
+            </div>
+          </div>
+        </div>
 
-        <q-card-section class="q-pa-md bg-grey-1" style="min-height: 180px; border-radius: 8px">
-          <span class="text-body1" style="line-height: 1.6; white-space: pre-line">
-            {{ formu.responses }}
-          </span>
-        </q-card-section>
+        <!-- Plan -->
+        <div class="modal-plan-section">
+          <div class="plan-header">
+            <i class="bi bi-box me-2"></i>
+            <span>Plan demandé</span>
+          </div>
+          <div class="plan-value">{{ formu.planSize }}</div>
+        </div>
 
-        <q-separator />
+        <!-- Message -->
+        <div class="modal-message-section">
+          <div class="message-header">
+            <i class="bi bi-file-text me-2"></i>
+            <span>Message</span>
+          </div>
+          <div class="message-content">
+            <p>{{ formu.responses }}</p>
+          </div>
+        </div>
 
-        <!-- Actions sur une seule ligne -->
-        <q-card-actions class="bg-grey-2 row no-wrap justify-end items-center q-gutter-sm q-pa-sm">
-          <BRow>
-            <!--<BCol lg="4"
-                          ><q-btn flat icon="reply" label="Répondre" color="primary"
-                        /></BCol>-->
-
-            <BCol lg="6" class="text-center"
-              ><q-btn
-                flat
-                icon="delete"
-                label="Supprimer"
-                color="negative"
-                @click="deleteRow(formu.id)" /></BCol
-            ><BCol lg="6" class="text-center"
-              ><q-btn flat icon="close" label="Fermer" color="grey" v-close-popup /></BCol
-          ></BRow>
-        </q-card-actions>
+        <!-- Actions -->
+        <div class="modal-footer-corporate">
+          <button class="btn-modal-delete" @click="deleteRow(formu.id)">
+            <i class="bi bi-trash me-2"></i>
+            Supprimer
+          </button>
+          <button class="btn-modal-close" @click="edit = false">
+            <i class="bi bi-x-circle me-2"></i>
+            Fermer
+          </button>
+        </div>
       </q-card>
     </q-dialog>
   </div>
@@ -385,63 +370,9 @@ export default {
 
 <style lang="scss">
 @import '../../../css/assets/scss/app2.scss';
-.progress-nav {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
+@import '../../../css/admin/modern-shared.scss';
+@import '../../../css/admin/contacts.scss';
 
-.progress {
-  width: 100%;
-  position: absolute;
-  height: 4px;
-}
-
-.wizard-steps {
-  position: relative;
-  z-index: 3;
-  width: 100%;
-
-  .wizard-step {
-    height: 60px;
-    width: 60px;
-    border-radius: 50%;
-    border: 3px solid;
-    display: flex;
-    justify-content: center;
-    z-index: 9;
-    position: relative;
-    background: white;
-  }
-}
-
-.step-arrow-nav {
-  .nav-link {
-    background: #f3f2ee;
-    padding: 4px 0;
-    border-radius: 0 !important;
-  }
-}
-
-.wizard {
-  .nav-link:not(.active) {
-    color: #f3f2ee;
-
-    .wizard-icon {
-      color: #a5a5a5;
-    }
-  }
-}
-
-[data-bs-theme='dark'] {
-  .wizard-steps .wizard-step:not(.active) {
-    background: var(--bs-input-bg);
-  }
-
-  .step-arrow-nav {
-    .nav-link:not(.active) {
-      background: var(--bs-input-bg);
-    }
-  }
-}
+// ✅ Tous les styles sont maintenant dans les fichiers SCSS partagés
+// Ajoutez ici uniquement les styles spécifiques à ce composant si nécessaire
 </style>

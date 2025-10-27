@@ -115,12 +115,23 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div class="modern-enquete-container">
     <BRow>
       <BCol cols="12">
-        <div
-          class="ttable table-centered datatable dt-responsive nowrap table-card-list dataTable no-footer dtr-inline"
-        >
+        <div class="page-header">
+          <div class="header-content">
+            <div class="header-icon">
+              <i class="bi bi-clock-history"></i>
+            </div>
+            <div>
+              <h2 class="page-title">Historique des Abonnements</h2>
+              <p class="page-subtitle">Consultez l'historique complet des abonnements</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tableau moderne -->
+        <div class="modern-table-container">
           <BRow>
             <BCol sm="12" md="6">
               <div id="tickets-table_length" class="dataTables_length">
@@ -154,10 +165,10 @@ export default {
             <i class="uil uil-folder-open text-muted" style="font-size: 3rem"></i>
             <p class="mt-3 text-muted">Aucune Subscriptions</p>
           </div>
+          <div v-else class="table-wrapper">
           <BTable
-            v-else
-            table-class="table table-centered datatable table-card-list"
-            thead-tr-class="bg-transparent"
+            table-class="modern-table"
+            thead-tr-class="table-header"
             :items="orderData"
             :fields="fields"
             responsive="sm"
@@ -210,222 +221,47 @@ export default {
 
             <template v-slot:cell(status)="data">
               <span
-                class="badge"
-                :class="{
-                  'bg-success': data.item.status === 'active',
-                  'bg-danger':
-                    data.item.status === 'inactive' ||
-                    data.item.status === 'Annuler' ||
-                    data.item.status === 'expired',
-                  'bg-warning': data.item.status === 'En attend',
+                :style="{
+                  padding: '4px 12px',
+                  borderRadius: '20px',
+                  fontSize: '0.8rem',
+                  fontWeight: '600',
+                  background: data.item.status === 'active' ? '#d1fae5' : 
+                             (data.item.status === 'En attend' ? '#fef3c7' : '#fee2e2'),
+                  color: data.item.status === 'active' ? '#059669' : 
+                        (data.item.status === 'En attend' ? '#d97706' : '#dc2626')
                 }"
-                >{{ data.item.status }}</span
               >
+                {{ data.item.status === 'active' ? 'Actif' : 
+                   (data.item.status === 'expired' ? 'Expiré' : 
+                   (data.item.status === 'Annuler' ? 'Annulé' : data.item.status)) }}
+              </span>
             </template>
 
             <template v-slot:cell(transactionId)="data">
               <a href="#" class="text-body">{{ data.item.transactionId }}</a>
             </template>
           </BTable>
+          </div>
+          <BRow>
+            <BCol>
+              <div class="dataTables_paginate paging_simple_numbers float-end">
+                <ul class="pagination pagination-rounded">
+                  <BPagination v-model="currentPage" :total-rows="rows" :per-page="perPage" />
+                </ul>
+              </div>
+            </BCol>
+          </BRow>
         </div>
-        <BRow>
-          <BCol>
-            <div class="dataTables_paginate paging_simple_numbers float-end">
-              <ul class="pagination pagination-rounded">
-                <BPagination v-model="currentPage" :total-rows="rows" :per-page="perPage" />
-              </ul>
-            </div>
-          </BCol>
-        </BRow>
       </BCol>
     </BRow>
   </div>
 </template>
+
 <style lang="scss">
-@import '../../../css/assets/scss/app2.scss';
-.progress-nav {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
+@import '../../../css/admin/subscriptions.scss';
+@import '../../../css/admin/tables-shared.scss';
+@import '../../../css/admin/badges.scss';
 
-.progress {
-  width: 100%;
-  position: absolute;
-  height: 4px;
-}
-
-.wizard-steps {
-  position: relative;
-  z-index: 3;
-  width: 100%;
-
-  .wizard-step {
-    height: 60px;
-    width: 60px;
-    border-radius: 50%;
-    border: 3px solid;
-    display: flex;
-    justify-content: center;
-    z-index: 9;
-    position: relative;
-    background: white;
-  }
-}
-
-.step-arrow-nav {
-  .nav-link {
-    background: #f3f2ee;
-    padding: 4px 0;
-    border-radius: 0 !important;
-  }
-}
-
-.wizard {
-  .nav-link:not(.active) {
-    color: #f3f2ee;
-
-    .wizard-icon {
-      color: #a5a5a5;
-    }
-  }
-}
-
-[data-bs-theme='dark'] {
-  .wizard-steps .wizard-step:not(.active) {
-    background: var(--bs-input-bg);
-  }
-
-  .step-arrow-nav {
-    .nav-link:not(.active) {
-      background: var(--bs-input-bg);
-    }
-  }
-}
-/* === Boutons modernes === */
-.btn-success {
-  background: linear-gradient(135deg, #34c38f, #2ea3f2);
-  border: none;
-  border-radius: 50px;
-  transition: all 0.3s ease;
-  font-weight: 600;
-  box-shadow: 0 4px 10px rgba(46, 163, 242, 0.3);
-
-  &:hover {
-    background: linear-gradient(135deg, #2ea3f2, #34c38f);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(46, 163, 242, 0.4);
-  }
-
-  &:active {
-    transform: scale(0.96);
-  }
-}
-
-/* === Table améliorée === */
-.table tbody tr {
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    background: #f9fcff;
-    box-shadow: #1f6bad33 0px 4px 8px;
-    transform: scale(1.01);
-  }
-}
-
-/* Icônes d'action */
-.list-inline-item a {
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    transform: scale(1.2) rotate(-5deg);
-    opacity: 0.8;
-  }
-}
-
-/* === Dialogues avec animation === */
-.q-dialog__inner {
-  animation: fadeScale 0.35s ease forwards;
-}
-
-@keyframes fadeScale {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* === Inputs flottants modernes === */
-.form-control {
-  border-radius: 12px;
-  transition: all 0.3s ease;
-
-  &:focus {
-    border-color: #2ea3f2;
-    box-shadow: 0 0 8px rgba(46, 163, 242, 0.4);
-    transform: scale(1.01);
-  }
-}
-
-.bg-gradient {
-  background: linear-gradient(135deg, #0d6efd, #6610f2);
-}
-
-/* === Champs modernes avec floating label === */
-.floating-label {
-  position: relative;
-}
-
-.form-control.form-control-modern {
-  border-radius: 12px;
-  border: 2px solid #e0e7ff;
-  padding: 0.9rem 1rem;
-  width: 100%;
-  transition: all 0.3s ease;
-  background: #fff;
-}
-
-.form-control.form-control-modern:focus {
-  border-color: #10d0f2;
-  box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
-  transform: scale(1.01);
-}
-
-/* Labels flottants */
-.floating-label label {
-  position: absolute;
-  top: 50%;
-  left: 15px;
-  transform: translateY(-50%);
-  color: #6c757d;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  pointer-events: none;
-  background: white;
-  padding: 0 5px;
-}
-
-.form-control-modern:focus + label,
-.form-control-modern:not(:placeholder-shown) + label {
-  top: -10px;
-  left: 10px;
-  font-size: 0.8rem;
-  color: #10d0f2;
-}
-
-/* Multiselect alignement */
-.multiselect {
-  border-radius: 12px !important;
-  border: 2px solid #e0e7ff !important;
-  padding: 6px 10px;
-  transition: all 0.3s ease;
-}
-.multiselect:focus-within {
-  border-color: #10d0f2 !important;
-  box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
-}
+// ✅ Tous les styles sont maintenant dans les fichiers SCSS partagés
 </style>

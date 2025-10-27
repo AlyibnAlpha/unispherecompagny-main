@@ -7,8 +7,6 @@ import {
   BPagination,
   BFormSelect,
   BTable,
-  BCard,
-  BCardBody,
 } from 'bootstrap-vue-next'
 import { api } from 'src/boot/axios'
 import { useAuthStore } from 'src/stores/auth'
@@ -25,8 +23,6 @@ export default {
     BPagination,
     BFormSelect,
     BTable,
-    BCard,
-    BCardBody,
     CountToComponent,
   },
   data() {
@@ -101,13 +97,11 @@ export default {
           key: 'check',
           label: '',
         },
-
         {
           key: 'lastName',
           label: 'Participant',
           sortable: true,
         },
-
         {
           key: 'title',
           label: 'Sondage lié',
@@ -193,156 +187,120 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div class="modern-detail-container">
+    <!-- Header moderne -->
+    <div class="detail-page-header">
+      <button class="back-btn-modern" @click="$router.back()">
+        <i class="bi bi-arrow-left"></i>
+      </button>
+      <div class="header-content">
+        <h2 class="page-title">Détails du Groupe</h2>
+        <p class="page-subtitle">Consultez les participants et leurs réponses</p>
+      </div>
+    </div>
+
     <BRow>
-      <BRow class="d-flex justify-content-between align-items-center">
-        <BCol cols="auto"
-          ><a href="javascript:void(0)" class="btn btn-link text-muted" @click="$router.back()">
-            <h4><i class="uil uil-arrow-left me-1"></i> Retour</h4>
-          </a></BCol
-        ></BRow
-      >
       <BRow class="align-items-stretch">
         <BCol cols="12" md="9" order="2" class="h-100">
-          <BRow>
-            <BCol md="4" cols="xl-4">
-              <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-                <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-                  <div>
-                    <div class="d-flex align-items-center mb-2">
-                      <i class="bi bi-people text-warning fs-3 me-2"></i>
-                      <h4 class="fw-bold mb-0 fs-2">
-                        <CountToComponent
-                          :startVal="0"
-                          :endVal="totalParticipants"
-                          :duration="2000"
-                        />
-                      </h4>
-                    </div>
+          <!-- Stats Grid Moderne -->
+          <div class="detail-stats-grid">
+            <div class="detail-stat-card stat-card-primary">
+              <div class="stat-card-icon">
+                <i class="bi bi-people-fill"></i>
+              </div>
+              <div class="stat-card-content">
+                <h4 class="stat-card-value">
+                  <CountToComponent :startVal="0" :endVal="totalParticipants" :duration="2000" />
+                </h4>
+                <p class="stat-card-label">Participants</p>
+              </div>
+            </div>
+            <div class="detail-stat-card stat-card-success">
+              <div class="stat-card-icon">
+                <i class="bi bi-check-circle-fill"></i>
+              </div>
+              <div class="stat-card-content">
+                <h4 class="stat-card-value">
+                  <CountToComponent :startVal="0" :endVal="totalResponded" :duration="2000" />
+                </h4>
+                <p class="stat-card-label">Répondus</p>
+              </div>
+            </div>
+            <div class="detail-stat-card stat-card-danger">
+              <div class="stat-card-icon">
+                <i class="bi bi-x-circle-fill"></i>
+              </div>
+              <div class="stat-card-content">
+                <h4 class="stat-card-value">
+                  <CountToComponent :startVal="0" :endVal="totalNotResponded" :duration="2000" />
+                </h4>
+                <p class="stat-card-label">Non Répondus</p>
+              </div>
+            </div>
+            <div class="detail-stat-card stat-card-info">
+              <div class="stat-card-icon">
+                <i class="bi bi-bell-fill"></i>
+              </div>
+              <div class="stat-card-content">
+                <h4 class="stat-card-value">
+                  <CountToComponent :startVal="0" :endVal="totalNotified" :duration="2000" />
+                </h4>
+                <p class="stat-card-label">Notifiés</p>
+              </div>
+            </div>
+            <div class="detail-stat-card stat-card-warning">
+              <div class="stat-card-icon">
+                <i class="bi bi-bell-slash-fill"></i>
+              </div>
+              <div class="stat-card-content">
+                <h4 class="stat-card-value">
+                  <CountToComponent :startVal="0" :endVal="totalNotNotified" :duration="2000" />
+                </h4>
+                <p class="stat-card-label">Non Notifiés</p>
+              </div>
+            </div>
+          </div>
 
-                    <span
-                      class="badge bg-warning-subtle text-warning fw-semibold px-3 py-1 rounded-pill"
-                      >Participants</span
-                    >
-                  </div>
-                </BCardBody>
-              </BCard>
-            </BCol>
-            <BCol md="2" cols="xl-2">
-              <BCard no-body class="shadow-sm rounded-4 stat-card shadow-success">
-                <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-                  <div>
-                    <div class="d-flex align-items-center mb-2">
-                      <i class="bi bi-pencil-square text-success fs-3 me-2"></i>
-                      <h4 class="fw-bold mb-0 fs-2">
-                        <CountToComponent :startVal="0" :endVal="totalResponded" :duration="2000" />
-                      </h4>
-                    </div>
-                    <span
-                      class="badge bg-success-subtle text-success fw-semibold px-3 py-1 rounded-pill"
-                      >Répondus</span
-                    >
-                  </div>
-                </BCardBody>
-              </BCard>
-            </BCol>
-            <BCol md="2" cols="xl-2">
-              <BCard no-body class="shadow-sm rounded-4 stat-card shadow-danger">
-                <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-                  <div>
-                    <div class="d-flex align-items-center mb-2">
-                      <i class="bi bi-ui-checks-grid text-danger fs-3 me-2"></i>
-                      <h4 class="fw-bold mb-0 fs-2">
-                        <CountToComponent
-                          :startVal="0"
-                          :endVal="totalNotResponded"
-                          :duration="2000"
-                        />
-                      </h4>
-                    </div>
+          <!-- Titre du tableau -->
+          <div class="table-section-header">
+            <div class="section-icon">
+              <i class="bi bi-people-fill"></i>
+            </div>
+            <div class="section-title-content">
+              <h3 class="section-title">Liste des Participants</h3>
+              <p class="section-subtitle">Participants associés à ce groupe</p>
+            </div>
+          </div>
 
-                    <span
-                      class="badge bg-danger-subtle text-danger fw-semibold px-1 py-1 rounded-pill"
-                      >Non Répondus</span
-                    >
-                  </div>
-                </BCardBody>
-              </BCard>
-            </BCol>
-            <BCol md="2" cols="xl-2">
-              <BCard no-body class="shadow-sm rounded-4 stat-card shadow-success">
-                <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-                  <div>
-                    <div class="d-flex align-items-center mb-2">
-                      <i class="bi bi-pencil-square text-success fs-3 me-2"></i>
-                      <h4 class="fw-bold mb-0 fs-2">
-                        <CountToComponent
-                          :startVal="0"
-                          :endVal="totalNotNotified"
-                          :duration="2000"
-                        />
-                      </h4>
-                    </div>
-                    <span
-                      class="badge bg-success-subtle text-success fw-semibold px-3 py-1 rounded-pill"
-                      >Notifier</span
-                    >
-                  </div>
-                </BCardBody>
-              </BCard>
-            </BCol>
-            <BCol md="2" cols="xl-2">
-              <BCard no-body class="shadow-sm rounded-4 stat-card shadow-danger">
-                <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-                  <div>
-                    <div class="d-flex align-items-center mb-2">
-                      <i class="bi bi-ui-checks-grid text-danger fs-3 me-2"></i>
-                      <h4 class="fw-bold mb-0 fs-2">
-                        <CountToComponent
-                          :startVal="0"
-                          :endVal="totalNotNotified"
-                          :duration="2000"
-                        />
-                      </h4>
-                    </div>
-
-                    <span
-                      class="badge bg-danger-subtle text-danger fw-semibold px-1 py-1 rounded-pill"
-                      >Non Notifier</span
-                    >
-                  </div>
-                </BCardBody>
-              </BCard>
-            </BCol>
-          </BRow>
-          <hr />
           <BCol cols="12">
-            <div
-              class="ttable table-centered datatable dt-responsive nowrap table-card-list dataTable no-footer dtr-inline"
-            >
-              <BRow>
-                <BCol sm="12" md="6">
-                  <div id="tickets-table_length" class="dataTables_length">
-                    <label class="d-inline-flex align-items-center">
-                      Trier:
-                      <BFormSelect v-model="perPage" size="sm" :options="pageOptions"></BFormSelect>
-                    </label>
-                  </div>
-                </BCol>
-                <BCol sm="12" md="6">
-                  <div id="tickets-table_filter" class="dataTables_filter text-md-end">
-                    <label class="d-inline-flex align-items-center">
-                      Recherche:
+            <div class="modern-table-container">
+              <div class="table-controls">
+                <BRow>
+                  <BCol sm="12" md="6">
+                    <div class="table-control-item">
+                      <label class="control-label">
+                        <i class="bi bi-sort-down me-2"></i>
+                        Trier:
+                      </label>
+                      <BFormSelect v-model="perPage" size="sm" :options="pageOptions" class="modern-select"></BFormSelect>
+                    </div>
+                  </BCol>
+                  <BCol sm="12" md="6">
+                    <div class="table-control-item search-control">
+                      <label class="control-label">
+                        <i class="bi bi-search me-2"></i>
+                        Recherche:
+                      </label>
                       <BFormInput
                         v-model="filter"
                         type="search"
-                        placeholder="Recherche..."
-                        class="form-control-sm ms-2"
+                        placeholder="Rechercher un participant..."
+                        class="modern-search-input"
                       ></BFormInput>
-                    </label>
-                  </div>
-                </BCol>
-              </BRow>
+                    </div>
+                  </BCol>
+                </BRow>
+              </div>
               <div v-if="loading" class="text-center my-5">
                 <q-spinner-ball color="green" size="50px" />
               </div>
@@ -353,10 +311,10 @@ export default {
                 <i class="uil uil-folder-open text-muted" style="font-size: 3rem"></i>
                 <p class="mt-3 text-muted">Aucun Participants</p>
               </div>
-              <BTable
-                v-else
-                table-class="table table-centered datatable table-card-list"
-                thead-tr-class="bg-transparent"
+              <div v-else class="table-wrapper">
+                <BTable
+                  table-class="modern-table"
+                  thead-tr-class="table-header"
                 :items="orderData"
                 :fields="fields"
                 responsive="sm"
@@ -393,35 +351,27 @@ export default {
                 </template>
 
                 <template v-slot:cell(gender)="data">
-                  <a
-                    href="#"
-                    class="badge"
-                    :class="{
-                      'bg-info': data.item.participantProfile.gender === 'M',
-
-                      'bg-pink': data.item.participantProfile.gender === 'F',
-                    }"
-                    >{{ data.item.participantProfile.gender === 'M' ? 'Homme' : 'Femme' }}</a
+                  <span 
+                    class="badge badge-pill font-size-12"
+                    :class="data.item.participantProfile.gender === 'M' ? 'bg-soft-primary' : 'bg-soft-danger'"
                   >
+                    {{ data.item.participantProfile.gender === 'M' ? 'Homme' : 'Femme' }}
+                  </span>
                 </template>
 
                 <template v-slot:cell(birthDate)="data">
-                  <a href="#" class="text-warning">{{
-                    getAge(data.item.participantProfile.birthDate)
-                  }}</a>
+                  <span class="badge badge-pill font-size-12 bg-soft-warning">
+                    {{ getAge(data.item.participantProfile.birthDate) }}
+                  </span>
                 </template>
 
                 <template v-slot:cell(notified)="data">
-                  <a
-                    href="#"
-                    class="badge"
-                    :class="{
-                      'bg-success': data.item.notified === true,
-
-                      'bg-danger': data.item.notified === false,
-                    }"
-                    >{{ data.item.notified === false ? 'Non Notifier' : 'Notifiée' }}</a
+                  <span 
+                    class="badge badge-pill font-size-12"
+                    :class="data.item.notified ? 'bg-soft-success' : 'bg-soft-danger'"
                   >
+                    {{ data.item.notified ? 'Notifié' : 'Non Notifié' }}
+                  </span>
                 </template>
 
                 <template v-slot:cell(notifiedAt)="data">
@@ -437,150 +387,124 @@ export default {
                 </template>
 
                 <template v-slot:cell(hasResponded)="data">
-                  <a
-                    href="#"
-                    class="badge"
-                    :class="{
-                      'bg-success': data.item.hasResponded === true,
-
-                      'bg-danger': data.item.hasResponded === false,
-                    }"
-                    >{{ data.item.hasResponded === false ? 'Non répondus' : 'Répondus' }}</a
+                  <span 
+                    class="badge badge-pill font-size-12"
+                    :class="data.item.hasResponded ? 'bg-soft-success' : 'bg-soft-danger'"
                   >
+                    {{ data.item.hasResponded ? 'Répondu' : 'Non Répondu' }}
+                  </span>
                 </template>
                 <template v-slot:cell(status)="data">
-                  <a
-                    href="#"
-                    class="badge"
+                  <span 
+                    class="badge badge-pill font-size-12"
                     :class="{
-                      'bg-success': data.item.status === 'completed',
-                      'bg-warning': data.item.status === 'in_progress',
-                      'bg-danger': data.item.status === 'not_started',
+                      'bg-soft-success': data.item.status === 'completed',
+                      'bg-soft-warning': data.item.status === 'in_progress',
+                      'bg-soft-danger': data.item.status === 'not_started',
                     }"
-                    >{{
+                  >
+                    {{
                       data.item.status === 'completed'
                         ? 'Completer'
                         : data.item.status === 'in_progress'
                           ? 'En cours'
                           : 'Non répondus'
-                    }}</a
-                  >
+                    }}
+                  </span>
                 </template>
-              </BTable>
+                </BTable>
+              </div>
             </div>
-            <BRow>
-              <BCol>
-                <div class="dataTables_paginate paging_simple_numbers float-end">
-                  <ul class="pagination pagination-rounded">
-                    <BPagination v-model="currentPage" :total-rows="rows" :per-page="perPage" />
-                  </ul>
-                </div>
-              </BCol>
-            </BRow>
+              <div class="pagination-container">
+                <BPagination v-model="currentPage" :total-rows="rows" :per-page="perPage" class="modern-pagination" />
+              </div>
           </BCol>
         </BCol>
-        <BCol cols="12" md="3" order="1" class="border-end d-flex flex-column p-2">
-          <BRow class="g-0">
-            <BCol lg="12" md="12" sm="12">
-              <BCard
-                no-body
-                class="shadow-sm rounded-4 stat-card shadow-warning d-flex flex-column"
-              >
-                <BCardBody class="d-flex flex-column p-4" style="width: 100%">
-                  <div class="sidebar-content">
-                    <div class="d-flex align-items-center mb-3">
-                      <h2 class="fw-bold mb-0 py-1 me-2" style="font-size: 15px">
-                        <span class="text-warning text-truncate text-wrap">{{
-                          truncate(Alldata?.name, 50)
-                        }}</span>
-                      </h2>
-                    </div>
-
-                    <span
-                      class="text-wrap text-black fw-semibold py-1 px-2 rounded-pill mb-2"
-                      style="font-size: smaller"
-                      >{{ truncate(Alldata?.description, 300) }}</span
-                    >
-                  </div>
-                  <div class="sidebar-content"></div>
-                </BCardBody>
-              </BCard>
-            </BCol>
-            <BCol lg="12" md="12" sm="12">
-              <!-- 🔹 Carte du créateur du sondage BUSINESS -->
-              <BCard
-                v-if="Alldata.manager?.businessAccount"
-                class="shadow-sm border-0 mt-3 rounded-4"
-              >
-                <div class="p-3 d-flex align-items-center gap-3">
-                  <!-- Avatar généré automatiquement -->
+        <BCol cols="12" md="3" order="1" class="sidebar-col">
+          <div class="modern-sidebar">
+            <!-- Carte du groupe -->
+            <div class="sidebar-card group-info-card">
+              <div class="card-header-modern">
+                <i class="bi bi-folder2-open"></i>
+                <h4>Informations du Groupe</h4>
+              </div>
+              <div class="card-body-modern">
+                <h5 class="group-name">{{ Alldata?.name }}</h5>
+                <p class="group-description">{{ Alldata?.description }}</p>
+              </div>
+            </div>
+            <!-- Carte du créateur -->
+            <div class="sidebar-card creator-card" v-if="Alldata.manager?.businessAccount || Alldata.manager?.admin">
+              <div class="card-header-modern">
+                <i class="bi bi-person-circle"></i>
+                <h4>Créateur</h4>
+              </div>
+              <div class="card-body-modern">
+                <div class="creator-info" v-if="Alldata.manager?.businessAccount">
                   <img
                     :src="`https://ui-avatars.com/api/?name=${Alldata.manager?.businessAccount?.firstName}+${Alldata.manager?.businessAccount?.lastName}&background=random`"
-                    alt="Avatar créateur"
-                    class="rounded-circle shadow-sm"
-                    style="width: 60px; height: 60px; object-fit: cover"
+                    alt="Avatar"
+                    class="creator-avatar"
                   />
-                  <div>
-                    <!-- Nom et prénom -->
-                    <h5 class="mb-1 fw-bold text-primary">
+                  <div class="creator-details">
+                    <h5 class="creator-name">
                       {{ Alldata.manager?.businessAccount?.firstName }}
                       {{ Alldata.manager?.businessAccount?.lastName }}
                     </h5>
+                    <span class="creator-badge">Business</span>
                   </div>
                 </div>
-              </BCard>
-              <!-- 🔹 Carte du créateur ADMIN -->
-              <BCard v-if="Alldata.manager?.admin" class="shadow-sm border-0 mt-3 rounded-4">
-                <div class="p-3 d-flex align-items-center gap-3">
-                  <!-- Avatar généré automatiquement -->
+                <div class="creator-info" v-if="Alldata.manager?.admin">
                   <img
                     :src="`https://ui-avatars.com/api/?name=${Alldata.manager?.admin?.firstName}+${Alldata.manager?.admin?.lastName}&background=random`"
-                    alt="Avatar créateur"
-                    class="rounded-circle shadow-sm"
-                    style="width: 60px; height: 60px; object-fit: cover"
+                    alt="Avatar"
+                    class="creator-avatar"
                   />
-
-                  <div>
-                    <!-- Nom et prénom -->
-                    <h5 class="mb-1 fw-bold text-primary">
+                  <div class="creator-details">
+                    <h5 class="creator-name">
                       {{ Alldata.manager?.admin?.firstName }} {{ Alldata.manager?.admin?.lastName }}
                     </h5>
+                    <span class="creator-badge admin-badge">Admin</span>
                   </div>
                 </div>
-              </BCard>
-            </BCol>
-            <BCol lg="12" md="12" sm="12">
-              <!-- 🔹 Carte du créateur du sondage BUSINESS -->
-              <BCard class="shadow-sm border-0 mt-3 rounded-4">
-                <div class="p-3 d-flex align-items-center gap-3">
-                  <!-- Avatar généré automatiquement -->
+              </div>
+            </div>
+            <!-- Carte des critères -->
+            <div class="sidebar-card criteria-card">
+              <div class="card-header-modern">
+                <i class="bi bi-sliders"></i>
+                <h4>Critères de Sélection</h4>
+              </div>
+              <div class="card-body-modern">
+                <div class="criteria-badges">
+                  <div v-if="Alldata.criteria?.age" class="criteria-badge age-badge">
+                    <i class="bi bi-calendar-range"></i>
+                    <span>{{ Alldata.criteria?.age?.min }} - {{ Alldata.criteria?.age?.max }} ans</span>
+                  </div>
+                  
+                  <div v-if="Alldata.criteria?.gender" class="criteria-badge gender-badge">
+                    <i class="bi bi-gender-ambiguous"></i>
+                    <span>{{ Alldata.criteria?.gender === 'H' ? 'Homme' : 'Femme' }}</span>
+                  </div>
 
-                  <div>
-                    <h5 class="mb-1 fw-bold text-warning">Critères</h5>
+                  <div v-if="Alldata.criteria?.location?.city" class="criteria-badge location-badge">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    <span>{{ Alldata.criteria?.location?.city }}</span>
+                  </div>
 
-                    <p v-if="Alldata.criteria?.age" class="mb-1 text-muted small">
-                      <i class="bi bi-person-up me-2"></i>
-                      Minimum:{{ Alldata.criteria?.age?.min }}ans -Maximum:
-                      {{ Alldata.criteria?.age?.max }}
-                    </p>
+                  <div v-if="Alldata.criteria?.location?.country" class="criteria-badge country-badge">
+                    <i class="bi bi-flag-fill"></i>
+                    <span>{{ Alldata.criteria?.location?.country }}</span>
+                  </div>
 
-                    <!-- Email -->
-                    <p v-if="Alldata.criteria?.location" class="mb-1 text-muted small">
-                      <i class="bi bi-geo-alt me-2"></i>
-                      Ville:{{ Alldata.criteria?.location?.city }} - Pays:
-                      {{ Alldata.criteria?.location?.country }}
-                    </p>
-
-                    <!-- Téléphone -->
-                    <p v-if="Alldata.criteria?.profession" class="mb-1 text-muted small">
-                      <i class="bi bi-building me-2"></i>
-                      Secteur: {{ Alldata.criteria?.profession?.sector }}
-                    </p>
+                  <div v-if="Alldata.criteria?.profession?.sector" class="criteria-badge sector-badge">
+                    <i class="bi bi-briefcase-fill"></i>
+                    <span>{{ Alldata.criteria?.profession?.sector }}</span>
                   </div>
                 </div>
-              </BCard>
-            </BCol>
-          </BRow>
+              </div>
+            </div>
+          </div>
         </BCol>
       </BRow>
     </BRow>
@@ -588,222 +512,10 @@ export default {
 </template>
 
 <style lang="scss">
-.stat-card {
-  transition: all 0.4s ease-in-out;
-  border: 2px solid transparent;
-  background: linear-gradient(135deg, #fdfdfd, #f5f5f5);
-  position: relative;
-  overflow: hidden;
-}
-.stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
-  border-radius: 20px;
-}
+@import '../../../css/modern-cards.scss';
+@import '../../../css/admin/tables-shared.scss';
+@import '../../../css/admin/participants.scss';
+@import '../../../css/admin/badges.scss';
 
-.shadow-warning:hover {
-  border-color: #f1c40f;
-  background-color: linear-gradient(135deg, #f8dc9f, #fff3cc);
-  box-shadow: 0 0 18px rgba(241, 196, 15, 0.6);
-}
-.shadow-success:hover {
-  border-color: #2ecc71;
-  background: linear-gradient(135deg, #2ecc71, #d4f5e6);
-  box-shadow: 0 0 18px rgba(46, 204, 113, 0.6);
-}
-.shadow-danger:hover {
-  border-color: #e74c3c;
-  background: linear-gradient(135deg, #ffecec, #ffd9d6);
-  box-shadow: 0 0 18px rgba(231, 76, 60, 0.6);
-}
-
-.progress-nav {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.progress {
-  width: 100%;
-  position: absolute;
-  height: 4px;
-}
-
-.wizard-steps {
-  position: relative;
-  z-index: 3;
-  width: 100%;
-
-  .wizard-step {
-    height: 60px;
-    width: 60px;
-    border-radius: 50%;
-    border: 3px solid;
-    display: flex;
-    justify-content: center;
-    z-index: 9;
-    position: relative;
-    background: white;
-  }
-}
-
-.step-arrow-nav {
-  .nav-link {
-    background: #f3f2ee;
-    padding: 4px 0;
-    border-radius: 0 !important;
-  }
-}
-
-.wizard {
-  .nav-link:not(.active) {
-    color: #f3f2ee;
-
-    .wizard-icon {
-      color: #a5a5a5;
-    }
-  }
-}
-
-[data-bs-theme='dark'] {
-  .wizard-steps .wizard-step:not(.active) {
-    background: var(--bs-input-bg);
-  }
-
-  .step-arrow-nav {
-    .nav-link:not(.active) {
-      background: var(--bs-input-bg);
-    }
-  }
-}
-/* === Boutons modernes === */
-.btn-success {
-  background: linear-gradient(135deg, #34c38f, #2ea3f2);
-  border: none;
-  border-radius: 50px;
-  transition: all 0.3s ease;
-  font-weight: 600;
-  box-shadow: 0 4px 10px rgba(46, 163, 242, 0.3);
-
-  &:hover {
-    background: linear-gradient(135deg, #2ea3f2, #34c38f);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(46, 163, 242, 0.4);
-  }
-
-  &:active {
-    transform: scale(0.96);
-  }
-}
-
-/* === Table améliorée === */
-.table tbody tr {
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    background: #f9fcff;
-    box-shadow: #1f6bad33 0px 4px 8px;
-    transform: scale(1.01);
-  }
-}
-
-/* Icônes d'action */
-.list-inline-item a {
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    transform: scale(1.2) rotate(-5deg);
-    opacity: 0.8;
-  }
-}
-
-/* === Dialogues avec animation === */
-.q-dialog__inner {
-  animation: fadeScale 0.35s ease forwards;
-}
-
-@keyframes fadeScale {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* === Inputs flottants modernes === */
-.form-control {
-  border-radius: 12px;
-  transition: all 0.3s ease;
-
-  &:focus {
-    border-color: #2ea3f2;
-    box-shadow: 0 0 8px rgba(46, 163, 242, 0.4);
-    transform: scale(1.01);
-  }
-}
-
-.bg-gradient {
-  background: linear-gradient(135deg, #0d6efd, #6610f2);
-}
-
-/* === Champs modernes avec floating label === */
-.floating-label {
-  position: relative;
-}
-
-.form-control-modern {
-  border-radius: 12px;
-  border: 2px solid #e0e7ff;
-  padding: 0.9rem 1rem;
-  width: 100%;
-  transition: all 0.3s ease;
-  background: #fff;
-}
-
-.form-control-modern:focus {
-  border-color: #10d0f2;
-  box-shadow: 0 0 8px #06cff3;
-  transform: scale(1.01);
-}
-
-/* Labels flottants */
-.floating-label label {
-  position: absolute;
-  top: 50%;
-  left: 15px;
-  transform: translateY(-50%);
-  color: #6c757d;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  pointer-events: none;
-  background: white;
-  padding: 0 5px;
-}
-
-.form-control-modern:focus + label,
-.form-control-modern:not(:placeholder-shown) + label {
-  top: -10px;
-  left: 10px;
-  font-size: 0.8rem;
-  color: #10d0f2;
-}
-
-/* Multiselect alignement */
-.multiselect {
-  border-radius: 12px !important;
-  border: 2px solid #e0e7ff !important;
-  padding: 6px 10px;
-  transition: all 0.3s ease;
-}
-.multiselect:focus-within {
-  border-color: #10d0f2 !important;
-  box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
-}
-.bg-pink {
-  background-color: #ff69b4; /* rose */
-  color: white; /* texte blanc pour le contraste */
-}
+// ✅ Tous les styles sont maintenant dans participants.scss
 </style>

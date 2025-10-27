@@ -1,0 +1,377 @@
+/**
+ * Modern Sidebar Styles
+ * Style moderne et cohérent pour le menu latéral
+ */
+
+/* === Variables === */
+$sidebar-bg: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+$sidebar-width: 260px;
+$sidebar-item-hover: rgba(255, 255, 255, 0.15);
+$sidebar-item-active: rgba(255, 255, 255, 0.25);
+$sidebar-text: rgba(255, 255, 255, 0.9);
+$sidebar-text-hover: #ffffff;
+
+/* === Vertical Menu Container === */
+.vertical-menu {
+  width: $sidebar-width;
+  z-index: 1001;
+  background: $sidebar-bg !important;
+  bottom: 0;
+  margin-top: 0;
+  position: fixed;
+  top: 70px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+
+  /* Scrollbar personnalisée */
+  .sidebar-menu-scroll {
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.4);
+      }
+    }
+  }
+}
+
+/* === Logo Section === */
+.navbar-brand-box {
+  background: rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+
+  .logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+  }
+}
+
+/* === Menu Toggle Button === */
+.vertical-menu-btn {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 10px !important;
+  margin: 15px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+    transform: translateX(3px);
+  }
+
+  i {
+    font-size: 1.3rem;
+  }
+}
+
+/* === Sidebar Menu === */
+#sidebar-menu {
+  padding: 15px 0;
+
+  .metismenu {
+    padding: 0;
+    margin: 0;
+
+    /* Titre de section */
+    .menu-title {
+      padding: 20px 25px 10px;
+      letter-spacing: 0.05em;
+      pointer-events: none;
+      cursor: default;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: 700;
+      margin-top: 10px;
+
+      &:first-child {
+        margin-top: 0;
+      }
+    }
+
+    /* Items du menu */
+    li {
+      position: relative;
+
+      a {
+        display: flex;
+        align-items: center;
+        padding: 12px 25px;
+        color: $sidebar-text;
+        font-size: 0.95rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border-left: 3px solid transparent;
+        text-decoration: none;
+        position: relative;
+
+        i {
+          min-width: 28px;
+          max-width: 28px;
+          font-size: 1.2rem;
+          margin-right: 12px;
+          transition: all 0.3s ease;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .menu-text,
+        span {
+          flex: 1;
+          transition: all 0.3s ease;
+          white-space: nowrap;
+        }
+
+        /* Flèche pour sous-menu */
+        &.has-arrow::after {
+          content: "\F0140" !important;
+          font-family: "Material Design Icons" !important;
+          display: block !important;
+          transition: transform 0.3s ease !important;
+          font-size: 1rem !important;
+          margin-left: auto !important;
+          color: rgba(255, 255, 255, 0.8) !important;
+        }
+
+        /* Hover effect */
+        &:hover {
+          background: $sidebar-item-hover;
+          border-left-color: rgba(255, 255, 255, 0.5);
+          color: $sidebar-text-hover;
+          padding-left: 28px;
+
+          i {
+            transform: scale(1.1);
+          }
+
+          &.has-arrow::after {
+            opacity: 1;
+            transform: translateX(3px);
+          }
+        }
+
+        /* Active state */
+        &.active,
+        &.mm-active {
+          background: $sidebar-item-active;
+          border-left-color: #ffffff;
+          color: $sidebar-text-hover;
+          font-weight: 600;
+          box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+
+          i {
+            transform: scale(1.15);
+          }
+        }
+      }
+
+      /* Sous-menu */
+      ul {
+        &.mm-collapse:not(.mm-show) {
+          display: none;
+        }
+
+        &.mm-show {
+          background: rgba(0, 0, 0, 0.15);
+          border-radius: 0;
+          padding: 5px 0;
+          margin: 5px 0;
+
+          li {
+            a {
+              padding: 10px 25px 10px 60px;
+              font-size: 0.9rem;
+              position: relative;
+
+              &::before {
+                content: "";
+                position: absolute;
+                left: 40px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.5);
+                transition: all 0.3s ease;
+              }
+
+              &:hover::before {
+                width: 8px;
+                height: 8px;
+                background: rgba(255, 255, 255, 0.9);
+              }
+
+              &.active::before {
+                width: 10px;
+                height: 10px;
+                background: #ffffff;
+                box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+              }
+            }
+          }
+        }
+      }
+
+      /* Rotation de la flèche quand le menu est ouvert */
+      &.mm-active > a.has-arrow::after {
+        transform: rotate(-180deg);
+      }
+    }
+
+    /* Styles spécifiques pour les liens du sidebar */
+    .side-nav-link-a-ref.has-arrow::after,
+    .is-parent.has-arrow::after {
+      content: "\F0140" !important;
+      font-family: "Material Design Icons" !important;
+      display: block !important;
+      transition: transform 0.3s ease !important;
+      font-size: 1rem !important;
+      margin-left: auto !important;
+      color: rgba(255, 255, 255, 0.8) !important;
+      position: relative !important;
+    }
+
+    li.mm-active > .side-nav-link-a-ref.has-arrow::after,
+    li.mm-active > .is-parent.has-arrow::after {
+      transform: rotate(-180deg);
+    }
+
+    /* Badge */
+    .badge {
+      padding: 3px 8px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      border-radius: 10px;
+      margin-left: auto;
+    }
+  }
+}
+
+/* === Responsive === */
+@media (max-width: 992px) {
+  .vertical-menu {
+    left: -$sidebar-width;
+
+    &.show {
+      left: 0;
+    }
+  }
+}
+
+/* === Dark Mode Support === */
+[data-sidebar="dark"] {
+  .vertical-menu {
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%) !important;
+  }
+}
+
+/* === Light Mode === */
+[data-sidebar="light"] {
+  .vertical-menu {
+    background: #ffffff !important;
+    box-shadow: 0 0 24px rgba(0, 0, 0, 0.08);
+  }
+
+  #sidebar-menu {
+    .menu-title {
+      color: #94a3b8;
+    }
+
+    .metismenu li a {
+      color: #475569;
+
+      &:hover {
+        background: #f1f5f9;
+        border-left-color: #667eea;
+        color: #1e293b;
+      }
+
+      &.active,
+      &.mm-active {
+        background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, transparent 100%);
+        border-left-color: #667eea;
+        color: #667eea;
+      }
+    }
+
+    .metismenu li ul.mm-show {
+      background: #f8fafc;
+    }
+  }
+}
+
+/* === Compact Mode === */
+[data-sidebar-size="small"] {
+  .vertical-menu {
+    width: 70px;
+
+    .navbar-brand-box {
+      .logo-lg {
+        display: none;
+      }
+
+      .logo-sm {
+        display: block;
+      }
+    }
+
+    #sidebar-menu {
+      .menu-title,
+      .menu-text,
+      .badge,
+      .has-arrow::after {
+        display: none;
+      }
+
+      .metismenu li a {
+        justify-content: center;
+        padding: 15px;
+
+        i {
+          margin-right: 0;
+          font-size: 1.4rem;
+        }
+      }
+    }
+  }
+}
+
+/* === Animation d'entrée === */
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.vertical-menu {
+  animation: slideInLeft 0.3s ease-out;
+}

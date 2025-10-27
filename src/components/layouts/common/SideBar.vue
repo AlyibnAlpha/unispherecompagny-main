@@ -192,25 +192,14 @@ export default {
 </script>
 
 <template>
-  <div
-    class="vertical-menu"
-    style="background: linear-gradient(135deg, #f0f4ff, #e0f7fa); transition: background 0.5s ease"
-  >
+  <div class="vertical-menu">
     <div class="navbar-brand-box">
-      <router-link :to="reloadTo()" class="logo logo-dark">
+      <router-link :to="reloadTo()" class="logo">
         <span class="logo-sm">
-          <img src="/favicons.ico" alt height="20" />
+          <img src="/favicons.ico" alt="Logo" height="20" />
         </span>
         <span class="logo-lg">
-          <img src="/favicons.ico" alt height="80" />
-        </span>
-      </router-link>
-      <router-link :to="reloadTo()" class="logo logo-light">
-        <span class="logo-sm">
-          <img src="/favicons.ico" alt height="20" />
-        </span>
-        <span class="logo-lg">
-          <img src="/favicons.ico" alt height="80" />
+          <img src="/favicons.ico" alt="Logo" height="80" />
         </span>
       </router-link>
     </div>
@@ -331,4 +320,8 @@ metismenu .has-arrow::after {
   color: #007bff;
   font-weight: 500;
 }
+</style>
+
+<style lang="scss">
+@import '../../../css/admin/modern-sidebar.scss';
 </style>

@@ -9,8 +9,6 @@ import {
   BFormSelect,
   BTable,
   BForm,
-  BCardBody,
-  BCard,
 } from 'bootstrap-vue-next'
 import Multiselect from '@vueform/multiselect'
 import { api } from 'src/boot/axios'
@@ -31,8 +29,6 @@ export default {
     BTable,
     BForm,
     Multiselect,
-    BCardBody,
-    BCard,
   },
   data() {
     const orderData = ref([])
@@ -266,37 +262,46 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div class="modern-enquete-container">
     <BRow>
       <BCol cols="12">
-        <div class="d-flex justify-content-between">
-          <BButton variant="success" class="waves-effect waves-light mb-3" @click="ajout = true"
-            >Créer une Subscriptions</BButton
-          >
+        <div class="page-header">
+          <div class="header-content">
+            <div class="header-icon">
+              <i class="bi bi-credit-card-2-front"></i>
+            </div>
+            <div>
+              <h2 class="page-title">Gestion des Abonnements</h2>
+              <p class="page-subtitle">Créez et gérez les abonnements des comptes business</p>
+            </div>
+          </div>
+          <BButton variant="success" class="modern-create-btn" @click="ajout = true">
+            <i class="bi bi-plus-circle me-2"></i>
+            Créer un abonnement
+          </BButton>
+        </div>
 
           <q-dialog v-model="ajout" transition-show="scale" transition-hide="fade">
-            <q-card
-              style="
-                width: 800px;
-                max-width: 90vw;
-                height: auto;
-                border-radius: 20px;
-                overflow: hidden;
-              "
-              class="shadow-lg"
-            >
-              <!-- Titre -->
-              <q-card-section
-                class="q-pa-md text-white flex items-center justify-center"
-                style="background: linear-gradient(135deg, #0d6efd, #6610f2)"
-              >
-                <q-icon name="group_add" size="28px" class="q-mr-sm" />
-                <div class="text-h6 text-center">Subscriptions</div>
-              </q-card-section>
+            <q-card class="modern-modal-card">
+              <!-- Header moderne -->
+              <div class="modern-modal-header">
+                <div class="modal-header-content">
+                  <div class="modal-icon">
+                    <i class="bi bi-credit-card-2-front"></i>
+                  </div>
+                  <div class="modal-title-section">
+                    <h3 class="modal-title">Nouvelle Subscription</h3>
+                    <p class="modal-subtitle">Créez un abonnement pour un compte business</p>
+                  </div>
+                </div>
+                <button class="modal-close-btn" @click="ajout = false">
+                  <i class="bi bi-x"></i>
+                </button>
+              </div>
 
               <!-- Formulaire -->
-              <div class="q-pa-lg">
-                <BForm style="margin: 1px 10px">
+              <div class="modern-modal-body">
+                <BForm>
                   <BRow>
                     <BCol cols="12" class="mb-4 floating-label">
                       <Multiselect
@@ -371,21 +376,29 @@ export default {
                   </BRow>
 
                   <!-- Bouton -->
-                  <div v-if="loadings" class="d-flex justify-content-end mt-4">
-                    <q-spinner-dots color="green" size="20px" class="q-mr-sm" />
-                  </div>
-                  <div v-else class="d-flex justify-content-end mt-2">
-                    <BButton variant="success" class="px-5" @click="Add"> Enregistrer </BButton>
-                  </div>
                 </BForm>
+              </div>
+
+              <!-- Footer moderne -->
+              <div class="modern-modal-footer">
+                <button class="modal-btn modal-btn-cancel" @click="ajout = false">
+                  <i class="bi bi-x-circle me-2"></i>
+                  Annuler
+                </button>
+                <button v-if="loadings" class="modal-btn modal-btn-primary" disabled>
+                  <q-spinner-dots color="white" size="20px" class="me-2" />
+                  Enregistrement...
+                </button>
+                <button v-else class="modal-btn modal-btn-primary" @click="Add">
+                  <i class="bi bi-check-circle me-2"></i>
+                  Enregistrer
+                </button>
               </div>
             </q-card>
           </q-dialog>
-        </div>
 
-        <div
-          class="ttable table-centered datatable dt-responsive nowrap table-card-list dataTable no-footer dtr-inline"
-        >
+        <!-- Tableau moderne -->
+        <div class="modern-table-container">
           <BRow>
             <BCol sm="12" md="6">
               <div id="tickets-table_length" class="dataTables_length">
@@ -397,7 +410,15 @@ export default {
             </BCol>
             <BCol sm="12" md="6">
               <div id="tickets-table_filter" class="dataTables_filter text-md-end">
-                <label class="d-inline-flex align-items-center">
+                <label class="d-inline-flex ali[plugin:vite:vue] Invalid end tag.
+/home/aly/Bureau/unispherecompagny-main/src/components/admin/enquete/SubscriptionCom.vue:663:11
+661 |              </q-badge>
+662 |            </div>
+663 |            </BRow>
+    |             ^
+664 |          </div>
+665 |        </q-card>
+gn-items-center">
                   Recherche:
                   <BFormInput
                     v-model="filter"
@@ -417,12 +438,12 @@ export default {
             class="text-center py-5"
           >
             <i class="uil uil-folder-open text-muted" style="font-size: 3rem"></i>
-            <p class="mt-3 text-muted">Aucune Subscriptions</p>
+            <p class="mt-3 text-muted">Aucun abonnement</p>
           </div>
-          <BTable
-            v-else
-            table-class="table table-centered datatable table-card-list"
-            thead-tr-class="bg-transparent"
+          <div v-else class="table-wrapper">
+            <BTable
+              table-class="modern-table"
+              thead-tr-class="table-header"
             :items="orderData"
             :fields="fields"
             responsive="sm"
@@ -468,17 +489,21 @@ export default {
 
             <template v-slot:cell(status)="data">
               <span
-                class="badge"
-                :class="{
-                  'bg-success': data.item.status === 'active',
-                  'bg-danger':
-                    data.item.status === 'inactive' ||
-                    data.item.status === 'Annuler' ||
-                    data.item.status === 'expired',
-                  'bg-warning': data.item.status === 'En attend',
+                :style="{
+                  padding: '4px 12px',
+                  borderRadius: '20px',
+                  fontSize: '0.8rem',
+                  fontWeight: '600',
+                  background: data.item.status === 'active' ? '#d1fae5' : 
+                             (data.item.status === 'En attend' ? '#fef3c7' : '#fee2e2'),
+                  color: data.item.status === 'active' ? '#059669' : 
+                        (data.item.status === 'En attend' ? '#d97706' : '#dc2626')
                 }"
-                >{{ data.item.status }}</span
               >
+                {{ data.item.status === 'active' ? 'Actif' : 
+                   (data.item.status === 'expired' ? 'Expiré' : 
+                   (data.item.status === 'Annuler' ? 'Annulé' : data.item.status)) }}
+              </span>
             </template>
 
             <template v-slot:cell(action)="data">
@@ -523,6 +548,7 @@ export default {
               </ul>
             </template>
           </BTable>
+          </div>
         </div>
         <BRow>
           <BCol>
@@ -536,413 +562,146 @@ export default {
       </BCol>
     </BRow>
     <q-dialog v-model="opendMdet">
-      <q-card class="modern-dialog" style="width: 800px; max-width: 90vw">
+      <q-card class="modern-modal-card" style="max-width: 900px;">
         <!-- Header -->
-        <q-card-section class="dialog-header row items-center q-pa-sm">
-          <div class="q-ml-sm">
-            <span v-if="loading" class="skeleton skeleton-title"></span>
-            <div v-else class="text-h6 text-warning">{{ selectedTask?.plan }}</div>
-            <div class="text-caption text-warning">Détails de la subscription</div>
+        <q-card-section class="dialog-header row items-center">
+          <div class="header-text q-ml-md">
+            <div v-if="loading" class="skeleton skeleton-title"></div>
+            <div v-else class="name" style="font-size: 1.3rem;">{{ selectedTask?.plan }}</div>
+            <div class="subtitle">Détails de la subscription</div>
           </div>
           <q-space />
         </q-card-section>
 
-        <q-separator color="grey-3" />
-        <q-card-section>
-          <BRow class="d-flexjustify-content-center">
-            <BCol md="4" cols="xl-4">
-              <BCard
-                no-body
-                class="shadow-sm rounded-4 stat-card shadow-warning"
-                style="height: 90px"
-              >
-                <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-                  <div>
-                    <div class="d-flex align-items-center mb-2">
-                      <i class="bi bi-building-fill text-warning fs-3 me-2"></i>
-                      <h4 v-if="loadingx" class="skeleton skeleton-title"></h4>
-                      <h4 v-else class="fw-bold mb-0 fs-3">
-                        {{ selectedTask?.businessAccount?.companyName }}
-                      </h4>
-                    </div>
-                  </div>
-                </BCardBody>
-              </BCard>
-            </BCol>
-            <BCol md="4" cols="xl-4">
-              <BCard
-                no-body
-                class="shadow-sm rounded-4 stat-card shadow-warning"
-                style="height: 90px"
-              >
-                <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-                  <div>
-                    <div class="d-flex align-items-center mb-2">
-                      <i class="bi bi-person text-warning fs-3 me-2"></i>
-                      <h4 v-if="loadingx" class="skeleton skeleton-title"></h4>
-                      <h4 v-else class="fw-bold mb-0 fs-3">
-                        {{ selectedTask?.businessAccount?.lastName }}
-                        {{ selectedTask?.businessAccount?.firstName }}
-                      </h4>
-                    </div>
-                  </div>
-                </BCardBody>
-              </BCard>
-            </BCol>
-            <BCol md="4" cols="xl-4">
-              <BCard
-                no-body
-                class="shadow-sm rounded-4 stat-card shadow-warning"
-                style="height: 90px"
-              >
-                <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-                  <div>
-                    <div class="d-flex align-items-center mb-2">
-                      <i class="bi bi-envelope-at text-warning fs-3 me-2"></i>
-                      <h4 v-if="loadingx" class="skeleton skeleton-title"></h4>
-                      <span v-else class="fw-bold mb-0" style="font-size: 12px">
-                        {{ selectedTask?.businessAccount?.user[0].email }}
-                      </span>
-                    </div>
-                  </div>
-                </BCardBody>
-              </BCard>
-            </BCol>
-          </BRow>
+        <q-separator />
+
+        <!-- Stats Section -->
+        <q-card-section class="modal-stats-section" style="padding: 20px 30px;">
+          <div class="modal-stats-grid modal-stats-grid-3">
+            <div class="modal-stat-card modal-stat-warning">
+              <div class="modal-stat-icon" style="font-size: 1.3rem;">
+                <i class="bi bi-building-fill"></i>
+              </div>
+              <div class="modal-stat-content">
+                <div v-if="loadingx" class="skeleton skeleton-title"></div>
+                <div v-else class="modal-stat-value" style="font-size: 1rem;">
+                  {{ selectedTask?.businessAccount?.companyName }}
+                </div>
+                <div class="modal-stat-label" style="font-size: 0.8rem;">Entreprise</div>
+              </div>
+            </div>
+
+            <div class="modal-stat-card modal-stat-info">
+              <div class="modal-stat-icon" style="font-size: 1.3rem;">
+                <i class="bi bi-person"></i>
+              </div>
+              <div class="modal-stat-content">
+                <div v-if="loadingx" class="skeleton skeleton-title"></div>
+                <div v-else class="modal-stat-value" style="font-size: 1rem;">
+                  {{ selectedTask?.businessAccount?.lastName }}
+                  {{ selectedTask?.businessAccount?.firstName }}
+                </div>
+                <div class="modal-stat-label" style="font-size: 0.8rem;">Contact</div>
+              </div>
+            </div>
+
+            <div class="modal-stat-card modal-stat-success">
+              <div class="modal-stat-icon" style="font-size: 1.3rem;">
+                <i class="bi bi-envelope-at"></i>
+              </div>
+              <div class="modal-stat-content">
+                <div v-if="loadingx" class="skeleton skeleton-title"></div>
+                <div v-else class="modal-stat-value" style="font-size: 0.85rem;">
+                  {{ selectedTask?.businessAccount?.user[0].email }}
+                </div>
+                <div class="modal-stat-label" style="font-size: 0.8rem;">Email</div>
+              </div>
+            </div>
+          </div>
         </q-card-section>
 
         <!-- Content -->
         <q-card-section class="dialog-content">
-          <div class="info-row px-2">
-            <span class="label">transactionId:</span>
-            <span v-if="loading" class="skeleton skeleton-title"></span>
-            <p v-else class="value px-2">
-              {{ selectedTask?.transactionId || 'Pas de om' }}
-            </p>
+          <div class="info-card">
+            <q-icon name="tag" size="18px" class="icon" />
+            <div class="info-text">
+              <div class="label" style="font-size: 0.8rem;">Transaction ID</div>
+              <div v-if="loading" class="skeleton skeleton-text"></div>
+              <div v-else class="value" style="font-size: 0.9rem;">
+                {{ selectedTask?.transactionId || 'N/A' }}
+              </div>
+            </div>
           </div>
 
-          <div class="info-row">
-            <span class="label px-2">Date de début :</span>
-            <span v-if="loading" class="skeleton skeleton-title"></span>
-            <span v-else class="value px-2">{{
-              new Date(selectedTask?.startAt).toLocaleDateString('fr-FR')
-            }}</span>
+          <div class="info-card">
+            <q-icon name="calendar_today" size="18px" class="icon" />
+            <div class="info-text">
+              <div class="label" style="font-size: 0.8rem;">Date de début</div>
+              <div v-if="loading" class="skeleton skeleton-text"></div>
+              <div v-else class="value" style="font-size: 0.9rem;">
+                {{ new Date(selectedTask?.startAt).toLocaleDateString('fr-FR') }}
+              </div>
+            </div>
           </div>
 
-          <div class="info-row">
-            <span class="label px-2">Date de fin :</span>
-            <span v-if="loading" class="skeleton skeleton-title"></span>
-            <span v-else class="value px-2">{{
-              new Date(selectedTask?.endAt).toLocaleDateString('fr-FR')
-            }}</span>
+          <div class="info-card">
+            <q-icon name="event" size="18px" class="icon" />
+            <div class="info-text">
+              <div class="label" style="font-size: 0.8rem;">Date de fin</div>
+              <div v-if="loading" class="skeleton skeleton-text"></div>
+              <div v-else class="value" style="font-size: 0.9rem;">
+                {{ new Date(selectedTask?.endAt).toLocaleDateString('fr-FR') }}
+              </div>
+            </div>
           </div>
-          <div class="info-row">
-            <span class="label px-2">Statut :</span>
-            <span v-if="loading" class="skeleton skeleton-title"></span>
-            <q-badge
-              v-else
-              :color="selectedTask?.status === 'expired' ? 'red' : 'green'"
-              class="chip px-2"
-            >
-              {{ selectedTask?.status === 'expired' ? 'Expirer' : 'Active' }}
-            </q-badge>
+
+          <div class="info-card">
+            <q-icon 
+              :name="selectedTask?.status === 'expired' ? 'cancel' : 'check_circle'" 
+              size="18px" 
+              class="icon" 
+              :style="{ color: selectedTask?.status === 'expired' ? '#ef4444' : '#10b981' }"
+            />
+            <div class="info-text">
+              <div class="label" style="font-size: 0.8rem;">Statut</div>
+              <div v-if="loading" class="skeleton skeleton-text"></div>
+              <div v-else class="value" style="font-size: 0.9rem;">
+                <span 
+                  :style="{ 
+                    padding: '4px 12px', 
+                    borderRadius: '20px', 
+                    fontSize: '0.8rem',
+                    fontWeight: '600',
+                    background: selectedTask?.status === 'expired' ? '#fee2e2' : '#d1fae5',
+                    color: selectedTask?.status === 'expired' ? '#dc2626' : '#059669'
+                  }"
+                >
+                  {{ selectedTask?.status === 'expired' ? 'Expiré' : 'Actif' }}
+                </span>
+              </div>
+            </div>
           </div>
         </q-card-section>
+
+        <!-- Actions -->
+        <q-card-actions align="right">
+          <q-btn
+            v-close-popup
+            flat
+            label="Fermer"
+            color="primary"
+          />
+        </q-card-actions>
       </q-card>
     </q-dialog>
   </div>
 </template>
 <style lang="scss">
-.modern-dialog {
-  width: 500px;
-  max-width: 90vw;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
-}
+@import '../../../css/admin/subscriptions.scss';
+@import '../../../css/admin/tables-shared.scss';
+@import '../../../css/admin/badges.scss';
+@import '../../../css/admin/users-management.scss';
 
-/* Header du dialog */
-.dialog-header {
-  padding: 16px 20px;
-}
-
-/* Section du contenu */
-.dialog-content {
-  padding: 20px;
-  background-color: #f9faff;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-
-  .info-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 12px;
-    border-radius: 8px;
-    background-color: #ffffff;
-    box-shadow: 0 2px 6px rgba(99, 102, 241, 0.08);
-    transition: all 0.2s ease;
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
-    }
-
-    .label {
-      font-weight: 600;
-      color: #4b4b4b;
-    }
-
-    .value {
-      color: #333;
-    }
-  }
-}
-
-/* Actions du dialog */
-.dialog-actions {
-  padding: 12px 20px;
-  background-color: #fafafa;
-
-  .q-btn {
-    border-radius: 12px;
-    min-width: 100px;
-    transition: all 0.3s ease;
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
-    }
-  }
-}
-
-/* Skeleton loading */
-.skeleton {
-  display: inline-block;
-  height: 1em;
-  width: 80px;
-  background: #e0e0e0;
-  border-radius: 4px;
-}
-
-.skeleton-title {
-  width: 150px;
-  height: 1.2em;
-  margin-bottom: 4px;
-}
-.progress-nav {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.progress {
-  width: 100%;
-  position: absolute;
-  height: 4px;
-}
-
-.wizard-steps {
-  position: relative;
-  z-index: 3;
-  width: 100%;
-
-  .wizard-step {
-    height: 60px;
-    width: 60px;
-    border-radius: 50%;
-    border: 3px solid;
-    display: flex;
-    justify-content: center;
-    z-index: 9;
-    position: relative;
-    background: white;
-  }
-}
-
-.step-arrow-nav {
-  .nav-link {
-    background: #f3f2ee;
-    padding: 4px 0;
-    border-radius: 0 !important;
-  }
-}
-
-.wizard {
-  .nav-link:not(.active) {
-    color: #f3f2ee;
-
-    .wizard-icon {
-      color: #a5a5a5;
-    }
-  }
-}
-
-[data-bs-theme='dark'] {
-  .wizard-steps .wizard-step:not(.active) {
-    background: var(--bs-input-bg);
-  }
-
-  .step-arrow-nav {
-    .nav-link:not(.active) {
-      background: var(--bs-input-bg);
-    }
-  }
-}
-/* === Boutons modernes === */
-.btn-success {
-  background: linear-gradient(135deg, #34c38f, #2ea3f2);
-  border: none;
-  border-radius: 50px;
-  transition: all 0.3s ease;
-  font-weight: 600;
-  box-shadow: 0 4px 10px rgba(46, 163, 242, 0.3);
-
-  &:hover {
-    background: linear-gradient(135deg, #2ea3f2, #34c38f);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(46, 163, 242, 0.4);
-  }
-
-  &:active {
-    transform: scale(0.96);
-  }
-}
-
-/* === Table améliorée === */
-.table tbody tr {
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    background: #f9fcff;
-    box-shadow: #1f6bad33 0px 4px 8px;
-    transform: scale(1.01);
-  }
-}
-
-/* Icônes d'action */
-.list-inline-item a {
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    transform: scale(1.2) rotate(-5deg);
-    opacity: 0.8;
-  }
-}
-
-/* === Dialogues avec animation === */
-.q-dialog__inner {
-  animation: fadeScale 0.35s ease forwards;
-}
-
-@keyframes fadeScale {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* === Inputs flottants modernes === */
-.form-control {
-  border-radius: 12px;
-  transition: all 0.3s ease;
-
-  &:focus {
-    border-color: #2ea3f2;
-    box-shadow: 0 0 8px rgba(46, 163, 242, 0.4);
-    transform: scale(1.01);
-  }
-}
-
-.bg-gradient {
-  background: linear-gradient(135deg, #0d6efd, #6610f2);
-}
-
-/* === Champs modernes avec floating label === */
-.floating-label {
-  position: relative;
-}
-
-.form-control.form-control-modern {
-  border-radius: 12px;
-  border: 2px solid #e0e7ff;
-  padding: 0.9rem 1rem;
-  width: 100%;
-  transition: all 0.3s ease;
-  background: #fff;
-}
-
-.form-control.form-control-modern:focus {
-  border-color: #10d0f2;
-  box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
-  transform: scale(1.01);
-}
-
-/* Labels flottants */
-.floating-label label {
-  position: absolute;
-  top: 50%;
-  left: 15px;
-  transform: translateY(-50%);
-  color: #6c757d;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  pointer-events: none;
-  background: white;
-  padding: 0 5px;
-}
-
-.form-control-modern:focus + label,
-.form-control-modern:not(:placeholder-shown) + label {
-  top: -10px;
-  left: 10px;
-  font-size: 0.8rem;
-  color: #10d0f2;
-}
-
-/* Multiselect alignement */
-.multiselect {
-  border-radius: 12px !important;
-  border: 2px solid #e0e7ff !important;
-  padding: 6px 10px;
-  transition: all 0.3s ease;
-}
-.multiselect:focus-within {
-  border-color: #10d0f2 !important;
-  box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
-}
-.stat-card {
-  transition: all 0.4s ease-in-out;
-  border: 2px solid transparent;
-  background: linear-gradient(135deg, #fdfdfd, #f5f5f5);
-  position: relative;
-  overflow: hidden;
-}
-.stat-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
-  border-radius: 20px;
-}
-
-.shadow-warning:hover {
-  border-color: #f1c40f;
-  background-color: linear-gradient(135deg, #f8dc9f, #fff3cc);
-  box-shadow: 0 0 18px rgba(241, 196, 15, 0.6);
-}
-.shadow-success:hover {
-  border-color: #2ecc71;
-  background: linear-gradient(135deg, #2ecc71, #d4f5e6);
-  box-shadow: 0 0 18px rgba(46, 204, 113, 0.6);
-}
-.shadow-danger:hover {
-  border-color: #e74c3c;
-  background: linear-gradient(135deg, #ffecec, #ffd9d6);
-  box-shadow: 0 0 18px rgba(231, 76, 60, 0.6);
-}
+// ✅ Tous les styles sont maintenant dans les fichiers SCSS partagés
 </style>
+

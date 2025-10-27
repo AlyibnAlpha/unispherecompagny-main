@@ -180,6 +180,22 @@ const routes = [
         },
       },
       {
+        path: '/admin/enquetes/create',
+        component: () => import('../components/admin/enquete/CreateEnquetePage.vue'),
+        meta: {
+          requiresAuth: true,
+          roles: [import.meta.env.VITE_DEFAULT_ROLEA],
+        },
+      },
+      {
+        path: '/business/enquetes/create',
+        component: () => import('../components/admin/enquete/CreateEnquetePage.vue'),
+        meta: {
+          requiresAuth: true,
+          roles: [import.meta.env.VITE_DEFAULT_ROLEB],
+        },
+      },
+      {
         path: '/admin/participants',
         component: () => import('src/pages/admin/enquetes/ParticipantGroup.vue'),
         meta: {
@@ -418,8 +434,16 @@ const routes = [
         },
       },
       {
+        path: '/admin/enquetes-welcome/create',
+        component: () => import('pages/admin/enquetes/EnqueteWelcomeCreate.vue'),
+        meta: {
+          requiresAuth: true,
+          roles: [import.meta.env.VITE_DEFAULT_ROLEA],
+        },
+      },
+      {
         path: '/admin/enquetes-welcome-modification/:id',
-        component: () => import('pages/admin/enquetes/EnqueteModifWel.vue'),
+        component: () => import('pages/admin/enquetes/EnqueteWelcomeModif.vue'),
         meta: {
           requiresAuth: true,
           roles: [import.meta.env.VITE_DEFAULT_ROLEA],

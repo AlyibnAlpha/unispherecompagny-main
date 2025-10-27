@@ -476,7 +476,7 @@ export default {
     const leval = ref([])
     const levals = ref([])
     const optionl = [
-      { label: 'Françe', value: 'FR' },
+      { label: 'Français', value: 'FR' },
       { label: 'Engletaire', value: 'EN' },
       { label: 'Espagne', value: 'ES' },
       { label: 'Itali', value: 'IT' },

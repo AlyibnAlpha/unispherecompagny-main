@@ -1,23 +1,9 @@
 <template>
-  <q-card class="shadow-lg rounded-3" style="max-width: 800px; margin: auto" bordered>
-    <!-- Titre -->
-    <q-card-section
-      class="q-pa-md flex items-center justify-center"
-      style="
-        background: linear-gradient(135deg, #f0f4ff, #e0f7fa);
-        transition: background 0.5s ease;
-        color: #10d0f2;
-      "
-    >
-      <div class="text-h5 text-center text-weight-bold">Créer Votre Sondage</div>
-    </q-card-section>
-
-    <!-- Formulaire -->
-    <q-card-section class="q-pa-lg">
-      <q-inner-loading v-if="loading" :showing="loading" background-color="rgba(0,0,0,0.4)">
-        <q-spinner-bars color="green" size="50px" />
-      </q-inner-loading>
-      <BForm v-else>
+  <div class="step-form-container">
+    <q-inner-loading v-if="loading" :showing="loading" background-color="rgba(0,0,0,0.4)">
+      <q-spinner-bars color="green" size="50px" />
+    </q-inner-loading>
+    <BForm v-else>
         <!-- Titre -->
         <BCol cols="12" class="mb-4 floating-label">
           <input
@@ -110,13 +96,12 @@
         </div>
 
         <div v-else class="d-flex justify-content-end mt-4">
-          <BButton variant="success" size="lg" class="px-5 rounded-3 shadow-sm" @click="handleNext">
+          <BButton class="btn-modern btn-success-modern" @click="handleNext">
             Suivant →
           </BButton>
         </div>
       </BForm>
-    </q-card-section>
-  </q-card>
+  </div>
 </template>
 <script>
 import { BButton, BCol, BRow } from 'bootstrap-vue-next'

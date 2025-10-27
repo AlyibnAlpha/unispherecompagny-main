@@ -55,103 +55,110 @@ export default {
 </script>
 
 <template>
-  <div>
-    <BRow>
-      <BCol cols="12">
-        <div class="d-flex justify-content-between" style="margin: 20px">
-          <q-card
-            style="
-              background: linear-gradient(135deg, #f0f4ff, #e0f7fa);
-              max-width: 920px;
-              width: 100%;
-            "
-          >
-            <!-- Titre -->
+  <div class="create-enquete-page-unified">
+    <!-- Navigation avec bouton retour et étapes -->
+    <div class="unified-navigation">
+      <button class="back-btn-unified" @click="$router.go(-1)">
+        <i class="bi bi-arrow-left"></i>
+      </button>
 
-            <!-- Barre de progression -->
-            <div class="q-pa-sm">
-              <q-linear-progress
-                :value="progressBarValue / 100"
-                color="success"
-                class="progress-bar"
-              />
-
-              <ul class="nav nav-pills d-flex justify-content-around wizard-steps" role="tablist">
-                <li class="nav-item" role="presentation">
-                  <q-btn
-                    flat
-                    round
-                    icon="check_circle"
-                    :color="activeTab >= 1 ? 'success' : 'grey'"
-                  />
-                </li>
-                <li class="nav-item" role="presentation">
-                  <q-btn
-                    flat
-                    round
-                    icon="check_circle"
-                    :color="activeTab >= 2 ? 'success' : 'grey'"
-                  />
-                </li>
-
-                <li class="nav-item" role="presentation">
-                  <q-btn
-                    flat
-                    round
-                    icon="check_circle"
-                    :color="activeTab >= 3 ? 'success' : 'grey'"
-                  />
-                </li>
-
-                <li class="nav-item" role="presentation">
-                  <q-btn
-                    flat
-                    round
-                    icon="check_circle"
-                    :color="activeTab >= 4 ? 'success' : 'grey'"
-                  />
-                </li>
-                <li class="nav-item" role="presentation">
-                  <q-btn
-                    flat
-                    round
-                    icon="check_circle"
-                    :color="activeTab >= 5 ? 'success' : 'grey'"
-                  />
-                </li>
-              </ul>
-            </div>
-
-            <!-- Contenu dynamique selon l'étape -->
-            <q-card-section>
-              <div v-show="activeTab === 1">
-                <Step1u @onNext="toggleWizard(2, 30)" />
-              </div>
-              <div v-show="activeTab === 2">
-                <Step2u
-                  @refreshGroups="refreshStep3()"
-                  @onBack="toggleWizard(1, 10)"
-                  @onNext="toggleWizard(3, 50)"
-                />
-              </div>
-              <div v-show="activeTab === 3">
-                <Step4Acu
-                  :refreshTrigger="step3Ref"
-                  @onBack="toggleWizard(2, 30)"
-                  @onNext="toggleWizard(4, 70)"
-                />
-              </div>
-              <div v-show="activeTab === 4">
-                <Step3u @onBack="toggleWizard(3, 50)" @onNext="toggleWizard(5, 100)" />
-              </div>
-              <div v-show="activeTab === 5">
-                <Step5Acu @onBack="toggleWizard(4, 70)" />
-              </div>
-            </q-card-section>
-          </q-card>
+      <div class="steps-navigation-unified">
+        <div
+          class="step-nav-item-unified"
+          :class="{ active: activeTab === 1, completed: activeTab > 1 }"
+          @click="activeTab > 1 && toggleWizard(1, 10)"
+        >
+          <div class="step-nav-number-unified">
+            <span v-if="activeTab > 1"><i class="bi bi-check-circle-fill"></i></span>
+            <span v-else>1</span>
+          </div>
+          <div class="step-nav-title-unified">Création</div>
         </div>
-      </BCol>
-    </BRow>
+
+        <div class="step-nav-connector-unified" :class="{ active: activeTab > 1 }"></div>
+
+        <div
+          class="step-nav-item-unified"
+          :class="{ active: activeTab === 2, completed: activeTab > 2 }"
+          @click="activeTab > 2 && toggleWizard(2, 30)"
+        >
+          <div class="step-nav-number-unified">
+            <span v-if="activeTab > 2"><i class="bi bi-check-circle-fill"></i></span>
+            <span v-else>2</span>
+          </div>
+          <div class="step-nav-title-unified">Groupes de questions</div>
+        </div>
+
+        <div class="step-nav-connector-unified" :class="{ active: activeTab > 2 }"></div>
+
+        <div
+          class="step-nav-item-unified"
+          :class="{ active: activeTab === 3, completed: activeTab > 3 }"
+          @click="activeTab > 3 && toggleWizard(3, 50)"
+        >
+          <div class="step-nav-number-unified">
+            <span v-if="activeTab > 3"><i class="bi bi-check-circle-fill"></i></span>
+            <span v-else>3</span>
+          </div>
+          <div class="step-nav-title-unified">Groupes de participants</div>
+        </div>
+
+        <div class="step-nav-connector-unified" :class="{ active: activeTab > 3 }"></div>
+
+        <div
+          class="step-nav-item-unified"
+          :class="{ active: activeTab === 4, completed: activeTab > 4 }"
+          @click="activeTab > 4 && toggleWizard(4, 70)"
+        >
+          <div class="step-nav-number-unified">
+            <span v-if="activeTab > 4"><i class="bi bi-check-circle-fill"></i></span>
+            <span v-else>4</span>
+          </div>
+          <div class="step-nav-title-unified">Questions</div>
+        </div>
+
+        <div class="step-nav-connector-unified" :class="{ active: activeTab > 4 }"></div>
+
+        <div
+          class="step-nav-item-unified"
+          :class="{ active: activeTab === 5, completed: activeTab > 5 }"
+          @click="activeTab > 5 && toggleWizard(5, 90)"
+        >
+          <div class="step-nav-number-unified">
+            <span v-if="activeTab > 5"><i class="bi bi-check-circle-fill"></i></span>
+            <span v-else>5</span>
+          </div>
+          <div class="step-nav-title-unified">Finalisation</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenu unifié -->
+    <div class="unified-content">
+      <div v-show="activeTab === 1" class="step-content-unified">
+        <Step1u @onNext="toggleWizard(2, 30)" />
+      </div>
+      <div v-show="activeTab === 2" class="step-content-unified">
+        <Step2u
+          @refreshGroups="refreshStep3()"
+          @onBack="toggleWizard(1, 10)"
+          @onNext="toggleWizard(3, 50)"
+        />
+      </div>
+      <div v-show="activeTab === 3" class="step-content-unified">
+        <Step4Acu
+          :refreshTrigger="step3Ref"
+          @onBack="toggleWizard(2, 30)"
+          @onNext="toggleWizard(4, 70)"
+        />
+      </div>
+      <div v-show="activeTab === 4" class="step-content-unified">
+        <Step3u @onBack="toggleWizard(3, 50)" @onNext="toggleWizard(5, 100)" />
+      </div>
+      <div v-show="activeTab === 5" class="step-content-unified">
+        <Step5Acu @onBack="toggleWizard(4, 70)" />
+      </div>
+    </div>
   </div>
 </template>
 

@@ -7,9 +7,6 @@ import {
   BPagination,
   BFormSelect,
   BTable,
-  BCardBody,
-  BCard,
-  BButton,
 } from 'bootstrap-vue-next'
 import { api } from 'src/boot/axios'
 import CountToComponent from 'src/components/common/CountToComponent.vue'
@@ -26,9 +23,6 @@ export default {
     BPagination,
     BFormSelect,
     BTable,
-    BCardBody,
-    BCard,
-    BButton,
     CountToComponent,
   },
   data() {
@@ -171,76 +165,88 @@ export default {
 </script>
 
 <template>
-  <div>
-    <BRow class="d-flexjustify-content-center">
-      <BCol md="4" cols="xl-4">
-        <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-          <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-            <div>
-              <div class="d-flex align-items-center mb-2">
-                <i class="bi bi-coin text-warning fs-3 me-2"></i>
-                <h4 class="fw-bold mb-0 fs-2">
-                  <CountToComponent :startVal="0" :endVal="totalParticipants" :duration="2000" />
-                </h4>
-              </div>
+  <div class="modern-admin-page">
+    <!-- En-tête de section moderne -->
+    <div class="section-header-modern mb-4">
+      <div class="section-title-wrapper">
+        <div class="section-icon-modern">
+          <i class="bi bi-trophy-fill"></i>
+        </div>
+        <div class="section-title-content">
+          <h3 class="section-title-modern">Leaderboard</h3>
+          <p class="section-subtitle-modern">Classement et compétition entre participants</p>
+        </div>
+      </div>
+    </div>
 
-              <span class="badge bg-warning-subtle text-warning fw-semibold px-3 py-1 rounded-pill"
-                >Participants</span
-              >
-            </div>
-          </BCardBody>
-        </BCard>
+    <!-- Cartes de statistiques modernes -->
+    <BRow class="g-3 mb-4">
+      <BCol md="4">
+        <div class="modern-stat-card stat-warning">
+          <div class="stat-icon">
+            <i class="bi bi-people-fill"></i>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-value">
+              <CountToComponent :startVal="0" :endVal="totalParticipants" :duration="2000" />
+            </h3>
+            <p class="stat-label">Participants</p>
+          </div>
+        </div>
       </BCol>
-      <BCol md="4" cols="xl-4">
-        <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-          <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-            <div>
-              <div class="d-flex align-items-center mb-2">
-                <i class="bi bi-bookmark-check text-warning fs-3 me-2"></i>
-                <h4 class="fw-bold mb-0 fs-2">
-                  <CountToComponent :startVal="0" :endVal="averagePoints" :duration="2000" />
-                </h4>
-              </div>
-
-              <span class="badge bg-warning-subtle text-warning fw-semibold px-3 py-1 rounded-pill"
-                >Moyennes des Points</span
-              >
-            </div>
-          </BCardBody>
-        </BCard>
+      <BCol md="4">
+        <div class="modern-stat-card stat-info">
+          <div class="stat-icon">
+            <i class="bi bi-graph-up-arrow"></i>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-value">
+              <CountToComponent :startVal="0" :endVal="averagePoints" :duration="2000" />
+            </h3>
+            <p class="stat-label">Moyenne des Points</p>
+          </div>
+        </div>
       </BCol>
-      <BCol md="4" cols="xl-4">
-        <BCard no-body class="shadow-sm rounded-4 stat-card shadow-success">
-          <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-            <div>
-              <div class="d-flex align-items-center mb-2">
-                <i class="bi bi-coin text-success fs-3 me-2"></i>
-                <h4 class="fw-bold mb-0 fs-2">
-                  <CountToComponent :startVal="0" :endVal="topScore" :duration="2000" />
-                </h4>
-              </div>
-              <span class="badge bg-success-subtle text-success fw-semibold px-3 py-1 rounded-pill"
-                >Top Points</span
-              >
-            </div>
-          </BCardBody>
-        </BCard>
+      <BCol md="4">
+        <div class="modern-stat-card stat-success">
+          <div class="stat-icon">
+            <i class="bi bi-award-fill"></i>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-value">
+              <CountToComponent :startVal="0" :endVal="topScore" :duration="2000" />
+            </h3>
+            <p class="stat-label">Top Points</p>
+          </div>
+        </div>
       </BCol>
     </BRow>
+    <!-- Section tableau -->
     <BRow>
       <BCol cols="12">
-        <div class="d-flex justify-content-between">
-          <div v-if="loadings" class="d-flex justify-content-end mt-4">
-            <q-spinner-dots color="green" size="20px" class="q-mr-sm" />
+        <div class="table-section-card">
+          <!-- En-tête avec bouton -->
+          <div class="table-header-section">
+            <div class="table-title-group">
+              <div class="table-icon-wrapper">
+                <i class="bi bi-list-ol"></i>
+              </div>
+              <div>
+                <h4 class="table-main-title">Classement des Participants</h4>
+                <p class="table-subtitle">Liste complète du leaderboard</p>
+              </div>
+            </div>
+            <button v-if="loadings" class="btn-recalculate-modern" disabled>
+              <q-spinner-dots color="white" size="20px" />
+            </button>
+            <button v-else class="btn-recalculate-modern" @click="Add">
+              <i class="bi bi-arrow-clockwise me-2"></i>
+              Recalculer Leaderboard
+            </button>
           </div>
-          <BButton
-            v-else
-            variant="success"
-            class="waves-effect waves-light mb-3 btn-success"
-            @click="Add"
-            >Recalculer Leaderboard</BButton
-          >
-        </div>
+
+          <!-- Contenu du tableau -->
+          <div class="table-content-section">
         <BRow>
           <BCol sm="12" md="6">
             <div id="tickets-table_length" class="dataTables_length">
@@ -325,48 +331,343 @@ export default {
             <a href="#" class="text-success">{{ data.item.totalPoints }} points</a>
           </template>
         </BTable>
-        <BRow>
-          <BCol>
-            <div class="dataTables_paginate paging_simple_numbers float-end">
-              <ul class="pagination pagination-rounded">
-                <BPagination v-model="currentPage" :total-rows="rows" :per-page="perPage" />
-              </ul>
-            </div>
-          </BCol>
-        </BRow>
+          </div>
+          
+          <!-- Pagination -->
+          <div class="table-footer-section">
+            <BPagination 
+              v-model="currentPage" 
+              :total-rows="rows" 
+              :per-page="perPage"
+              class="modern-pagination"
+            />
+          </div>
+        </div>
       </BCol>
     </BRow>
   </div>
 </template>
 <style lang="scss">
 @import '../../../css/assets/scss/app2.scss';
-.stat-card {
-  transition: all 0.4s ease-in-out;
-  border: 2px solid transparent;
-  background: linear-gradient(135deg, #fdfdfd, #f5f5f5);
-  position: relative;
-  overflow: hidden;
-}
-.stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
-  border-radius: 20px;
+
+/* === Page moderne === */
+.modern-admin-page {
+  padding: 1.5rem;
+  background: #f8fafc;
+  min-height: 100vh;
 }
 
-.shadow-warning:hover {
-  border-color: #f1c40f;
-  background-color: linear-gradient(135deg, #f8dc9f, #fff3cc);
-  box-shadow: 0 0 18px rgba(241, 196, 15, 0.6);
+/* === En-tête de section moderne === */
+.section-header-modern {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+
+  .section-title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .section-icon-modern {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.8rem;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .section-title-content {
+      .section-title-modern {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .section-subtitle-modern {
+        font-size: 0.95rem;
+        color: #64748b;
+        margin: 0;
+        font-weight: 500;
+      }
+    }
+  }
 }
-.shadow-success:hover {
-  border-color: #2ecc71;
-  background: linear-gradient(135deg, #2ecc71, #d4f5e6);
-  box-shadow: 0 0 18px rgba(46, 204, 113, 0.6);
+
+/* === Cartes de statistiques modernes === */
+.modern-stat-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #667eea, #764ba2);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+    &::before {
+      opacity: 1;
+    }
+
+    .stat-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+  }
+
+  .stat-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    color: white;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .stat-content {
+    flex: 1;
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1;
+      margin: 0 0 0.5rem 0;
+      color: #1e293b;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: #64748b;
+      font-weight: 600;
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  &.stat-warning {
+    .stat-icon {
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    }
+
+    &:hover {
+      border-color: #fef3c7;
+      background: linear-gradient(135deg, #ffffff, #fffbeb);
+    }
+  }
+
+  &.stat-success {
+    .stat-icon {
+      background: linear-gradient(135deg, #34d399, #10b981);
+    }
+
+    &:hover {
+      border-color: #d1fae5;
+      background: linear-gradient(135deg, #ffffff, #f0fdf4);
+    }
+  }
+
+  &.stat-info {
+    .stat-icon {
+      background: linear-gradient(135deg, #60a5fa, #3b82f6);
+    }
+
+    &:hover {
+      border-color: #dbeafe;
+      background: linear-gradient(135deg, #ffffff, #eff6ff);
+    }
+  }
 }
-.shadow-danger:hover {
-  border-color: #e74c3c;
-  background: linear-gradient(135deg, #ffecec, #ffd9d6);
-  box-shadow: 0 0 18px rgba(231, 76, 60, 0.6);
+
+/* === Section tableau moderne === */
+.table-section-card {
+  background: white;
+  border-radius: 20px;
+  padding: 0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border: 2px solid #f1f5f9;
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #e2e8f0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.table-header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f8fafc, #ffffff);
+  border-bottom: 2px solid #f1f5f9;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  .table-title-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .table-icon-wrapper {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .table-main-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .table-subtitle {
+      font-size: 0.85rem;
+      color: #64748b;
+      margin: 0.25rem 0 0 0;
+    }
+  }
+}
+
+.btn-recalculate-modern {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  border: none !important;
+  color: white !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
+  transition: all 0.3s ease !important;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4) !important;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0) !important;
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  i {
+    font-size: 1.1rem;
+  }
+}
+
+.table-content-section {
+  padding: 1.5rem;
+}
+
+.table-footer-section {
+  padding: 1.25rem 1.5rem;
+  background: #fafbfc;
+  border-top: 2px solid #f1f5f9;
+  display: flex;
+  justify-content: center;
+
+  .modern-pagination {
+    margin: 0;
+    
+    .page-item {
+      margin: 0 0.25rem;
+
+      .page-link {
+        border-radius: 8px;
+        border: 2px solid #e2e8f0;
+        color: #64748b;
+        font-weight: 600;
+        padding: 0.5rem 0.75rem;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: #f1f5f9;
+          border-color: #cbd5e1;
+          color: #475569;
+        }
+      }
+
+      &.active .page-link {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-color: #667eea;
+        color: white;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+      }
+    }
+  }
+}
+
+/* === Badges de rang === */
+.bg-gold {
+  background: linear-gradient(135deg, #ffd700, #ffed4e) !important;
+  color: #92400e !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+}
+
+.bg-silver {
+  background: linear-gradient(135deg, #c0c0c0, #e8e8e8) !important;
+  color: #475569 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(192, 192, 192, 0.3);
+}
+
+.bg-bronze {
+  background: linear-gradient(135deg, #cd7f32, #e8a87c) !important;
+  color: #78350f !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(205, 127, 50, 0.3);
 }
 .tabs-morphing-container {
   position: relative;

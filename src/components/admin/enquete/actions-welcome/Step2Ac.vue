@@ -1,26 +1,47 @@
 <template>
-  <div style="height: auto">
-    <h3 class="mb-4 text-success fw-bold">Ajouter vos groupes des questions</h3>
+  <div class="step-form-container">
+    <!-- Bouton d'action -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <p class="text-muted mb-0" style="font-size: 0.9375rem;">Organisez vos questions par thématiques</p>
+      <BButton
+        class="btn-modern btn-success-modern"
+        @click="AddFormData"
+        type="button"
+      >
+        <i class="bi bi-plus-circle me-2"></i>
+        Ajouter un groupe
+      </BButton>
+    </div>
 
-    <BButton
-      variant="success"
-      class="px-4 py-2 rounded-3 shadow-sm mb-3"
-      @click="AddFormData"
-      type="button"
-    >
-      ➕ Ajouter un groupe
-    </BButton>
     <q-inner-loading v-if="loading" :showing="loading" background-color="rgba(0,0,0,0.4)">
       <q-spinner-bars color="green" size="50px" />
     </q-inner-loading>
 
     <!-- Liste des groupes -->
-    <div v-else v-for="(field, index) in fields" :key="index" class="mb-4">
-      <BCard class="shadow-sm rounded-3 border-0">
-        <BCardBody>
+    <div v-else>
+      <div v-if="fields.length === 0" class="empty-state">
+        <i class="bi bi-inbox" style="font-size: 3rem; color: #cbd5e1;"></i>
+        <p class="mt-3 text-muted">Aucun groupe ajouté. Cliquez sur "Ajouter un groupe" pour commencer.</p>
+      </div>
+
+      <div v-for="(field, index) in fields" :key="index" class="group-card mb-3">
+        <div class="group-card-header">
+          <div class="group-number">
+            <i class="bi bi-folder2-open"></i>
+            <span>Groupe {{ index + 1 }}</span>
+          </div>
+          <BButton 
+            class="btn-delete" 
+            @click="deleteRow(index)"
+            title="Supprimer ce groupe"
+          >
+            <i class="bi bi-trash"></i>
+          </BButton>
+        </div>
+        <div class="group-card-body">
           <BRow>
             <!-- Titre -->
-            <BCol lg="4" class="mb-3 floating-label">
+            <BCol lg="5" class="mb-3 floating-label">
               <input
                 type="text"
                 v-model="field.title"
@@ -35,28 +56,20 @@
               <textarea
                 v-model="field.description"
                 class="form-control form-control-modern"
-                rows="3"
+                rows="2"
                 placeholder=" "
               ></textarea>
               <label>Description du groupe</label>
             </BCol>
-
-            <!-- Supprimer -->
-            <BCol lg="1" class="d-flex justify-content-end align-self-center">
-              <BButton variant="danger" class="px-3 py-2 rounded-3" @click="deleteRow(index)">
-                🗑
-              </BButton>
-            </BCol>
           </BRow>
-        </BCardBody>
-      </BCard>
+        </div>
+      </div>
     </div>
 
     <!-- Navigation -->
     <div class="d-flex justify-content-end justify-content-md-between mt-4">
       <BButton
-        variant="outline-secondary"
-        class="px-5 rounded-3 shadow-sm"
+        class="btn-modern btn-secondary-modern"
         @click="$emit('onBack')"
       >
         ← Retour
@@ -64,7 +77,7 @@
 
       <q-spinner-dots v-if="loadings" color="green" size="20px" class="q-mr-sm" />
 
-      <BButton v-else variant="success" class="px-5 rounded-3 shadow-sm ms-2" @click="handleNext">
+      <BButton v-else class="btn-modern btn-success-modern ms-2" @click="handleNext">
         Suivant →
       </BButton>
     </div>
@@ -72,7 +85,7 @@
 </template>
 
 <script>
-import { BButton, BCol, BRow, BCard, BCardBody } from 'bootstrap-vue-next'
+import { BButton, BCol, BRow } from 'bootstrap-vue-next'
 import { Notify } from 'quasar'
 import { api } from 'src/boot/axios'
 import { useRegisterStore } from 'src/stores/useRegisterStore'
@@ -82,8 +95,6 @@ export default {
     BButton,
     BCol,
     BRow,
-    BCard,
-    BCardBody,
   },
   emits: ['onBack', 'onNext'],
   setup() {
@@ -136,19 +147,17 @@ export default {
     const deleteRow = async (index) => {
       if (fields.value[index].title !== '') {
         api
-          .delete(
-            `/admin/welcome-surveys/${store.idsurveyw}/question-groups/${fields.value[index].id}`,
-          )
+          .delete(`/admin/welcome-surveys/${store.idsurveyw}/question-groups/${fields.value[index].id}`)
           .then(() => {
             Notify.create({
               type: 'success',
-              message: 'Question groupe supprimmer avec success.',
+              message: 'Groupe de questions supprimé avec succès.',
             })
           })
           .catch((error) => {
             console.error('Error deleting question group:', error)
           })
-        const response = await api.get('/admin/welcome-surveys') // récupère le sondage mis à jour
+        const response = await api.get('/admin/welcome-surveys')
         store.setSurveyDataw(response.data.find((s) => s.id === store.idsurveyw))
 
         fields.value.splice(index, 1)
@@ -162,7 +171,7 @@ export default {
       if (!store.idsurveyw) {
         Notify.create({
           type: 'negative',
-          message: 'Créer votre sondage de bienvenue.',
+          message: 'Créer votre enquête de bienvenue.',
         })
         return
       }
@@ -198,12 +207,12 @@ export default {
           await api.post(`/admin/welcome-surveys/${store.idsurveyw}/question-groups`, {
             groups: add.value,
           })
-          const response = await api.get('/admin/welcome-surveys') // récupère le sondage mis à jour
+          const response = await api.get('/admin/welcome-surveys')
           store.setSurveyDataw(response.data.find((s) => s.id === store.idsurveyw))
           Notify.create({
             type: 'positive',
             message: 'Opération effectuée avec succès !',
-            timeout: 5000, // durée en ms
+            timeout: 5000,
           })
         } catch (error) {
           Notify.create(
@@ -225,13 +234,12 @@ export default {
             title: field.title,
             description: field.description,
           })
-          const response = await api.get('/admin/welcome-surveys') // récupère le sondage mis à jour
+          const response = await api.get('/admin/welcome-surveys')
           store.setSurveyDataw(response.data.find((s) => s.id === store.idsurveyw))
-
           Notify.create({
             type: 'positive',
             message: 'Opération effectuée avec succès !',
-            timeout: 5000, // durée en ms
+            timeout: 5000,
           })
         } catch (error) {
           Notify.create(
@@ -276,67 +284,96 @@ export default {
 }
 </script>
 
-<style scoped>
-.btn-primary {
-  background: linear-gradient(135deg, #34c38f, #2ea3f2);
-  border: none;
-  border-radius: 50px;
+<style scoped lang="scss">
+.empty-state {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 2px dashed #cbd5e1;
+}
+
+.group-card {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
   transition: all 0.3s ease;
-  font-weight: 600;
-  box-shadow: 0 4px 10px rgba(46, 163, 242, 0.3);
 
   &:hover {
-    background: linear-gradient(135deg, #2ea3f2, #34c38f);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(46, 163, 242, 0.4);
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
 
-  &:active {
-    transform: scale(0.96);
+  .group-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    border-bottom: 2px solid #e2e8f0;
+
+    .group-number {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 600;
+      color: #475569;
+      font-size: 1rem;
+
+      i {
+        font-size: 1.25rem;
+        color: #667eea;
+      }
+    }
+
+    .btn-delete {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: #fee2e2;
+      border: none;
+      color: #dc2626;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: #fecaca;
+        transform: scale(1.05);
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+
+      i {
+        font-size: 1rem;
+      }
+    }
+  }
+
+  .group-card-body {
+    padding: 1.5rem;
   }
 }
-.floating-label {
-  position: relative;
 
-  input,
-  textarea,
-  .form-control-modern,
-  .multiselect {
-    border-radius: 10px;
-    transition: all 0.3s ease;
+@media (max-width: 768px) {
+  .d-flex.justify-content-between {
+    flex-direction: column;
+    gap: 1rem;
+
+    .btn-modern {
+      width: 100%;
+    }
   }
 
-  label {
-    position: absolute;
-    top: 50%;
-    left: 15px;
-    transform: translateY(-50%);
-    transition: all 0.2s ease;
-    color: #6c757d;
-    pointer-events: none;
-  }
-
-  input:focus + label,
-  input:not(:placeholder-shown) + label,
-  textarea:focus + label,
-  textarea:not(:placeholder-shown) + label,
-  .multiselect:focus + label,
-  .multiselect:not(:empty) + label {
-    top: -10px;
-    font-size: 0.8rem;
-    color: #10d0f2;
-    background: white;
-    padding: 0 5px;
-  }
-}
-.form-control {
-  border-radius: 12px;
-  transition: all 0.3s ease;
-
-  &:focus {
-    border-color: #2ea3f2;
-    box-shadow: 0 0 8px rgba(46, 163, 242, 0.4);
-    transform: scale(1.01);
+  .group-card-header {
+    .group-number {
+      font-size: 0.875rem;
+    }
   }
 }
 </style>

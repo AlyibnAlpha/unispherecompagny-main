@@ -131,32 +131,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 @import '../../../../css/assets/scss/app2.scss';
-
-/* Card style */
-.stat-card {
-  border-radius: 1rem;
-  color: #fff;
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
-  overflow: hidden;
-}
-
-.stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-}
-
-/* Gradient backgrounds */
-.shadow-warning {
-  background: linear-gradient(135deg, #b2f2fa, #83eefc);
-  box-shadow: 0 4px 20px rgba(253, 160, 133, 0.4);
-}
-
-.shadow-success {
-  background: linear-gradient(135deg, #4edaec, #b2f2fa);
-  box-shadow: 0 4px 20px rgba(56, 249, 215, 0.4);
-}
+@import '../../../../css/admin/dashboard.scss';
 </style>

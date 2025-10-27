@@ -1,125 +1,135 @@
 <template>
-  <BRow>
-    <BCol cols="12">
-      <!-- Tableau 3 derniers sondages -->
-      <BRow class="mt-2">
-        <BCol cols="12">
-          <BCard no-body>
-            <BCardBody>
-              <h4 class="card-title mb-4 text-success">3 derniers sondages</h4>
-              <BTable :items="lastSurveys" :fields="fields" bordered striped responsive>
-                <template #cell(type)="data">
-                  <span
-                    class="badge"
-                    :class="data.item.type === 'BUSINESS' ? 'bg-warning' : 'bg-success'"
-                  >
-                    {{ data.item.type === 'BUSINESS' ? 'Business' : 'Public' }}
-                  </span>
-                </template>
-                <template #cell(startDate)="data">
-                  {{ new Date(data.item.startDate).toLocaleDateString() }}
-                </template>
-                <template #cell(endDate)="data">
-                  {{ new Date(data.item.endDate).toLocaleDateString() }}
-                </template>
-                <template #cell(status)="data">
-                  <div
-                    class="badge badge-pill font-size-12"
-                    :class="{
-                      'bg-soft-primary': data.item.status === 'draft',
-                      'bg-soft-success': data.item.status === 'published',
-                      'bg-soft-warning': data.item.status === 'archived',
-                      'bg-soft-secondary': data.item.status === 'review',
-                      'bg-soft-danger': data.item.status === 'closed',
-                    }"
-                  >
-                    {{ data.item.status }}
-                  </div>
-                </template>
-              </BTable>
-            </BCardBody>
-          </BCard>
-        </BCol>
-      </BRow>
-    </BCol>
-  </BRow>
-  <BRow>
-    <BCol cols="xl-6">
-      <BCard no-body>
-        <BCardBody>
-          <h4 class="card-title mb-4">Répartition Sondages Public vs Business</h4>
-          <div class="mt-3 d-flex flex-wrap">
-            <!-- Camembert répartition Public vs Business -->
-            <div class="flex-fill mt-5" style="min-width: 300px; flex: 1">
-              <apexchart
-                type="pie"
-                class="apex-charts"
-                dir="ltr"
-                height="339"
-                :options="pieOptions"
-                :series="pieSeries"
-              ></apexchart>
-            </div></div
-        ></BCardBody>
-      </BCard>
-    </BCol>
-    <BCol cols="xl-6">
-      <BCard no-body>
-        <BCardBody>
-          <!-- Dropdown tri -->
-          <div class="float-end">
-            <BDropdown variant="white" toggle-class="text-reset p-0" no-caret>
-              <template v-slot:button-content>
-                <span class="font-weight-semibold">Trié:</span>
-                <span class="text-muted">
-                  par...
-                  <i class="mdi mdi-chevron-down ms-1"></i>
-                </span>
+  <div class="modern-analytics">
+    <BRow class="g-4">
+      <BCol cols="12">
+        <!-- Tableau 3 derniers sondages -->
+        <div class="modern-table-card">
+          <div class="table-header">
+            <h4 class="table-title">3 derniers sondages</h4>
+            <div class="table-subtitle">Sondages récemment créés</div>
+          </div>
+          <div class="table-content">
+            <BTable
+              :items="lastSurveys"
+              :fields="fields"
+              bordered
+              striped
+              responsive
+              class="modern-table"
+            >
+              <template #cell(type)="data">
+                <div
+                  class="badge badge-pill font-size-12"
+                  :class="{
+                    'bg-soft-warning': data.item.type === 'BUSINESS',
+                    'bg-soft-success': data.item.type === 'PUBLIC',
+                  }"
+                >
+                  {{ data.item.type === 'BUSINESS' ? 'Business' : 'Public' }}
+                </div>
               </template>
-              <BDropdownItem @click="setPeriod('semaine')">Semaine</BDropdownItem>
-              <BDropdownItem @click="setPeriod('mois')">Mois</BDropdownItem>
-              <BDropdownItem @click="setPeriod('année')">Année</BDropdownItem>
-            </BDropdown>
+              <template #cell(startDate)="data">
+                {{ new Date(data.item.startDate).toLocaleDateString() }}
+              </template>
+              <template #cell(endDate)="data">
+                {{ new Date(data.item.endDate).toLocaleDateString() }}
+              </template>
+              <template #cell(status)="data">
+                <div
+                  class="badge badge-pill font-size-12"
+                  :class="{
+                    'bg-soft-primary': data.item.status === 'draft',
+                    'bg-soft-success': data.item.status === 'published',
+                    'bg-soft-warning': data.item.status === 'archived',
+                    'bg-soft-secondary': data.item.status === 'review',
+                    'bg-soft-danger': data.item.status === 'closed',
+                  }"
+                >
+                  {{ data.item.status }}
+                </div>
+              </template>
+            </BTable>
           </div>
-
-          <h4 class="card-title mb-4">Statistique</h4>
-
-          <div class="mt-1">
-            <ul class="list-inline main-chart mb-0">
-              <li class="list-inline-item chart-border-left me-0 border-0">
-                <h3 class="text-primary d-flex align-items-end">
+        </div>
+      </BCol>
+    </BRow>
+    <BRow class="g-4">
+      <BCol cols="xl-6">
+        <div class="modern-chart-card">
+          <div class="chart-header">
+            <h4 class="chart-title">Répartition Sondages</h4>
+            <div class="chart-subtitle">Public vs Business</div>
+          </div>
+          <div class="chart-content">
+            <apexchart
+              type="pie"
+              class="apex-charts"
+              dir="ltr"
+              height="300"
+              :options="pieOptions"
+              :series="pieSeries"
+            ></apexchart>
+          </div>
+        </div>
+      </BCol>
+      <BCol cols="xl-6">
+        <div class="modern-chart-card">
+          <div class="chart-header">
+            <div class="chart-header-content">
+              <div class="chart-title-section">
+                <h4 class="chart-title">Statistiques</h4>
+                <div class="chart-subtitle">Évolution des réponses</div>
+              </div>
+              <div class="chart-controls">
+                <BDropdown variant="white" toggle-class="modern-dropdown-toggle" no-caret>
+                  <template v-slot:button-content>
+                    <span class="dropdown-label">Période:</span>
+                    <span class="dropdown-value">
+                      {{ period === 'semaine' ? 'Semaine' : period === 'mois' ? 'Mois' : 'Année' }}
+                      <i class="bi bi-chevron-down ms-1"></i>
+                    </span>
+                  </template>
+                  <BDropdownItem @click="setPeriod('semaine')">Semaine</BDropdownItem>
+                  <BDropdownItem @click="setPeriod('mois')">Mois</BDropdownItem>
+                  <BDropdownItem @click="setPeriod('année')">Année</BDropdownItem>
+                </BDropdown>
+              </div>
+            </div>
+            <div class="header-stats">
+              <div class="header-stat-item">
+                <div class="header-stat-value">
                   <CountToComponent :startVal="0" :endVal="Tquestions" :duration="2000" />
-                  <span class="text-muted d-inline-block font-size-15 ms-2">Questions</span>
-                </h3>
-              </li>
-              <li class="list-inline-item chart-border-left me-0">
-                <h3 class="d-flex align-items-end">
+                </div>
+                <div class="header-stat-label">Questions</div>
+              </div>
+              <div class="header-stat-item">
+                <div class="header-stat-value">
                   <CountToComponent :startVal="0" :endVal="Trep" :duration="2000" />
-                  <span class="text-muted d-inline-block font-size-15 ms-2">Réponses</span>
-                </h3>
-              </li>
-            </ul>
+                </div>
+                <div class="header-stat-label">Réponses</div>
+              </div>
+            </div>
           </div>
 
-          <div class="mt-3">
+          <div class="chart-content">
             <apexchart
               type="bar"
               class="apex-charts"
               dir="ltr"
-              height="339"
+              height="250"
               :options="chartOptions"
               :series="series"
             ></apexchart>
           </div>
-        </BCardBody>
-      </BCard>
-    </BCol>
-  </BRow>
+        </div>
+      </BCol>
+    </BRow>
+  </div>
 </template>
 
 <script>
 import CountToComponent from '../../../common/CountToComponent.vue'
-import { BRow, BCard, BCardBody, BCol, BDropdown, BDropdownItem, BTable } from 'bootstrap-vue-next'
+import { BRow, BCol, BDropdown, BDropdownItem, BTable } from 'bootstrap-vue-next'
 import { api } from 'src/boot/axios'
 import { useAuthStore } from 'src/stores/auth'
 import { onMounted, ref } from 'vue'
@@ -128,8 +138,6 @@ import ApexCharts from 'vue3-apexcharts'
 export default {
   components: {
     CountToComponent,
-    BCard,
-    BCardBody,
     BCol,
     BDropdown,
     BDropdownItem,
@@ -148,9 +156,40 @@ export default {
     const pieSeries = ref([0, 0]) // [Public, Business]
     const pieOptions = ref({
       labels: ['Sondages Public', 'Sondages Business'],
-      legend: { position: 'bottom' },
-      chart: { type: 'pie', height: 339 },
-      colors: ['#28a745', '#FFC107'],
+      legend: {
+        position: 'bottom',
+        fontSize: '12px',
+        fontFamily: 'Inter, sans-serif',
+        markers: {
+          width: 8,
+          height: 8,
+          radius: 4,
+        },
+      },
+      chart: {
+        type: 'pie',
+        height: 300,
+        background: 'transparent',
+        fontFamily: 'Inter, sans-serif',
+      },
+      colors: ['#10b981', '#f59e0b'],
+      dataLabels: {
+        enabled: true,
+        style: {
+          fontSize: '12px',
+          fontWeight: 600,
+          colors: ['#fff'],
+        },
+      },
+      tooltip: {
+        theme: 'light',
+        style: {
+          fontSize: '12px',
+        },
+        y: {
+          formatter: (val) => `${val} sondages`,
+        },
+      },
       responsive: [
         {
           breakpoint: 480,
@@ -260,7 +299,13 @@ export default {
         series.value = [{ name: 'Réponses', type: 'column', data: values }]
 
         chartOptions.value = {
-          chart: { type: 'bar', height: 339, toolbar: { show: false } },
+          chart: {
+            type: 'bar',
+            height: 250,
+            toolbar: { show: false },
+            background: 'transparent',
+            fontFamily: 'Inter, sans-serif',
+          },
           xaxis: {
             categories,
             title: {
@@ -270,22 +315,53 @@ export default {
                   : period.value === 'mois'
                     ? 'Mois'
                     : 'Années',
-              style: { fontSize: '14px', fontWeight: 'bold', color: '#555' },
+              style: { fontSize: '12px', fontWeight: 600, color: '#64748b' },
+            },
+            labels: {
+              style: {
+                fontSize: '11px',
+                colors: '#64748b',
+              },
+            },
+            axisBorder: {
+              show: false,
+            },
+            axisTicks: {
+              show: false,
             },
           },
           yaxis: {
             title: {
               text: 'Nombre de réponses',
-              style: { fontSize: '14px', fontWeight: 'bold', color: '#555' },
+              style: { fontSize: '12px', fontWeight: 600, color: '#64748b' },
+            },
+            labels: {
+              style: {
+                fontSize: '11px',
+                colors: '#64748b',
+              },
             },
           },
-          plotOptions: { bar: { columnWidth: '30%' } },
-          colors: ['#5b73e8'],
-          fill: { opacity: 0.85 },
-          title: {
-            text: `Réponses par ${period.value}`,
-            align: 'center',
-            style: { fontSize: '16px', fontWeight: 'bold', color: '#333' },
+          plotOptions: {
+            bar: {
+              columnWidth: '50%',
+              borderRadius: 6,
+            },
+          },
+          colors: ['#667eea'],
+          fill: { opacity: 0.8 },
+          tooltip: {
+            theme: 'light',
+            style: {
+              fontSize: '12px',
+            },
+            y: {
+              formatter: (val) => `${val} réponses`,
+            },
+          },
+          grid: {
+            borderColor: '#f1f5f9',
+            strokeDashArray: 3,
           },
         }
         camembert()
@@ -374,6 +450,8 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 @import '../../../../css/assets/scss/app2.scss';
+@import '../../../../css/admin/badges.scss';
+@import '../../../../css/admin/dashboard.scss';
 </style>

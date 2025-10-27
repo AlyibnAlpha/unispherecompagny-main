@@ -1,423 +1,314 @@
 <template>
-  <div>
-    <BRow class="d-flexjustify-content-center g-3">
-      <BCol md="6" cols="12">
-        <BCard no-body class="shadow-sm rounded-4 p-2 stat-card shadow-warning h-100">
-          <BCardHeader class="text-warning fw-bold rounded-4"> Transactions </BCardHeader>
-          <BCardBody class="pb-0" style="margin-bottom: -4px">
-            <BRow class="g-3">
-              <BCol cols="6" md="6" xl="3">
-                <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-                  <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-                    <div>
-                      <div class="d-flex align-items-center mb-2">
-                        <i class="bi bi-coin text-warning fs-3 me-2"></i>
-                        <h4 class="fw-bold mb-0 fs-2">
-                          <CountToComponent
-                            :startVal="0"
-                            :endVal="totaltransaction"
-                            :duration="2000"
-                          />
-                        </h4>
-                      </div>
+  <div class="modern-admin-page">
+    <!-- En-tête moderne -->
+    <div class="section-header-modern mb-4">
+      <div class="section-title-wrapper">
+        <div class="section-icon-modern">
+          <i class="bi bi-currency-exchange"></i>
+        </div>
+        <div class="section-title-content">
+          <h3 class="section-title-modern">Transactions de Points</h3>
+          <p class="section-subtitle-modern">Gérez et suivez toutes les transactions de points</p>
+        </div>
+      </div>
+    </div>
 
-                      <span
-                        class="badge bg-warning-subtle text-warning fw-semibold px-3 py-1 rounded-pill"
-                        >Transactions</span
-                      >
-                    </div>
-                  </BCardBody>
-                </BCard>
-              </BCol>
-              <BCol cols="6" md="6" xl="3">
-                <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-                  <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-                    <div>
-                      <div class="d-flex align-items-center mb-2">
-                        <i class="bi bi-coin text-warning fs-3 me-2"></i>
-                        <h4 class="fw-bold mb-0 fs-2">
-                          <CountToComponent
-                            :startVal="0"
-                            :endVal="totalPointsAwarded"
-                            :duration="2000"
-                          />
-                        </h4>
-                      </div>
+    <!-- Section Transactions -->
+    <div class="stats-group-card mb-4">
+      <div class="stats-section-title mb-3">
+        <i class="bi bi-currency-exchange me-2"></i>
+        Transactions
+      </div>
+      <BRow class="g-3">
+      <BCol cols="6" md="3">
+        <div class="modern-stat-card stat-warning">
+          <div class="stat-icon">
+            <i class="bi bi-coin"></i>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-value">
+              <CountToComponent :startVal="0" :endVal="totaltransaction" :duration="2000" />
+            </h3>
+            <p class="stat-label">Transactions</p>
+          </div>
+        </div>
+      </BCol>
+      <BCol cols="6" md="3">
+        <div class="modern-stat-card stat-success">
+          <div class="stat-icon">
+            <i class="bi bi-arrow-up-circle"></i>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-value">
+              <CountToComponent :startVal="0" :endVal="totalPointsAwarded" :duration="2000" />
+            </h3>
+            <p class="stat-label">Points crédités</p>
+          </div>
+        </div>
+      </BCol>
+      <BCol cols="6" md="3">
+        <div class="modern-stat-card stat-danger">
+          <div class="stat-icon">
+            <i class="bi bi-arrow-down-circle"></i>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-value">
+              <CountToComponent :startVal="0" :endVal="totalPointsSpent" :duration="2000" />
+            </h3>
+            <p class="stat-label">Points débités</p>
+          </div>
+        </div>
+      </BCol>
+      <BCol cols="6" md="3">
+        <div class="modern-stat-card stat-info">
+          <div class="stat-icon">
+            <i class="bi bi-wallet2"></i>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-value">
+              <CountToComponent :startVal="0" :endVal="netPoints" :duration="2000" />
+            </h3>
+            <p class="stat-label">Solde net</p>
+          </div>
+        </div>
+      </BCol>
+      </BRow>
+    </div>
 
-                      <span
-                        class="badge bg-warning-subtle text-warning fw-semibold px-0 py-1 rounded-pill"
-                        >Points crédités</span
-                      >
-                    </div>
-                  </BCardBody>
-                </BCard>
-              </BCol>
-              <BCol cols="6" md="6" xl="3">
-                <BCard no-body class="shadow-sm rounded-4 stat-card shadow-danger">
-                  <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-                    <div>
-                      <div class="d-flex align-items-center mb-2">
-                        <i class="bi bi-coin text-danger fs-3 me-2"></i>
-                        <h4 class="fw-bold mb-0 fs-2">
-                          <CountToComponent
-                            :startVal="0"
-                            :endVal="totalPointsSpent"
-                            :duration="2000"
-                          />
-                        </h4>
-                      </div>
-                      <span
-                        class="badge bg-danger-subtle text-danger fw-semibold px-0 py-1 rounded-pill"
-                        >Points débités</span
-                      >
-                    </div>
-                  </BCardBody>
-                </BCard>
-              </BCol>
-              <BCol cols="6" md="6" xl="3">
-                <BCard no-body class="shadow-sm rounded-4 stat-card shadow-success">
-                  <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-                    <div>
-                      <div class="d-flex align-items-center mb-2">
-                        <i class="bi bi-coin text-success fs-3 me-2"></i>
-                        <h4 class="fw-bold mb-0 fs-2">
-                          <CountToComponent :startVal="0" :endVal="netPoints" :duration="2000" />
-                        </h4>
-                      </div>
+    <!-- Grille 2 colonnes pour les autres sections -->
+    <BRow class="g-4">
+      <!-- Colonne gauche -->
+      <BCol md="6">
+        <!-- Section Sondages -->
+        <div class="stats-group-card mb-4">
+          <div class="stats-section-title mb-3">
+            <i class="bi bi-clipboard-check me-2"></i>
+            Sondages
+          </div>
+          <BRow class="g-3">
+            <BCol cols="6">
+              <div class="modern-stat-card stat-warning">
+                <div class="stat-icon">
+                  <i class="bi bi-bookmark-check"></i>
+                </div>
+                <div class="stat-content">
+                  <h3 class="stat-value">
+                    <CountToComponent :startVal="0" :endVal="surveyCounst" :duration="2000" />
+                  </h3>
+                  <p class="stat-label">Transactions</p>
+                </div>
+              </div>
+            </BCol>
+            <BCol cols="6">
+              <div class="modern-stat-card stat-success">
+                <div class="stat-icon">
+                  <i class="bi bi-star-fill"></i>
+                </div>
+                <div class="stat-content">
+                  <h3 class="stat-value">
+                    <CountToComponent :startVal="0" :endVal="surveytotalPoints" :duration="2000" />
+                  </h3>
+                  <p class="stat-label">Points attribués</p>
+                </div>
+              </div>
+            </BCol>
+          </BRow>
+        </div>
 
-                      <span
-                        class="badge bg-success-subtle text-success fw-semibold px-1 py-1 rounded-pill"
-                        >Solde net</span
-                      >
-                    </div>
-                  </BCardBody>
-                </BCard>
-              </BCol>
-            </BRow>
-          </BCardBody>
-        </BCard>
+        <!-- Section Bonus -->
+        <div class="stats-group-card mb-4">
+          <div class="stats-section-title mb-3">
+            <i class="bi bi-star-fill me-2"></i>
+            Bonus
+          </div>
+          <BRow class="g-3">
+            <BCol cols="6">
+              <div class="modern-stat-card stat-warning">
+                <div class="stat-icon">
+                  <i class="bi bi-cash-coin"></i>
+                </div>
+                <div class="stat-content">
+                  <h3 class="stat-value">
+                    <CountToComponent :startVal="0" :endVal="leaderboard_bonuscount" :duration="2000" />
+                  </h3>
+                  <p class="stat-label">Transactions Bonus</p>
+                </div>
+              </div>
+            </BCol>
+            <BCol cols="6">
+              <div class="modern-stat-card stat-success">
+                <div class="stat-icon">
+                  <i class="bi bi-trophy-fill"></i>
+                </div>
+                <div class="stat-content">
+                  <h3 class="stat-value">
+                    <CountToComponent :startVal="0" :endVal="leaderboard_bonustotalPoints" :duration="2000" />
+                  </h3>
+                  <p class="stat-label">Points attribués</p>
+                </div>
+              </div>
+            </BCol>
+          </BRow>
+        </div>
+
+        <!-- Section Ajustements -->
+        <div class="stats-group-card">
+          <div class="stats-section-title mb-3">
+            <i class="bi bi-sliders me-2"></i>
+            Ajustements Admin
+          </div>
+          <BRow class="g-3">
+            <BCol cols="6">
+              <div class="modern-stat-card stat-warning">
+                <div class="stat-icon">
+                  <i class="bi bi-pie-chart"></i>
+                </div>
+                <div class="stat-content">
+                  <h3 class="stat-value">
+                    <CountToComponent :startVal="0" :endVal="admin_adjustmentcount" :duration="2000" />
+                  </h3>
+                  <p class="stat-label">Ajustements manuels</p>
+                </div>
+              </div>
+            </BCol>
+            <BCol cols="6">
+              <div class="modern-stat-card stat-success">
+                <div class="stat-icon">
+                  <i class="bi bi-check-circle-fill"></i>
+                </div>
+                <div class="stat-content">
+                  <h3 class="stat-value">
+                    <CountToComponent :startVal="0" :endVal="admin_adjustmenttotalPoints" :duration="2000" />
+                  </h3>
+                  <p class="stat-label">Points attribués</p>
+                </div>
+              </div>
+            </BCol>
+          </BRow>
+        </div>
       </BCol>
 
-      <BCol md="6" cols="xl-6">
-        <BRow>
-          <BCol cols="12" md="12" xl="12">
-            <BCard no-body class="shadow-sm rounded-4 p-1 stat-card shadow-warning h-100">
-              <BCardHeader class="text-warning fw-bold rounded-4"> sondages </BCardHeader>
-              <BCardBody class="pb-0" style="margin-bottom: -4px">
-                <BRow class="g-3">
-                  <BCol cols="6" md="6" xl="3">
-                    <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-                      <BCardBody
-                        class="d-flex justify-content-between align-items-center p-3 bg-light"
-                      >
-                        <div>
-                          <div class="d-flex align-items-center mb-2">
-                            <i class="bi bi-bookmark-check text-warning fs-3 me-2"></i>
-                            <h4 class="fw-bold mb-0 fs-2">
-                              <CountToComponent
-                                :startVal="0"
-                                :endVal="surveyCounst"
-                                :duration="2000"
-                              />
-                            </h4>
-                          </div>
-                          <span
-                            class="badge bg-warning-subtle text-warning fw-semibold px-3 py-1 rounded-pill"
-                          >
-                            Transaction</span
-                          >
-                        </div>
-                      </BCardBody>
-                    </BCard>
-                  </BCol>
-                  <BCol cols="6" md="6" xl="3">
-                    <BCard no-body class="shadow-sm rounded-4 stat-card shadow-success">
-                      <BCardBody
-                        class="d-flex justify-content-between align-items-center p-3 bg-light"
-                      >
-                        <div>
-                          <div class="d-flex align-items-center mb-2">
-                            <i class="bi bi-bookmark-check text-success fs-3 me-2"></i>
-                            <h4 class="fw-bold mb-0 fs-2">
-                              <CountToComponent
-                                :startVal="0"
-                                :endVal="surveytotalPoints"
-                                :duration="2000"
-                              />
-                            </h4>
-                          </div>
+      <!-- Colonne droite -->
+      <BCol md="6">
+        <!-- Section Parrainage -->
+        <div class="stats-group-card mb-4">
+          <div class="stats-section-title mb-3">
+            <i class="bi bi-people-fill me-2"></i>
+            Parrainage
+          </div>
+          <BRow class="g-3">
+            <BCol cols="6">
+              <div class="modern-stat-card stat-warning">
+                <div class="stat-icon">
+                  <i class="bi bi-people"></i>
+                </div>
+                <div class="stat-content">
+                  <h3 class="stat-value">
+                    <CountToComponent :startVal="0" :endVal="invitationcount" :duration="2000" />
+                  </h3>
+                  <p class="stat-label">Parrainages</p>
+                </div>
+              </div>
+            </BCol>
+            <BCol cols="6">
+              <div class="modern-stat-card stat-success">
+                <div class="stat-icon">
+                  <i class="bi bi-gift-fill"></i>
+                </div>
+                <div class="stat-content">
+                  <h3 class="stat-value">
+                    <CountToComponent :startVal="0" :endVal="invitationtotalPoints" :duration="2000" />
+                  </h3>
+                  <p class="stat-label">Points via invitations</p>
+                </div>
+              </div>
+            </BCol>
+          </BRow>
+        </div>
 
-                          <span
-                            class="badge bg-success-subtle text-success fw-semibold px-1 py-1 rounded-pill"
-                            >Points attribuée</span
-                          >
-                        </div>
-                      </BCardBody>
-                    </BCard>
-                  </BCol>
-                </BRow>
-              </BCardBody>
-            </BCard>
-          </BCol>
-          <BCol md="12" cols="xl-12" class="mt-2">
-            <BCard no-body class="shadow-sm rounded-4 p-1 stat-card shadow-warning h-100">
-              <BCardHeader class="text-warning fw-bold rounded-4"> Parrainage </BCardHeader>
-              <BCardBody class="pb-0" style="margin-bottom: -4px">
-                <BRow class="g-3">
-                  <BCol cols="6" md="6" xl="3">
-                    <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-                      <BCardBody
-                        class="d-flex justify-content-between align-items-center p-3 bg-light"
-                      >
-                        <div>
-                          <div class="d-flex align-items-center mb-2">
-                            <i class="bi bi-people text-warning fs-3 me-2"></i>
-                            <h4 class="fw-bold mb-0 fs-2">
-                              <CountToComponent
-                                :startVal="0"
-                                :endVal="invitationcount"
-                                :duration="2000"
-                              />
-                            </h4>
-                          </div>
-
-                          <span
-                            class="badge bg-warning-subtle text-warning fw-semibold px-1 py-1 rounded-pill"
-                            >parrainage</span
-                          >
-                        </div>
-                      </BCardBody>
-                    </BCard>
-                  </BCol>
-                  <BCol cols="6" md="6" xl="3">
-                    <BCard no-body class="shadow-sm rounded-4 stat-card shadow-success">
-                      <BCardBody
-                        class="d-flex justify-content-between align-items-center p-3 bg-light"
-                      >
-                        <div>
-                          <div class="d-flex align-items-center mb-2">
-                            <i class="bi bi-people text-success fs-3 me-2"></i>
-                            <h4 class="fw-bold mb-0 fs-2">
-                              <CountToComponent
-                                :startVal="0"
-                                :endVal="invitationtotalPoints"
-                                :duration="2000"
-                              />
-                            </h4>
-                          </div>
-
-                          <span
-                            class="badge bg-success-subtle text-success fw-semibold px-1 py-1 rounded-pill"
-                            >points crédités via invitations</span
-                          >
-                        </div>
-                      </BCardBody>
-                    </BCard>
-                  </BCol>
-                </BRow>
-              </BCardBody>
-            </BCard>
-          </BCol>
-        </BRow>
-      </BCol>
-
-      <BCol md="4" cols="xl-2"
-        ><BCard no-body class="shadow-sm rounded-4 p-1 stat-card shadow-warning h-100">
-          <BCardHeader class="text-warning fw-bold rounded-4"> Bonus </BCardHeader>
-          <BCardBody class="pb-0" style="margin-bottom: -4px">
-            <BRow class="g-3">
-              <BCol cols="6" md="6" xl="3">
-                <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-                  <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-                    <div>
-                      <div class="d-flex align-items-center mb-2">
-                        <i class="bi bi-cash-coin text-warning fs-3 me-2"></i>
-                        <h4 class="fw-bold mb-0 fs-2">
-                          <CountToComponent
-                            :startVal="0"
-                            :endVal="leaderboard_bonuscount"
-                            :duration="2000"
-                          />
-                        </h4>
-                      </div>
-
-                      <span
-                        class="badge bg-warning-subtle text-warning fw-semibold px-1 py-1 rounded-pill"
-                        >Transaction Bonus</span
-                      >
-                    </div>
-                  </BCardBody>
-                </BCard>
-              </BCol>
-              <BCol cols="6" md="6" xl="3">
-                <BCard no-body class="shadow-sm rounded-4 stat-card shadow-success">
-                  <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-                    <div>
-                      <div class="d-flex align-items-center mb-2">
-                        <i class="bi bi-cash-coin text-success fs-3 me-2"></i>
-                        <h4 class="fw-bold mb-0 fs-2">
-                          <CountToComponent
-                            :startVal="0"
-                            :endVal="leaderboard_bonustotalPoints"
-                            :duration="2000"
-                          />
-                        </h4>
-                      </div>
-
-                      <span
-                        class="badge bg-success-subtle text-success fw-semibold px-1 py-1 rounded-pill"
-                        >Point attribué
-                      </span>
-                    </div>
-                  </BCardBody>
-                </BCard>
-              </BCol>
-            </BRow>
-          </BCardBody>
-        </BCard>
-      </BCol>
-      <BCol md="4" cols="xl-2"
-        ><BCard no-body class="shadow-sm rounded-4 p-1 stat-card shadow-warning h-100">
-          <BCardHeader class="text-warning fw-bold rounded-4"> Récompenses </BCardHeader>
-          <BCardBody class="pb-0" style="margin-bottom: -4px">
-            <BRow class="g-3">
-              <BCol cols="6" md="6" xl="3">
-                <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-                  <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-                    <div>
-                      <div class="d-flex align-items-center mb-2">
-                        <i class="bi bi-trophy text-warning fs-3 me-2"></i>
-                        <h4 class="fw-bold mb-0 fs-2">
-                          <CountToComponent
-                            :startVal="0"
-                            :endVal="redemptioncount"
-                            :duration="2000"
-                          />
-                        </h4>
-                      </div>
-
-                      <span
-                        class="badge bg-warning-subtle text-warning fw-semibold px-1 py-1 rounded-pill"
-                        >échange de points</span
-                      >
-                    </div>
-                  </BCardBody>
-                </BCard>
-              </BCol>
-              <BCol cols="6" md="6" xl="3">
-                <BCard no-body class="shadow-sm rounded-4 stat-card shadow-danger">
-                  <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-                    <div>
-                      <div class="d-flex align-items-center mb-2">
-                        <i class="bi bi-trophy text-danger fs-3 me-2"></i>
-                        <h4 class="fw-bold mb-0 fs-2">
-                          <CountToComponent
-                            :startVal="0"
-                            :endVal="redemptiontotalPoints"
-                            :duration="2000"
-                          />
-                        </h4>
-                      </div>
-
-                      <span
-                        class="badge bg-danger-subtle text-danger fw-semibold px-1 py-1 rounded-pill"
-                        >Point dépensé</span
-                      >
-                    </div>
-                  </BCardBody>
-                </BCard>
-              </BCol>
-            </BRow>
-          </BCardBody>
-        </BCard>
-      </BCol>
-      <BCol md="4" cols="xl-2"
-        ><BCard no-body class="shadow-sm rounded-4 p-1 stat-card shadow-warning h-100">
-          <BCardHeader class="text-warning fw-bold rounded-4">
-            Ajustements Administrateur
-          </BCardHeader>
-          <BCardBody class="pb-0" style="margin-bottom: -4px">
-            <BRow class="g-3">
-              <BCol cols="6" md="6" xl="3">
-                <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-                  <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-                    <div>
-                      <div class="d-flex align-items-center mb-2">
-                        <i class="bi bi-pie-chart text-warning fs-3 me-2"></i>
-                        <h4 class="fw-bold mb-0 fs-2">
-                          <CountToComponent
-                            :startVal="0"
-                            :endVal="admin_adjustmentcount"
-                            :duration="2000"
-                          />
-                        </h4>
-                      </div>
-
-                      <span
-                        class="badge bg-warning-subtle text-warning fw-semibold px-1 py-1 rounded-pill"
-                        >Ajustements manuels</span
-                      >
-                    </div>
-                  </BCardBody>
-                </BCard>
-              </BCol>
-              <BCol cols="6" md="6" xl="3">
-                <BCard no-body class="shadow-sm rounded-4 stat-card shadow-success">
-                  <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-                    <div>
-                      <div class="d-flex align-items-center mb-2">
-                        <i class="bi bi-pie-chart text-success fs-3 me-2"></i>
-                        <h4 class="fw-bold mb-0 fs-2">
-                          <CountToComponent
-                            :startVal="0"
-                            :endVal="admin_adjustmenttotalPoints"
-                            :duration="2000"
-                          />
-                        </h4>
-                      </div>
-
-                      <span
-                        class="badge bg-success-subtle text-success fw-semibold px-1 py-1 rounded-pill"
-                        >Points attribué</span
-                      >
-                    </div>
-                  </BCardBody>
-                </BCard>
-              </BCol>
-            </BRow>
-          </BCardBody>
-        </BCard>
+        <!-- Section Récompenses -->
+        <div class="stats-group-card">
+          <div class="stats-section-title mb-3">
+            <i class="bi bi-gift me-2"></i>
+            Récompenses
+          </div>
+          <BRow class="g-3">
+            <BCol cols="6">
+              <div class="modern-stat-card stat-warning">
+                <div class="stat-icon">
+                  <i class="bi bi-trophy"></i>
+                </div>
+                <div class="stat-content">
+                  <h3 class="stat-value">
+                    <CountToComponent :startVal="0" :endVal="redemptioncount" :duration="2000" />
+                  </h3>
+                  <p class="stat-label">Échanges de points</p>
+                </div>
+              </div>
+            </BCol>
+            <BCol cols="6">
+              <div class="modern-stat-card stat-danger">
+                <div class="stat-icon">
+                  <i class="bi bi-bag-x-fill"></i>
+                </div>
+                <div class="stat-content">
+                  <h3 class="stat-value">
+                    <CountToComponent :startVal="0" :endVal="redemptiontotalPoints" :duration="2000" />
+                  </h3>
+                  <p class="stat-label">Points dépensés</p>
+                </div>
+              </div>
+            </BCol>
+          </BRow>
+        </div>
       </BCol>
     </BRow>
-    <BRow class="mt-3">
+    <BRow class="mt-4">
       <BCol cols="12">
-        <div class="d-flex justify-content-between">
-          <BButton
-            variant="success"
-            class="waves-effect waves-light mb-3 btn-success"
-            @click="ajout = true"
-            >Créer une Transactions</BButton
-          >
+        <div class="table-section-card">
+          <!-- En-tête avec bouton -->
+          <div class="table-header-section">
+            <div class="table-title-group">
+              <div class="table-icon-wrapper">
+                <i class="bi bi-table"></i>
+              </div>
+              <div>
+                <h4 class="table-main-title">Liste des Transactions</h4>
+                <p class="table-subtitle">Gérez toutes les transactions de points</p>
+              </div>
+            </div>
+            <BButton class="btn-create-modern" @click="ajout = true">
+              <i class="bi bi-plus-circle me-2"></i>
+              Créer une Transaction
+            </BButton>
+          </div>
 
-          <q-dialog v-model="ajout" transition-show="scale" transition-hide="fade">
-            <q-card
-              style="width: 800px; max-width: 90vw; border-radius: 20px; overflow: hidden"
-              class="shadow-lg"
-            >
-              <!-- Titre -->
-              <q-card-section
-                class="q-pa-md text-white flex items-center justify-center"
-                style="background: linear-gradient(135deg, #0d6efd, #6610f2)"
-              >
-                <q-icon name="group_add" size="28px" class="q-mr-sm" />
-                <div class="text-h6 text-center">Transactions</div>
-              </q-card-section>
+          <!-- Contenu du tableau -->
+          <div class="table-content-section">
+        
+        <q-dialog v-model="ajout" transition-show="scale" transition-hide="fade">
+            <q-card class="modern-form-modal">
+              <!-- Header moderne -->
+              <div class="form-modal-header">
+                <div class="form-modal-header-content">
+                  <div class="form-modal-icon">
+                    <i class="bi bi-plus-circle-fill"></i>
+                  </div>
+                  <div>
+                    <h4 class="form-modal-title">Créer une Transaction</h4>
+                    <p class="form-modal-subtitle">Ajouter une nouvelle transaction de points</p>
+                  </div>
+                </div>
+                <button class="form-modal-close-btn" @click="ajout = false">
+                  <i class="bi bi-x-lg"></i>
+                </button>
+              </div>
 
               <!-- Formulaire -->
-              <div class="q-pa-lg">
+              <div class="form-modal-content">
                 <BForm>
                   <BRow>
-                    <!-- Nom -->
+                    <!-- Participant -->
                     <BCol cols="12" class="mb-4 floating-label">
                       <Multiselect
                         id="st"
@@ -444,7 +335,7 @@
                       <label for="desc">Description</label>
                     </BCol>
 
-                    <!-- Ville -->
+                    <!-- Points -->
                     <BCol cols="12" class="mb-4 floating-label">
                       <input
                         class="form-control form-control-modern"
@@ -453,22 +344,29 @@
                         v-model="form.points"
                         placeholder=" "
                       />
-                      <label for="publishCheck"> Points requits </label>
+                      <label for="publishCheck">Points requis</label>
                     </BCol>
                   </BRow>
 
-                  <!-- Bouton -->
-                  <div v-if="loadings" class="d-flex justify-content-end mt-4">
-                    <q-spinner-dots color="green" size="20px" class="q-mr-sm" />
-                  </div>
-                  <div v-else class="d-flex justify-content-end mt-4">
-                    <BButton variant="success" class="px-5" @click="Add"> Enregistrer </BButton>
+                  <!-- Boutons -->
+                  <div class="form-modal-actions">
+                    <button type="button" class="btn-cancel-form" @click="ajout = false">
+                      <i class="bi bi-x-circle me-2"></i>
+                      Annuler
+                    </button>
+                    <button v-if="loadings" type="button" class="btn-submit-form" disabled>
+                      <q-spinner-dots color="white" size="20px" />
+                    </button>
+                    <button v-else type="button" class="btn-submit-form" @click="Add">
+                      <i class="bi bi-check-circle me-2"></i>
+                      Enregistrer
+                    </button>
                   </div>
                 </BForm>
               </div>
             </q-card>
-          </q-dialog>
-        </div>
+        </q-dialog>
+        
         <BRow>
           <BCol sm="12" md="6">
             <div id="tickets-table_length" class="dataTables_length">
@@ -574,143 +472,175 @@
           </template>
         </BTable>
         <q-dialog v-model="edit" transition-show="scale" transition-hide="fade">
-          <q-card
-            style="width: 800px; max-width: 90vw; border-radius: 20px; overflow: hidden"
-            class="shadow-lg"
-          >
-            <!-- Titre -->
-            <q-card-section
-              class="q-pa-md text-white flex items-center justify-center"
-              style="background: linear-gradient(135deg, #0d6efd, #6610f2)"
-            >
-              <q-icon name="group_add" size="28px" class="q-mr-sm" />
-              <div class="text-h6 text-center">Transactions</div>
-            </q-card-section>
+          <q-card class="modern-form-modal">
+            <!-- Header moderne -->
+            <div class="form-modal-header">
+              <div class="form-modal-header-content">
+                <div class="form-modal-icon form-modal-icon-edit">
+                  <i class="bi bi-pencil-square"></i>
+                </div>
+                <div>
+                  <h4 class="form-modal-title">Modifier la Transaction</h4>
+                  <p class="form-modal-subtitle">Mettre à jour les informations</p>
+                </div>
+              </div>
+              <button class="form-modal-close-btn" @click="edit = false">
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </div>
 
             <!-- Formulaire -->
-            <div class="q-pa-lg">
+            <div class="form-modal-content">
               <BForm>
                 <BRow>
-                  <!-- Nom -->
-
                   <!-- Description -->
                   <BCol cols="12" class="mb-4 floating-label">
                     <textarea
-                      id="desc"
+                      id="desc-edit"
                       v-model="formu.description"
                       class="form-control form-control-modern"
                       rows="3"
                       placeholder=" "
                     ></textarea>
-                    <label for="desc">Description</label>
+                    <label for="desc-edit">Description</label>
                   </BCol>
 
-                  <!-- Ville -->
-                  <BCol cols="12" class="mb-4 floating-label" style="margin-top: 5px">
+                  <!-- Points -->
+                  <BCol cols="12" class="mb-4 floating-label">
                     <input
                       class="form-control form-control-modern"
                       type="number"
-                      id="publishCheck"
+                      id="points-edit"
                       v-model="formu.points"
+                      placeholder=" "
                     />
-                    <label class="form-check-label fw-semibold" for="publishCheck">
-                      Points requits
-                    </label>
+                    <label for="points-edit">Points requis</label>
                   </BCol>
                 </BRow>
 
-                <!-- Bouton -->
-                <div v-if="loadings" class="d-flex justify-content-end mt-4">
-                  <q-spinner-dots color="green" size="20px" class="q-mr-sm" />
-                </div>
-                <div v-else class="d-flex justify-content-end mt-4">
-                  <BButton variant="success" class="px-5" @click="Edit"> Enregistrer </BButton>
+                <!-- Boutons -->
+                <div class="form-modal-actions">
+                  <button type="button" class="btn-cancel-form" @click="edit = false">
+                    <i class="bi bi-x-circle me-2"></i>
+                    Annuler
+                  </button>
+                  <button v-if="loadings" type="button" class="btn-submit-form" disabled>
+                    <q-spinner-dots color="white" size="20px" />
+                  </button>
+                  <button v-else type="button" class="btn-submit-form" @click="Edit">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Enregistrer
+                  </button>
                 </div>
               </BForm>
             </div>
           </q-card>
         </q-dialog>
         <q-dialog v-model="opendMdet">
-          <q-card class="detail-dialog" style="width: 800px; max-width: 90vw">
-            <!-- Header -->
-            <q-card-section class="dialog-header row items-center q-pa-sm">
-              <div class="q-ml-sm">
-                <div class="text-h6 text-warning">Ajustements</div>
-                <div class="text-caption text-warning">📋 Détails</div>
+          <q-card class="modern-detail-modal">
+            <!-- Header moderne -->
+            <div class="modal-header-modern">
+              <div class="modal-header-content">
+                <div class="modal-icon-wrapper">
+                  <i class="bi bi-info-circle"></i>
+                </div>
+                <div>
+                  <h4 class="modal-title">Détails de la Transaction</h4>
+                  <p class="modal-subtitle">Informations complètes</p>
+                </div>
               </div>
-              <q-space />
-            </q-card-section>
+              <button class="modal-close-btn" @click="opendMdet = false">
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </div>
 
-            <!-- Contenu -->
-            <q-card-section class="dialog-content">
-              <div class="info-grid">
-                <div class="info-box">
-                  <q-icon name="category" class="text-primary q-mr-sm" />
-                  <div>
-                    <div class="label">Source</div>
-                    <q-badge color="orange" class="chip">
+            <!-- Contenu moderne -->
+            <div class="modal-content-modern">
+              <div class="info-cards-grid">
+                <!-- Source -->
+                <div class="info-card">
+                  <div class="info-card-icon info-icon-orange">
+                    <i class="bi bi-tag-fill"></i>
+                  </div>
+                  <div class="info-card-content">
+                    <div class="info-card-label">Source</div>
+                    <div class="info-card-badge badge-orange">
                       {{ selectedTask?.source }}
-                    </q-badge>
-                  </div>
-                </div>
-
-                <div class="info-box">
-                  <q-icon name="paid" class="text-indigo q-mr-sm" />
-                  <div>
-                    <div class="label">Points</div>
-                    <div class="value">{{ selectedTask?.points }} Pts</div>
-                  </div>
-                </div>
-
-                <div class="info-box">
-                  <q-icon name="event" class="text-indigo q-mr-sm" />
-                  <div>
-                    <div class="label">Date de creation</div>
-                    <div class="value">
-                      {{ new Date(selectedTask?.createdAt).toLocaleDateString('fr-FR') }}
                     </div>
                   </div>
                 </div>
 
-                <div class="info-box col-span-2">
-                  <q-icon name="assignment_turned_in" class="text-blue q-mr-sm" />
-                  <div>
-                    <div class="label">Participant info</div>
-                    <div class="value">
-                      {{
-                        selectedTask?.participant.lastName +
-                        ' ' +
-                        selectedTask?.participant.firstName +
-                        ' - ' +
-                        getAge(selectedTask?.participant.birthDate)
-                      }}
+                <!-- Points -->
+                <div class="info-card">
+                  <div class="info-card-icon info-icon-purple">
+                    <i class="bi bi-coin"></i>
+                  </div>
+                  <div class="info-card-content">
+                    <div class="info-card-label">Points</div>
+                    <div class="info-card-value">{{ selectedTask?.points }} Pts</div>
+                  </div>
+                </div>
+
+                <!-- Date -->
+                <div class="info-card">
+                  <div class="info-card-icon info-icon-blue">
+                    <i class="bi bi-calendar-event"></i>
+                  </div>
+                  <div class="info-card-content">
+                    <div class="info-card-label">Date de création</div>
+                    <div class="info-card-value">
+                      {{ new Date(selectedTask?.createdAt).toLocaleDateString('fr-FR', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                      }) }}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Participant -->
+                <div class="info-card info-card-full">
+                  <div class="info-card-icon info-icon-green">
+                    <i class="bi bi-person-fill"></i>
+                  </div>
+                  <div class="info-card-content">
+                    <div class="info-card-label">Participant</div>
+                    <div class="info-card-value">
+                      {{ selectedTask?.participant.lastName }}
+                      {{ selectedTask?.participant.firstName }}
+                      <span class="age-badge">{{ getAge(selectedTask?.participant.birthDate) }}</span>
                     </div>
                   </div>
                 </div>
               </div>
 
               <!-- Description -->
-              <div class="description-box">
-                <q-icon name="description" class="text-teal q-mr-sm" />
-                <div>
-                  <div class="label">Description</div>
-                  <p class="description-text">
-                    {{ selectedTask?.description || 'Pas de description' }}
-                  </p>
+              <div class="description-card">
+                <div class="description-header">
+                  <div class="description-icon">
+                    <i class="bi bi-file-text"></i>
+                  </div>
+                  <div class="description-label">Description</div>
                 </div>
+                <p class="description-content">
+                  {{ selectedTask?.description || 'Aucune description disponible' }}
+                </p>
               </div>
-            </q-card-section>
+            </div>
           </q-card>
         </q-dialog>
-        <BRow>
-          <BCol>
-            <div class="dataTables_paginate paging_simple_numbers float-end">
-              <ul class="pagination pagination-rounded">
-                <BPagination v-model="currentPage" :total-rows="rows" :per-page="perPage" />
-              </ul>
-            </div>
-          </BCol>
-        </BRow>
+          </div>
+          
+          <!-- Pagination -->
+          <div class="table-footer-section">
+            <BPagination 
+              v-model="currentPage" 
+              :total-rows="rows" 
+              :per-page="perPage"
+              class="modern-pagination"
+            />
+          </div>
+        </div>
       </BCol>
     </BRow>
   </div>
@@ -725,9 +655,6 @@ import {
   BFormSelect,
   BTable,
   BButton,
-  BCardBody,
-  BCard,
-  BCardHeader,
 } from 'bootstrap-vue-next'
 import { api } from 'src/boot/axios'
 import Multiselect from '@vueform/multiselect'
@@ -748,10 +675,7 @@ export default {
     BTable,
     Multiselect,
     BButton,
-    BCardBody,
-    BCard,
     CountToComponent,
-    BCardHeader,
   },
   data() {
     const orderData = ref([])
@@ -1030,11 +954,967 @@ export default {
 </script>
 <style lang="scss">
 @import '../../../css/assets/scss/app2.scss';
-.detail-dialog {
-  border-radius: 18px;
+
+/* === Page moderne === */
+.modern-admin-page {
+  padding: 1.5rem;
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+/* === En-tête de section moderne === */
+.section-header-modern {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+
+  .section-title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .section-icon-modern {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.8rem;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .section-title-content {
+      .section-title-modern {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .section-subtitle-modern {
+        font-size: 0.95rem;
+        color: #64748b;
+        margin: 0;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .btn-add-gradient {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+      background: linear-gradient(135deg, #764ba2, #667eea);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    i {
+      font-size: 1.1rem;
+    }
+  }
+}
+
+/* === Section tableau moderne === */
+.table-section-card {
+  background: white;
+  border-radius: 20px;
+  padding: 0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border: 2px solid #f1f5f9;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(50, 50, 93, 0.25);
-  background: #fff;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #e2e8f0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.table-header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f8fafc, #ffffff);
+  border-bottom: 2px solid #f1f5f9;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  .table-title-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .table-icon-wrapper {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .table-main-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .table-subtitle {
+      font-size: 0.85rem;
+      color: #64748b;
+      margin: 0.25rem 0 0 0;
+    }
+  }
+}
+
+.btn-create-modern {
+  background: linear-gradient(135deg, #667eea, #764ba2) !important;
+  border: none !important;
+  color: white !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
+  transition: all 0.3s ease !important;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  &:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
+  }
+
+  &:active {
+    transform: translateY(0) !important;
+  }
+
+  i {
+    font-size: 1.1rem;
+  }
+}
+
+.table-content-section {
+  padding: 1.5rem;
+}
+
+.table-footer-section {
+  padding: 1.25rem 1.5rem;
+  background: #fafbfc;
+  border-top: 2px solid #f1f5f9;
+  display: flex;
+  justify-content: center;
+
+  .modern-pagination {
+    margin: 0;
+    
+    .page-item {
+      margin: 0 0.25rem;
+
+      .page-link {
+        border-radius: 8px;
+        border: 2px solid #e2e8f0;
+        color: #64748b;
+        font-weight: 600;
+        padding: 0.5rem 0.75rem;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: #f1f5f9;
+          border-color: #cbd5e1;
+          color: #475569;
+        }
+      }
+
+      &.active .page-link {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-color: #667eea;
+        color: white;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+      }
+    }
+  }
+}
+
+/* === Cartes de groupe === */
+.stats-group-card {
+  background: white;
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border: 2px solid #f1f5f9;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #e2e8f0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* === Titres de sections === */
+.stats-section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  padding-left: 0.75rem;
+  border-left: 4px solid #667eea;
+  
+  i {
+    color: #667eea;
+  }
+}
+
+/* === Cartes de statistiques modernes === */
+.modern-stat-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #667eea, #764ba2);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+    &::before {
+      opacity: 1;
+    }
+
+    .stat-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+  }
+
+  .stat-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    color: white;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .stat-content {
+    flex: 1;
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1;
+      margin: 0 0 0.5rem 0;
+      color: #1e293b;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: #64748b;
+      font-weight: 600;
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  &.stat-warning {
+    .stat-icon {
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    }
+
+    &:hover {
+      border-color: #fef3c7;
+      background: linear-gradient(135deg, #ffffff, #fffbeb);
+    }
+  }
+
+  &.stat-success {
+    .stat-icon {
+      background: linear-gradient(135deg, #34d399, #10b981);
+    }
+
+    &:hover {
+      border-color: #d1fae5;
+      background: linear-gradient(135deg, #ffffff, #f0fdf4);
+    }
+  }
+
+  &.stat-danger {
+    .stat-icon {
+      background: linear-gradient(135deg, #f87171, #ef4444);
+    }
+
+    &:hover {
+      border-color: #fecaca;
+      background: linear-gradient(135deg, #ffffff, #fef2f2);
+    }
+  }
+
+  &.stat-info {
+    .stat-icon {
+      background: linear-gradient(135deg, #60a5fa, #3b82f6);
+    }
+
+    &:hover {
+      border-color: #dbeafe;
+      background: linear-gradient(135deg, #ffffff, #eff6ff);
+    }
+  }
+}
+
+/* === Modaux modernes (pour SubscriptionCom) === */
+.modern-dialog-card {
+  width: 70vw !important;
+  max-width: 1300px !important;
+  margin: 20px auto;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modern-dialog-details {
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modern-dialog-details-small {
+  width: 55vw !important;
+  max-width: 900px !important;
+}
+
+.modern-dialog-header {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: none;
+
+  .dialog-header-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .dialog-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .dialog-title-wrapper {
+      .dialog-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: white;
+        margin: 0;
+        line-height: 1.2;
+      }
+
+      .dialog-subtitle {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin: 0.25rem 0 0 0;
+      }
+    }
+  }
+
+  .dialog-close-btn {
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+    backdrop-filter: blur(10px);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3) !important;
+    }
+  }
+}
+
+.detail-stats-grid-modal {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.detail-stat-card {
+  background: white;
+  border: 2px solid #f1f5f9;
+  border-radius: 16px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+
+  .stat-card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  &.stat-card-warning .stat-card-icon {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  }
+
+  &.stat-card-success .stat-card-icon {
+    background: linear-gradient(135deg, #34d399, #10b981);
+  }
+
+  &.stat-card-info .stat-card-icon {
+    background: linear-gradient(135deg, #60a5fa, #3b82f6);
+  }
+
+  .stat-card-content {
+    flex: 1;
+
+    .stat-card-value {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0 0 0.25rem 0;
+      line-height: 1.2;
+    }
+
+    .stat-card-label {
+      font-size: 0.7rem;
+      color: #64748b;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 0;
+    }
+  }
+}
+
+.section-subtitle-info {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  i {
+    color: #667eea;
+  }
+}
+
+.info-grid-modern {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.info-card-modern {
+  background: white;
+  border: 2px solid #f1f5f9;
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  .info-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .info-content {
+    flex: 1;
+
+    .info-label {
+      font-size: 0.7rem;
+      color: #64748b;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.5rem;
+    }
+
+    .info-value {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #1e293b;
+      line-height: 1.4;
+    }
+  }
+}
+
+/* === Modals de formulaire === */
+.modern-form-modal {
+  width: 700px;
+  max-width: 90vw;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  background: white;
+}
+
+.form-modal-header {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .form-modal-header-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .form-modal-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      backdrop-filter: blur(10px);
+
+      &.form-modal-icon-edit {
+        background: rgba(255, 193, 7, 0.3);
+      }
+    }
+
+    .form-modal-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: white;
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .form-modal-subtitle {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.8);
+      margin: 0.25rem 0 0 0;
+    }
+  }
+
+  .form-modal-close-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1);
+    }
+
+    i {
+      font-size: 1rem;
+    }
+  }
+}
+
+.form-modal-content {
+  padding: 2rem;
+  background: #f8fafc;
+}
+
+.form-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid #e2e8f0;
+}
+
+.btn-cancel-form {
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #475569;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  i {
+    font-size: 1.1rem;
+  }
+}
+
+.btn-submit-form {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border: none;
+  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #059669, #047857);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  i {
+    font-size: 1.1rem;
+  }
+}
+
+/* === Modal de détail moderne (AdTranscCom) === */
+.modern-detail-modal {
+  width: 60vw !important;
+  max-width: 950px !important;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  background: white;
+
+  @media (max-width: 768px) {
+    width: 90vw !important;
+  }
+}
+
+.modal-header-modern {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .modal-header-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .modal-icon-wrapper {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .modal-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: white;
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .modal-subtitle {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.8);
+      margin: 0.25rem 0 0 0;
+    }
+  }
+
+  .modal-close-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1);
+    }
+
+    i {
+      font-size: 1rem;
+    }
+  }
+}
+
+.modal-content-modern {
+  padding: 1.5rem;
+}
+
+.info-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.info-card {
+  background: white;
+  border: 2px solid #f1f5f9;
+  border-radius: 16px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+
+  &.info-card-full {
+    grid-column: 1 / -1;
+  }
+
+  .info-card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+
+    &.info-icon-orange {
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    }
+
+    &.info-icon-purple {
+      background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+    }
+
+    &.info-icon-blue {
+      background: linear-gradient(135deg, #60a5fa, #3b82f6);
+    }
+
+    &.info-icon-green {
+      background: linear-gradient(135deg, #34d399, #10b981);
+    }
+  }
+
+  .info-card-content {
+    flex: 1;
+
+    .info-card-label {
+      font-size: 0.8rem;
+      color: #64748b;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.5rem;
+    }
+
+    .info-card-value {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1e293b;
+      line-height: 1.3;
+
+      .age-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-left: 0.5rem;
+      }
+    }
+
+    .info-card-badge {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+
+      &.badge-orange {
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        color: #92400e;
+        border: 2px solid #fbbf24;
+      }
+    }
+  }
+}
+
+.description-card {
+  background: linear-gradient(135deg, #f8fafc, #ffffff);
+  border: 2px solid #f1f5f9;
+  border-radius: 16px;
+  padding: 1.25rem;
+
+  .description-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+
+    .description-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.1rem;
+    }
+
+    .description-label {
+      font-size: 0.9rem;
+      color: #64748b;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  .description-content {
+    font-size: 1rem;
+    color: #475569;
+    line-height: 1.6;
+    margin: 0;
+    padding-left: 3rem;
+  }
 }
 
 /* Header */

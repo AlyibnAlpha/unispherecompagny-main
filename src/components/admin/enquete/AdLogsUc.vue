@@ -141,9 +141,9 @@ export default {
         'actions',
       ],
       fieldss: [
-        { key: 'id', label: 'ID', sortable: true },
         { key: 'action', label: 'Action', sortable: true },
-        { key: 'actionType', label: 'Type', sortable: true },
+        { key: 'actionType', label: 'Type d\'action', sortable: true },
+        { key: 'entityType', label: 'Entité', sortable: true },
         { key: 'timestamp', label: 'Date', sortable: true },
       ],
       progressBarValue: 15,
@@ -187,10 +187,26 @@ export default {
 </script>
 
 <template>
-  <div>
-    <BRow class="d-flexjustify-content-center"> </BRow>
+  <div class="modern-admin-page">
+    <!-- En-tête de section moderne -->
+    <div class="section-header-modern mb-4">
+      <div class="section-title-wrapper">
+        <div class="section-icon-modern">
+          <i class="bi bi-people-fill"></i>
+        </div>
+        <div class="section-title-content">
+          <h3 class="section-title-modern">Logs Utilisateurs</h3>
+          <p class="section-subtitle-modern">Actions des utilisateurs les plus actifs</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section tableau -->
     <BRow>
       <BCol cols="12">
+        <div class="table-section-card">
+          <!-- Contenu du tableau -->
+          <div class="table-content-section">
         <BRow>
           <BCol sm="12" md="6">
             <div id="tickets-table_length" class="dataTables_length">
@@ -215,14 +231,18 @@ export default {
           </BCol>
         </BRow>
         <div v-if="loading" class="text-center my-5">
-          <q-spinner-ball color="green" size="50px" />
+          <q-spinner-ball color="primary" size="50px" />
+          <p class="mt-3 text-muted">Chargement des données...</p>
         </div>
         <div
           v-else-if="Array.isArray(orderData) && orderData.length === 0"
-          class="text-center py-5"
+          class="empty-state"
         >
-          <i class="uil uil-folder-open text-muted" style="font-size: 3rem"></i>
-          <p class="mt-3 text-muted">Aucune données</p>
+          <div class="empty-state-icon">
+            <i class="bi bi-inbox"></i>
+          </div>
+          <h5 class="empty-state-title">Aucune donnée disponible</h5>
+          <p class="empty-state-text">Il n'y a pas d'utilisateurs actifs à afficher pour le moment.</p>
         </div>
         <BTable
           v-else
@@ -238,25 +258,23 @@ export default {
           @filtered="onFiltered"
         >
           <template v-slot:cell(participantProfile)="data">
-            <a href="#" class="text-body"
-              >{{
-                data.item.user.participantProfile.firstName ||
-                data.item.user.businessAccount.firstName ||
-                data.item.user.admin.firstName
+            <span class="text-body">{{
+                data.item.user?.participantProfile?.firstName ||
+                data.item.user?.businessAccount?.firstName ||
+                data.item.user?.admin?.firstName || 'N/A'
               }}
               {{
-                data.item.user.participantProfile.lastName ||
-                data.item.user.businessAccount.lastName ||
-                data.item.user.admin.lastName
-              }}</a
-            >
+                data.item.user?.participantProfile?.lastName ||
+                data.item.user?.businessAccount?.lastName ||
+                data.item.user?.admin?.lastName || ''
+              }}</span>
           </template>
 
           <template v-slot:cell(email)="data">
-            <a href="#" class="text-warning">{{ data.item.user.email }} </a>
+            <span class="text-body">{{ data.item.user?.email || 'N/A' }}</span>
           </template>
           <template v-slot:cell(action_count)="data">
-            <a href="#" class="text-body">{{ data.item.action_count }} </a>
+            <span class="text-body">{{ data.item.action_count || 0 }}</span>
           </template>
 
           <template v-slot:cell(actions)="data">
@@ -274,34 +292,41 @@ export default {
             </ul>
           </template>
         </BTable>
-        <BRow>
-          <BCol>
-            <div class="dataTables_paginate paging_simple_numbers float-end">
-              <ul class="pagination pagination-rounded">
-                <BPagination v-model="currentPage" :total-rows="rows" :per-page="perPage" />
-              </ul>
-            </div>
-          </BCol>
-        </BRow>
+          </div>
+          
+          <!-- Pagination -->
+          <div class="table-footer-section">
+            <BPagination 
+              v-model="currentPage" 
+              :total-rows="rows" 
+              :per-page="perPage"
+              class="modern-pagination"
+            />
+          </div>
+        </div>
       </BCol>
     </BRow>
 
-    <q-dialog v-model="opendMdet">
-      <q-card class="detail-dialog" style="width: 900px; max-width: 90vw">
-        <!-- Header -->
-        <q-card-section
-          class="row items-center q-pa-sm text-white"
-          style="padding: 16px 20px; display: flex; align-items: center"
-        >
-          <div class="q-ml-sm">
-            <div class="text-h6 text-primary">Vue Globale des actions de l'Utilisateur</div>
-            <div class="text-caption text-primary">📋 Détails du log</div>
+    <q-dialog v-model="opendMdet" transition-show="scale" transition-hide="fade">
+      <q-card class="modern-detail-modal-large">
+        <!-- Header moderne -->
+        <div class="modal-header-modern">
+          <div class="modal-header-content">
+            <div class="modal-icon-wrapper">
+              <i class="bi bi-person-badge-fill"></i>
+            </div>
+            <div>
+              <h4 class="modal-title">Activité Utilisateur</h4>
+              <p class="modal-subtitle">Vue globale des actions</p>
+            </div>
           </div>
-          <q-space />
-        </q-card-section>
+          <button class="modal-close-btn" @click="opendMdet = false">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
 
         <!-- Contenu -->
-        <q-card-section class="dialog-content">
+        <div class="modal-content-modern">
           <div v-if="loadingx" class="text-center q-pa-md">
             <q-spinner-ball color="primary" size="50px" />
             <div class="q-mt-sm text-grey">Chargement des détails...</div>
@@ -309,90 +334,607 @@ export default {
 
           <div v-else>
             <!-- === Section Statistiques Globales === -->
-            <div class="q-mb-md">
-              <div class="text-h6 text-primary q-mb-sm">Statistiques globales</div>
+            <div class="stats-section mb-4">
+              <h5 class="stats-section-title">
+                <i class="bi bi-bar-chart-fill me-2"></i>
+                Statistiques globales
+              </h5>
 
-              <div class="row q-col-gutter-md">
+              <div class="stats-grid">
                 <div
                   v-for="(action, index) in sletstats?.actions_by_type || []"
                   :key="index"
-                  class="col-12 col-sm-6 col-md-4 col-lg-3"
+                  class="stat-card-mini"
                 >
-                  <q-card flat bordered class="text-center shadow-1 stat-card q-pa-sm">
-                    <div class="text-h6 text-primary">{{ action.count }}</div>
-                    <div class="text-caption text-grey">
-                      {{ getActionLabel(action.actionType) }}
-                    </div>
-                  </q-card>
+                  <div class="stat-card-mini-value">{{ action.count }}</div>
+                  <div class="stat-card-mini-label">
+                    {{ getActionLabel(action.actionType) }}
+                  </div>
                 </div>
               </div>
 
               <!-- Total + dernière action -->
-              <div class="row q-col-gutter-md q-mt-md">
-                <div class="col-6 col-md-4">
-                  <q-card flat bordered class="text-center shadow-1 stat-card">
-                    <div class="text-h6 text-green">{{ sletstats?.total_actions || 0 }}</div>
-                    <div class="text-caption text-grey">Total d'actions</div>
-                  </q-card>
+              <div class="summary-cards">
+                <div class="summary-card summary-card-total">
+                  <div class="summary-card-icon">
+                    <i class="bi bi-check-circle-fill"></i>
+                  </div>
+                  <div class="summary-card-content">
+                    <div class="summary-card-value">{{ sletstats?.total_actions || 0 }}</div>
+                    <div class="summary-card-label">Total d'actions</div>
+                  </div>
                 </div>
 
-                <div class="col-6 col-md-8">
-                  <q-card flat bordered class="text-center shadow-1 stat-card">
-                    <div class="text-h6 text-orange">
+                <div class="summary-card summary-card-last">
+                  <div class="summary-card-icon">
+                    <i class="bi bi-clock-history"></i>
+                  </div>
+                  <div class="summary-card-content">
+                    <div class="summary-card-value-small">
                       {{
                         sletstats?.last_action?.timestamp
                           ? new Date(sletstats.last_action.timestamp).toLocaleString('fr-FR')
                           : 'Aucune'
                       }}
                     </div>
-                    <div class="text-caption text-grey">
+                    <div class="summary-card-label">
                       Dernière action : {{ sletstats?.last_action?.action || '—' }}
                     </div>
-                  </q-card>
+                  </div>
                 </div>
               </div>
             </div>
 
             <!-- === Section Logs Détail === -->
-            <div class="q-mt-lg">
-              <div class="text-h6 text-primary q-mb-sm">🧾 Historique des actions</div>
+            <div class="logs-history-section">
+              <h5 class="logs-history-title">
+                <i class="bi bi-journal-text me-2"></i>
+                Historique des actions
+              </h5>
 
-              <BTable
-                :items="paginatedLogs"
-                :fields="fieldss"
-                striped
-                hover
-                bordered
-                responsive
-                small
-              >
-                <template #cell(timestamp)="data">
-                  {{ formatDate(data.item.timestamp) }}
-                </template>
+              <div class="history-table-wrapper">
+                <BTable
+                  :items="paginatedLogs"
+                  :fields="fieldss"
+                  hover
+                  responsive
+                  class="modern-history-table"
+                >
+                  <template #cell(timestamp)="data">
+                    <span class="text-body">{{ formatDate(data.item.timestamp) }}</span>
+                  </template>
 
-                <template #cell(actionType)="data">
-                  <span class="badge bg-info">{{ data.item.entityType }}</span>
-                </template>
-              </BTable>
+                  <template #cell(action)="data">
+                    <span class="text-body">{{ data.item.action }}</span>
+                  </template>
 
-              <div class="d-flex justify-content-end mt-3">
-                <BPagination
-                  v-model="currentPages"
-                  :total-rows="selectedTask.length"
-                  :per-page="perPages"
-                  align="right"
-                  size="sm"
-                />
+                  <template #cell(actionType)="data">
+                    <span class="badge-modern badge-modern-info">{{ getActionLabel(data.item.actionType) }}</span>
+                  </template>
+
+                  <template #cell(entityType)="data">
+                    <span class="badge-modern badge-modern-purple">{{ data.item.entityType }}</span>
+                  </template>
+                </BTable>
+
+                <div class="history-pagination">
+                  <BPagination
+                    v-model="currentPages"
+                    :total-rows="selectedTask.length"
+                    :per-page="perPages"
+                    class="modern-pagination-small"
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </q-card-section>
+        </div>
       </q-card>
     </q-dialog>
   </div>
 </template>
 <style lang="scss">
 @import '../../../css/assets/scss/app2.scss';
+
+/* === Page moderne === */
+.modern-admin-page {
+  padding: 1.5rem;
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+/* === En-tête de section moderne === */
+.section-header-modern {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+
+  .section-title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .section-icon-modern {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.8rem;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .section-title-content {
+      .section-title-modern {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .section-subtitle-modern {
+        font-size: 0.95rem;
+        color: #64748b;
+        margin: 0;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+/* === Section tableau moderne === */
+.table-section-card {
+  background: white;
+  border-radius: 20px;
+  padding: 0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border: 2px solid #f1f5f9;
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #e2e8f0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.table-content-section {
+  padding: 1.5rem;
+}
+
+.table-footer-section {
+  padding: 1.25rem 1.5rem;
+  background: #fafbfc;
+  border-top: 2px solid #f1f5f9;
+  display: flex;
+  justify-content: center;
+
+  .modern-pagination {
+    margin: 0;
+    
+    .page-item {
+      margin: 0 0.25rem;
+
+      .page-link {
+        border-radius: 8px;
+        border: 2px solid #e2e8f0;
+        color: #64748b;
+        font-weight: 600;
+        padding: 0.5rem 0.75rem;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: #f1f5f9;
+          border-color: #cbd5e1;
+          color: #475569;
+        }
+      }
+
+      &.active .page-link {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-color: #667eea;
+        color: white;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+      }
+    }
+  }
+}
+
+/* === Modal de détail large === */
+.modern-detail-modal-large {
+  width: 70vw !important;
+  max-width: 1100px !important;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  background: white;
+
+  @media (max-width: 768px) {
+    width: 90vw !important;
+  }
+}
+
+.modal-header-modern {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .modal-header-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .modal-icon-wrapper {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .modal-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: white;
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .modal-subtitle {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.8);
+      margin: 0.25rem 0 0 0;
+    }
+  }
+
+  .modal-close-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1);
+    }
+
+    i {
+      font-size: 1rem;
+    }
+  }
+}
+
+.modal-content-modern {
+  padding: 1.5rem;
+}
+
+/* === État vide === */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 16px;
+  margin: 2rem 0;
+
+  .empty-state-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    i {
+      font-size: 2.5rem;
+      color: #94a3b8;
+    }
+  }
+
+  .empty-state-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 0.5rem;
+  }
+
+  .empty-state-text {
+    font-size: 0.95rem;
+    color: #64748b;
+    margin: 0;
+  }
+}
+
+/* === Section Statistiques === */
+.stats-section {
+  .stats-section-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+
+    i {
+      color: #667eea;
+    }
+  }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card-mini {
+  background: white;
+  border: 2px solid #f1f5f9;
+  border-radius: 12px;
+  padding: 1.25rem;
+  text-align: center;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #667eea;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    transform: translateY(-2px);
+  }
+
+  .stat-card-mini-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #667eea;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-card-mini-label {
+    font-size: 0.8rem;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 1rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.summary-card {
+  background: white;
+  border: 2px solid #f1f5f9;
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+
+  .summary-card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .summary-card-content {
+    flex: 1;
+  }
+
+  .summary-card-value {
+    font-size: 1.8rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .summary-card-value-small {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+
+  .summary-card-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 600;
+  }
+
+  &.summary-card-total {
+    border-color: #d1fae5;
+    background: linear-gradient(135deg, #ffffff, #f0fdf4);
+
+    .summary-card-icon {
+      background: linear-gradient(135deg, #34d399, #10b981);
+      color: white;
+    }
+
+    .summary-card-value {
+      color: #10b981;
+    }
+  }
+
+  &.summary-card-last {
+    border-color: #dbeafe;
+    background: linear-gradient(135deg, #ffffff, #eff6ff);
+
+    .summary-card-icon {
+      background: linear-gradient(135deg, #60a5fa, #3b82f6);
+      color: white;
+    }
+
+    .summary-card-value-small {
+      color: #3b82f6;
+    }
+  }
+}
+
+/* === Section Historique === */
+.logs-history-section {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid #f1f5f9;
+
+  .logs-history-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+
+    i {
+      color: #667eea;
+    }
+  }
+}
+
+.history-table-wrapper {
+  background: white;
+  border: 2px solid #f1f5f9;
+  border-radius: 12px;
+  overflow: hidden;
+
+  .modern-history-table {
+    margin: 0;
+
+    thead {
+      background: linear-gradient(135deg, #f8fafc, #ffffff);
+      
+      th {
+        border-bottom: 2px solid #e2e8f0;
+        color: #475569;
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 1rem;
+      }
+    }
+
+    tbody {
+      tr {
+        transition: all 0.2s ease;
+        border-bottom: 1px solid #f1f5f9;
+
+        &:hover {
+          background: #f8fafc;
+        }
+
+        td {
+          padding: 0.875rem 1rem;
+          vertical-align: middle;
+          color: #334155;
+          font-size: 0.9rem;
+        }
+      }
+    }
+  }
+}
+
+.badge-modern {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &.badge-modern-info {
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    color: #1e40af;
+    border: 1px solid #93c5fd;
+  }
+
+  &.badge-modern-purple {
+    background: linear-gradient(135deg, #e9d5ff, #ddd6fe);
+    color: #6b21a8;
+    border: 1px solid #c4b5fd;
+  }
+}
+
+.history-pagination {
+  padding: 1rem;
+  background: #fafbfc;
+  border-top: 2px solid #f1f5f9;
+  display: flex;
+  justify-content: center;
+
+  .modern-pagination-small {
+    margin: 0;
+
+    .page-item {
+      margin: 0 0.15rem;
+
+      .page-link {
+        border-radius: 6px;
+        border: 1px solid #e2e8f0;
+        color: #64748b;
+        font-weight: 600;
+        padding: 0.375rem 0.625rem;
+        font-size: 0.85rem;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: #f1f5f9;
+          border-color: #cbd5e1;
+          color: #475569;
+        }
+      }
+
+      &.active .page-link {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-color: #667eea;
+        color: white;
+        box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+      }
+    }
+  }
+}
+
 /* Grid d'infos */
 .info-grid {
   display: grid;

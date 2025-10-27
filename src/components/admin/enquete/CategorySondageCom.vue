@@ -9,8 +9,6 @@ import {
   BFormSelect,
   BTable,
   BForm,
-  BCardBody,
-  BCard,
 } from 'bootstrap-vue-next'
 
 import { api } from 'src/boot/axios'
@@ -30,8 +28,6 @@ export default {
     BFormSelect,
     BTable,
     BForm,
-    BCardBody,
-    BCard,
     CountToComponent,
   },
   data() {
@@ -292,33 +288,40 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div class="modern-enquete-container">
     <BRow>
       <BCol cols="12">
-        <div class="d-flex justify-content-between">
-          <BButton
-            variant="success"
-            class="waves-effect waves-light mb-3 btn-success"
-            @click="ajout = true"
-            >Créer vos Catégories</BButton
-          >
+        <div class="page-header">
+          <div class="header-content">
+            <h2 class="page-title">Gestion des Catégories</h2>
+            <p class="page-subtitle">Créez et gérez vos catégories de sondages</p>
+          </div>
+          <BButton variant="success" class="modern-create-btn" @click="ajout = true">
+            <i class="bi bi-plus-circle me-2"></i>
+            Créer une catégorie
+          </BButton>
+        </div>
 
-          <q-dialog v-model="ajout" transition-show="scale" transition-hide="fade">
-            <q-card
-              style="width: 800px; max-width: 90vw; border-radius: 20px; overflow: hidden"
-              class="shadow-lg"
-            >
-              <!-- Titre -->
-              <q-card-section
-                class="q-pa-md text-white flex items-center justify-center"
-                style="background: linear-gradient(135deg, #0d6efd, #6610f2)"
-              >
-                <q-icon name="group_add" size="28px" class="q-mr-sm" />
-                <div class="text-h6 text-center">Catégories de sondage</div>
-              </q-card-section>
+        <q-dialog v-model="ajout" transition-show="scale" transition-hide="fade">
+            <q-card class="modern-modal-card">
+              <!-- Header moderne -->
+              <div class="modern-modal-header">
+                <div class="modal-header-content">
+                  <div class="modal-icon">
+                    <i class="bi bi-folder-plus"></i>
+                  </div>
+                  <div class="modal-title-section">
+                    <h3 class="modal-title">Nouvelle Catégorie</h3>
+                    <p class="modal-subtitle">Créez une catégorie pour organiser vos sondages</p>
+                  </div>
+                </div>
+                <button class="modal-close-btn" @click="ajout = false">
+                  <i class="bi bi-x"></i>
+                </button>
+              </div>
 
               <!-- Formulaire -->
-              <div class="q-pa-lg">
+              <div class="modern-modal-body">
                 <BForm>
                   <BRow>
                     <!-- Nom -->
@@ -362,22 +365,27 @@ export default {
                     </BCol>
                   </BRow>
 
-                  <!-- Bouton -->
-                  <div v-if="loadings" class="d-flex justify-content-end mt-4">
-                    <q-spinner-dots color="green" size="20px" class="q-mr-sm" />
-                  </div>
-                  <div v-else class="d-flex justify-content-end mt-4">
-                    <BButton variant="success" class="px-5" @click="Add"> Enregistrer </BButton>
+                  <!-- Boutons -->
+                  <div class="modal-footer-actions">
+                    <button class="modal-btn modal-btn-cancel" @click="ajout = false">
+                      <i class="bi bi-x-circle me-2"></i>
+                      Annuler
+                    </button>
+                    <button v-if="loadings" class="modal-btn modal-btn-primary" disabled>
+                      <q-spinner-dots color="white" size="20px" class="me-2" />
+                      Enregistrement...
+                    </button>
+                    <button v-else class="modal-btn modal-btn-primary" @click="Add">
+                      <i class="bi bi-check-circle me-2"></i>
+                      Enregistrer
+                    </button>
                   </div>
                 </BForm>
               </div>
             </q-card>
-          </q-dialog>
-        </div>
+        </q-dialog>
 
-        <div
-          class="ttable table-centered datatable dt-responsive nowrap table-card-list dataTable no-footer dtr-inline"
-        >
+        <div class="modern-table-container">
           <BRow>
             <BCol sm="12" md="6">
               <div id="tickets-table_length" class="dataTables_length">
@@ -401,20 +409,22 @@ export default {
               </div>
             </BCol>
           </BRow>
-          <div v-if="loading" class="text-center my-5">
+          <div v-if="loading" class="loading-state">
             <q-spinner-ball color="green" size="50px" />
+            <p class="loading-text">Chargement des catégories...</p>
           </div>
           <div
             v-else-if="Array.isArray(orderData) && orderData.length === 0"
-            class="text-center py-5"
+            class="empty-state"
           >
-            <i class="uil uil-folder-open text-muted" style="font-size: 3rem"></i>
-            <p class="mt-3 text-muted">Aucune Catégories d'enquêtes</p>
+            <i class="bi bi-folder-open empty-icon"></i>
+            <h4 class="empty-title">Aucune catégorie trouvée</h4>
+            <p class="empty-description">Commencez par créer votre première catégorie</p>
           </div>
-          <BTable
-            v-else
-            table-class="table table-centered datatable table-card-list"
-            thead-tr-class="bg-transparent"
+          <div v-else class="table-wrapper">
+            <BTable
+              table-class="modern-table"
+              thead-tr-class="table-header"
             :items="orderData"
             :fields="fields"
             responsive="sm"
@@ -439,15 +449,15 @@ export default {
             </template>
 
             <template v-slot:cell(status)="data">
-              <a
-                href="#"
-                class="badge"
+              <div
+                class="badge badge-pill font-size-12"
                 :class="{
-                  'bg-success': data.item.status === true,
-                  'bg-danger': data.item.status === false,
+                  'bg-soft-success': data.item.status === true,
+                  'bg-soft-danger': data.item.status === false,
                 }"
-                >{{ data.item.status }}</a
               >
+                {{ data.item.status ? 'Actif' : 'Inactif' }}
+              </div>
             </template>
 
             <template v-slot:cell(action)="data">
@@ -457,7 +467,7 @@ export default {
                     href="#"
                     class="px-2 text-info"
                     @click.prevent="openDetailModal(data.item.id)"
-                    title="stastique"
+                    title="Voir les statistiques"
                   >
                     <i class="bi bi-eye" style="font-size: 18px"></i>
                   </a>
@@ -467,132 +477,107 @@ export default {
                     href="#"
                     class="px-2 text-warning"
                     @click.prevent="openEditModal(data.item)"
-                    title="Edit"
+                    title="Modifier"
                   >
                     <i class="uil uil-pen font-size-18"></i>
                   </a>
                 </li>
-
                 <li class="list-inline-item">
                   <a
                     href="#"
                     class="px-2 text-danger"
                     @click.prevent="deleteRow(data.item.id)"
-                    title="Delete"
+                    title="Supprimer"
                   >
                     <i class="uil uil-trash-alt font-size-18"></i>
                   </a>
                 </li>
               </ul>
             </template>
-          </BTable>
+            </BTable>
+          </div>
+          <div class="pagination-container">
+            <BPagination v-model="currentPage" :total-rows="rows" :per-page="perPage" class="modern-pagination" />
+          </div>
         </div>
-        <BRow>
-          <BCol>
-            <div class="dataTables_paginate paging_simple_numbers float-end">
-              <ul class="pagination pagination-rounded">
-                <BPagination v-model="currentPage" :total-rows="rows" :per-page="perPage" />
-              </ul>
-            </div>
-          </BCol>
-        </BRow>
       </BCol>
     </BRow>
     <q-dialog v-model="opendMdet">
-      <q-card class="modern-dialog" style="width: 1000px; max-width: 100vw">
-        <!-- Header -->
-        <q-card-section class="row items-center q-pa-sm">
-          <div class="q-ml-sm">
-            <span v-if="loading" class="skeleton skeleton-title"></span>
-            <div v-else class="text-h6 text-warning">
-              {{ selct?.name }}
-              <q-badge :color="selct?.status ? 'green' : 'red'" class="chip">{{
-                selct?.status
-              }}</q-badge>
+      <q-card class="modern-modal-card modern-detail-modal">
+        <!-- Header moderne -->
+        <div class="modern-modal-header">
+          <div class="modal-header-content">
+            <div class="modal-icon modal-icon-info">
+              <i class="bi bi-info-circle"></i>
             </div>
-            <div class="text-caption text-white-8">{{ selct?.description }}</div>
+            <div class="modal-title-section">
+              <h3 class="modal-title">
+                {{ selct?.name }}
+                <span
+                  class="detail-status-badge"
+                  :class="selct?.status ? 'badge-active' : 'badge-inactive'"
+                >
+                  {{ selct?.status ? 'Actif' : 'Inactif' }}
+                </span>
+              </h3>
+              <p class="modal-subtitle">{{ selct?.description }}</p>
+            </div>
           </div>
-          <q-space />
-        </q-card-section>
+          <button class="modal-close-btn" @click="opendMdet = false">
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
 
-        <q-separator color="grey-3" />
-        <div class="px-3" style="max-height: 70vh; overflow-y: auto">
-          <q-card-section>
-            <BRow class="d-flexjustify-content-center">
-              <BCol md="4" cols="xl-4">
-                <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-                  <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-                    <div>
-                      <div class="d-flex align-items-center mb-2">
-                        <i class="bi bi-building-fill text-warning fs-3 me-2"></i>
-                        <h4 v-if="loadingx" class="skeleton skeleton-title"></h4>
-                        <h4 v-else class="fw-bold mb-0 fs-3">
-                          <CountToComponent :startVal="0" :endVal="totalSurvey" :duration="2000" />
-                        </h4>
-                      </div>
-                      <span
-                        class="badge bg-warning-subtle text-warning fw-semibold px-3 py-1 rounded-pill"
-                        >Sondages liée</span
-                      >
-                    </div>
-                  </BCardBody>
-                </BCard>
-              </BCol>
-              <BCol md="4" cols="xl-4">
-                <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-                  <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-                    <div>
-                      <div class="d-flex align-items-center mb-2">
-                        <i class="bi bi-building-fill text-warning fs-3 me-2"></i>
-                        <h4 v-if="loadingx" class="skeleton skeleton-title"></h4>
-                        <h4 v-else class="fw-bold mb-0 fs-3">
-                          <CountToComponent
-                            :startVal="0"
-                            :endVal="totalSurveyPu"
-                            :duration="2000"
-                          />
-                        </h4>
-                      </div>
-                      <span
-                        class="badge bg-warning-subtle text-warning fw-semibold px-3 py-1 rounded-pill"
-                        >Sondages Public</span
-                      >
-                    </div>
-                  </BCardBody>
-                </BCard>
-              </BCol>
-              <BCol md="4" cols="xl-4">
-                <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-                  <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-                    <div>
-                      <div class="d-flex align-items-center mb-2">
-                        <i class="bi bi-building-fill text-warning fs-3 me-2"></i>
-                        <h4 v-if="loadingx" class="skeleton skeleton-title"></h4>
-                        <h4 v-else class="fw-bold mb-0 fs-3">
-                          <CountToComponent
-                            :startVal="0"
-                            :endVal="totalSurveyBu"
-                            :duration="2000"
-                          />
-                        </h4>
-                      </div>
-                      <span
-                        class="badge bg-warning-subtle text-warning fw-semibold px-3 py-1 rounded-pill"
-                        >Sondages Business</span
-                      >
-                    </div>
-                  </BCardBody>
-                </BCard>
-              </BCol>
-            </BRow>
-          </q-card-section>
+        <div class="modern-modal-body detail-modal-body">
+          <!-- Stats Grid Moderne -->
+          <div class="detail-stats-grid">
+            <div class="detail-stat-card stat-card-primary">
+              <div class="stat-card-icon">
+                <i class="bi bi-clipboard-data"></i>
+              </div>
+              <div class="stat-card-content">
+                <h4 v-if="loadingx" class="skeleton skeleton-title"></h4>
+                <h4 v-else class="stat-card-value">
+                  <CountToComponent :startVal="0" :endVal="totalSurvey" :duration="2000" />
+                </h4>
+                <p class="stat-card-label">Sondages liés</p>
+              </div>
+            </div>
+
+            <div class="detail-stat-card stat-card-success">
+              <div class="stat-card-icon">
+                <i class="bi bi-globe"></i>
+              </div>
+              <div class="stat-card-content">
+                <h4 v-if="loadingx" class="skeleton skeleton-title"></h4>
+                <h4 v-else class="stat-card-value">
+                  <CountToComponent :startVal="0" :endVal="totalSurveyPu" :duration="2000" />
+                </h4>
+                <p class="stat-card-label">Sondages Public</p>
+              </div>
+            </div>
+
+            <div class="detail-stat-card stat-card-warning">
+              <div class="stat-card-icon">
+                <i class="bi bi-briefcase"></i>
+              </div>
+              <div class="stat-card-content">
+                <h4 v-if="loadingx" class="skeleton skeleton-title"></h4>
+                <h4 v-else class="stat-card-value">
+                  <CountToComponent :startVal="0" :endVal="totalSurveyBu" :duration="2000" />
+                </h4>
+                <p class="stat-card-label">Sondages Business</p>
+              </div>
+            </div>
+          </div>
 
           <!-- Content -->
-          <q-card-section class="dialog-content">
-            <div
-              class="ttable table-centered datatable dt-responsive nowrap table-card-list dataTable no-footer dtr-inline"
-            >
-              <h4 class="text-warning">Sondages Liés</h4>
+          <div class="detail-table-section">
+            <h3 class="detail-section-title">
+              <i class="bi bi-list-ul me-2"></i>
+              Sondages Liés
+            </h3>
+            <div class="modern-table-container">
               <BRow>
                 <BCol sm="12" md="6">
                   <div id="tickets-table_length" class="dataTables_length">
@@ -620,7 +605,8 @@ export default {
                   </div>
                 </BCol>
               </BRow>
-              <div v-if="loadingx" class="text-center my-5">
+            
+            <div v-if="loadingx" class="text-center my-5">
                 <q-spinner-ball color="green" size="50px" />
               </div>
               <div
@@ -684,7 +670,7 @@ export default {
                   >
                 </template>
               </BTable>
-            </div>
+            
             <BRow>
               <BCol>
                 <div class="dataTables_paginate paging_simple_numbers float-end">
@@ -694,25 +680,31 @@ export default {
                 </div>
               </BCol>
             </BRow>
-          </q-card-section>
+            </div>
+          </div>
         </div>
       </q-card>
     </q-dialog>
     <q-dialog v-model="edit" transition-show="scale" transition-hide="fade">
-      <q-card
-        style="width: 800px; max-width: 90vw; border-radius: 20px; overflow: hidden"
-        class="shadow-lg"
-      >
-        <!-- Titre -->
-        <q-card-section
-          class="q-pa-md text-white flex items-center justify-center"
-          style="background: linear-gradient(135deg, #0d6efd, #6610f2)"
-        >
-          <div class="text-h6 text-center">Modifier</div>
-        </q-card-section>
+      <q-card class="modern-modal-card">
+        <!-- Header moderne -->
+        <div class="modern-modal-header">
+          <div class="modal-header-content">
+            <div class="modal-icon modal-icon-warning">
+              <i class="bi bi-pencil-square"></i>
+            </div>
+            <div class="modal-title-section">
+              <h3 class="modal-title">Modifier la Catégorie</h3>
+              <p class="modal-subtitle">Modifiez les informations de la catégorie</p>
+            </div>
+          </div>
+          <button class="modal-close-btn" @click="edit = false">
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
 
         <!-- Formulaire -->
-        <div class="q-pa-lg">
+        <div class="modern-modal-body">
           <BForm>
             <BRow>
               <!-- Nom -->
@@ -753,12 +745,20 @@ export default {
               </BCol>
             </BRow>
 
-            <!-- Bouton -->
-            <div v-if="loadings" class="d-flex justify-content-end mt-4">
-              <q-spinner-dots color="green" size="20px" class="q-mr-sm" />
-            </div>
-            <div v-else class="d-flex justify-content-end mt-4">
-              <BButton variant="success" class="px-5" @click="Edit"> Enregistrer </BButton>
+            <!-- Boutons -->
+            <div class="modal-footer-actions">
+              <button class="modal-btn modal-btn-cancel" @click="edit = false">
+                <i class="bi bi-x-circle me-2"></i>
+                Annuler
+              </button>
+              <button v-if="loadings" class="modal-btn modal-btn-warning" disabled>
+                <q-spinner-dots color="white" size="20px" class="me-2" />
+                Enregistrement...
+              </button>
+              <button v-else class="modal-btn modal-btn-warning" @click="Edit">
+                <i class="bi bi-check-circle me-2"></i>
+                Enregistrer
+              </button>
             </div>
           </BForm>
         </div>
@@ -767,259 +767,12 @@ export default {
   </div>
 </template>
 
-<style>
+<style lang="scss">
 @import '../../../css/assets/scss/app2.scss';
-.stat-card {
-  transition: all 0.4s ease-in-out;
-  border: 2px solid transparent;
-  background: linear-gradient(135deg, #fdfdfd, #f5f5f5);
-  position: relative;
-  overflow: hidden;
-}
-.stat-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
-  border-radius: 20px;
-}
+@import '../../../css/modern-cards.scss';
+@import '../../../css/admin/tables-shared.scss';
+@import '../../../css/admin/categories.scss';
+@import '../../../css/admin/badges.scss';
 
-.shadow-warning:hover {
-  border-color: #f1c40f;
-  background-color: linear-gradient(135deg, #f8dc9f, #fff3cc);
-  box-shadow: 0 0 18px rgba(241, 196, 15, 0.6);
-}
-.shadow-success:hover {
-  border-color: #2ecc71;
-  background: linear-gradient(135deg, #2ecc71, #d4f5e6);
-  box-shadow: 0 0 18px rgba(46, 204, 113, 0.6);
-}
-.shadow-danger:hover {
-  border-color: #e74c3c;
-  background: linear-gradient(135deg, #ffecec, #ffd9d6);
-  box-shadow: 0 0 18px rgba(231, 76, 60, 0.6);
-}
-.tabs-morphing-container {
-  position: relative;
-  padding: 20px;
-  border-radius: 30px;
-  overflow: hidden;
-  z-index: 0;
-  background: linear-gradient(135deg, #f8f9ff, #eef2ff);
-}
-
-/* Les onglets */
-.morph-tabs .nav-tabs {
-  border: none;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 16px;
-  padding: 6px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
-
-/* Chaque onglet */
-.morph-tabs .nav-link {
-  border-radius: 12px;
-  padding: 10px 20px;
-  margin: 0 5px;
-  color: #444;
-  transition: all 0.3s ease-in-out;
-}
-
-/* Hover */
-.morph-tabs .nav-link:hover {
-  background: rgba(99, 102, 241, 0.1); /* indigo clair */
-  color: #4f46e5;
-}
-
-/* Actif */
-.morph-tabs .nav-link.active {
-  background: linear-gradient(135deg, #4f46e5, #6366f1);
-  color: #fff !important;
-  box-shadow: 0 3px 8px rgba(79, 70, 229, 0.3);
-  transform: scale(1.05);
-}
-.progress-nav {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.progress {
-  width: 100%;
-  position: absolute;
-  height: 4px;
-}
-
-.wizard-steps {
-  position: relative;
-  z-index: 3;
-  width: 100%;
-
-  .wizard-step {
-    height: 60px;
-    width: 60px;
-    border-radius: 50%;
-    border: 3px solid;
-    display: flex;
-    justify-content: center;
-    z-index: 9;
-    position: relative;
-    background: white;
-  }
-}
-
-.step-arrow-nav {
-  .nav-link {
-    background: #f3f2ee;
-    padding: 4px 0;
-    border-radius: 0 !important;
-  }
-}
-
-.wizard {
-  .nav-link:not(.active) {
-    color: #f3f2ee;
-
-    .wizard-icon {
-      color: #a5a5a5;
-    }
-  }
-}
-
-[data-bs-theme='dark'] {
-  .wizard-steps .wizard-step:not(.active) {
-    background: var(--bs-input-bg);
-  }
-
-  .step-arrow-nav {
-    .nav-link:not(.active) {
-      background: var(--bs-input-bg);
-    }
-  }
-}
-/* === Boutons modernes === */
-.btn-success {
-  background: linear-gradient(135deg, #34c38f, #2ea3f2);
-  border: none;
-  border-radius: 50px;
-  transition: all 0.3s ease;
-  font-weight: 600;
-  box-shadow: 0 4px 10px rgba(46, 163, 242, 0.3);
-
-  &:hover {
-    background: linear-gradient(135deg, #2ea3f2, #34c38f);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(46, 163, 242, 0.4);
-  }
-
-  &:active {
-    transform: scale(0.96);
-  }
-}
-
-/* === Table améliorée === */
-.table tbody tr {
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    background: #f9fcff;
-    box-shadow: #1f6bad33 0px 4px 8px;
-    transform: scale(1.01);
-  }
-}
-
-/* Icônes d'action */
-.list-inline-item a {
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    transform: scale(1.2) rotate(-5deg);
-    opacity: 0.8;
-  }
-}
-
-/* === Dialogues avec animation === */
-.q-dialog__inner {
-  animation: fadeScale 0.35s ease forwards;
-}
-
-@keyframes fadeScale {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* === Inputs flottants modernes === */
-.form-control {
-  border-radius: 12px;
-  transition: all 0.3s ease;
-
-  &:focus {
-    border-color: #2ea3f2;
-    box-shadow: 0 0 8px rgba(46, 163, 242, 0.4);
-    transform: scale(1.01);
-  }
-}
-
-.bg-gradient {
-  background: linear-gradient(135deg, #0d6efd, #6610f2);
-}
-
-/* === Champs modernes avec floating label === */
-.floating-label {
-  position: relative;
-}
-
-.form-control.form-control-modern {
-  border-radius: 12px;
-  border: 2px solid #e0e7ff;
-  padding: 0.9rem 1rem;
-  width: 100%;
-  transition: all 0.3s ease;
-}
-
-.form-control.form-control-modern:focus {
-  border-color: #10d0f2;
-  box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
-  transform: scale(1.01);
-}
-
-/* Labels flottants */
-.floating-label label {
-  position: absolute;
-  top: 50%;
-  left: 15px;
-  transform: translateY(-50%);
-  color: #6c757d;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  pointer-events: none;
-  background: white;
-  padding: 0 5px;
-}
-
-.form-control.form-control-modern:focus + label,
-.form-control.form-control-modern:not(:placeholder-shown) + label {
-  top: -10px;
-  left: 10px;
-  font-size: 0.8rem;
-  color: #10d0f2;
-}
-
-/* Multiselect alignement */
-.multiselect {
-  border-radius: 12px !important;
-  border: 2px solid #e0e7ff !important;
-  padding: 6px 10px;
-  transition: all 0.3s ease;
-}
-.multiselect:focus-within {
-  border-color: #10d0f2 !important;
-  box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
-}
+// ✅ Tous les styles sont maintenant dans les fichiers SCSS partagés
 </style>

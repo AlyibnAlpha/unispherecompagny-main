@@ -1,8 +1,5 @@
 <template>
-  <header
-    id="page-topbar"
-    style="background: linear-gradient(135deg, #f0f4ff, #e0f7fa); transition: background 0.5s ease"
-  >
+  <header id="page-topbar">
     <div class="navbar-header">
       <div class="d-flex">
         <HederLogo />
@@ -351,4 +348,8 @@ q-dialog__inner {
   font-size: 0.8rem;
   color: #10d0f2;
 }
+</style>
+
+<style lang="scss">
+@import '../../../css/admin/modern-topbar.scss';
 </style>

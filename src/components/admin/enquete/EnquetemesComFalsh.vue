@@ -9,8 +9,6 @@ import {
   BFormSelect,
   BTable,
   BForm,
-  BCardBody,
-  BCard,
 } from 'bootstrap-vue-next'
 import Multiselect from '@vueform/multiselect'
 import { api } from 'src/boot/axios'
@@ -33,8 +31,6 @@ export default {
     BTable,
     BForm,
     Multiselect,
-    BCardBody,
-    BCard,
     CountToComponent,
     apexchart: ApexCharts,
   },
@@ -553,23 +549,29 @@ export default {
   <div>
     <BRow>
       <BCol cols="12">
-        <div class="d-flex justify-content-between">
-          <BButton variant="success" class="waves-effect waves-light mb-3" @click="onpenCreate"
-            >Créer un sondage rapide</BButton
-          >
+        <div class="page-header">
+          <div class="header-content">
+            <h2 class="page-title">Sondages Flash</h2>
+            <p class="page-subtitle">Créez et gérez vos sondages rapides</p>
+          </div>
+          <BButton class="modern-create-btn" @click="onpenCreate">
+            <i class="bi bi-plus-circle me-2"></i>
+            Créer un sondage rapide
+          </BButton>
 
           <q-dialog v-model="ajout" transition-show="scale" transition-hide="fade">
-            <q-card class="shadow-lg" style="width: 800px; max-width: 90vw">
-              <!-- En-tête -->
-              <q-card-section
-                class="q-pa-md text-white flex items-center justify-center"
-                style="background: linear-gradient(135deg, #0d6efd, #6610f2)"
-              >
-                <div class="text-h6">Sondage</div>
+            <q-card class="modern-modal-card">
+              <!-- Header -->
+              <q-card-section class="dialog-header row items-center">
+                <div class="header-text q-ml-md">
+                  <div class="name">Nouveau Sondage Flash</div>
+                  <div class="subtitle">Créez un sondage rapide pour vos participants</div>
+                </div>
+                <q-space />
               </q-card-section>
 
-              <!-- Contenu -->
-              <div class="q-pa-lg" style="max-height: 70vh; overflow-y: auto">
+              <!-- Formulaire -->
+              <q-card-section class="modal-form-section">
                 <BForm>
                   <BRow>
                     <BCol cols="12">
@@ -611,29 +613,31 @@ export default {
 
                       <!-- Choix multiples -->
                       <BCol v-if="form.type === 'CHOIX_MULTIPLE'" lg="12" class="mb-3">
-                        <BRow v-for="(option, indexs) in form.choices" :key="indexs">
-                          <BCol lg="10" class="mb-3 floating-label">
-                            <input
-                              type="text"
-                              v-model="option.value"
-                              class="w-100 form-control-modern"
-                              placeholder=" "
-                            />
-                            <label>Option de réponse</label>
-                          </BCol>
-                          <BCol lg="2" class="d-flex align-items-center">
-                            <BButton
-                              size="sm"
-                              class="btn-success me-1"
-                              @click="AddFormDataM(indexs)"
-                            >
-                              <i class="bx bx-add-to-queue"></i>
-                            </BButton>
-                            <BButton size="sm" class="btn-danger" @click="deleteRow(indexs)">
-                              <i class="dripicons-document-delete"></i>
-                            </BButton>
-                          </BCol>
-                        </BRow>
+                        <label class="form-label fw-semibold mb-3">
+                          <i class="bi bi-list-ul me-2"></i>
+                          Options de réponses
+                        </label>
+                        <div class="options-list">
+                          <div v-for="(option, indexs) in form.choices" :key="indexs" class="option-item mb-3">
+                            <div class="option-input-wrapper">
+                              <span class="option-number">{{ indexs + 1 }}</span>
+                              <input
+                                type="text"
+                                v-model="option.value"
+                                placeholder="Entrez une option de réponse"
+                                class="form-control-modern"
+                              />
+                            </div>
+                            <div class="option-actions">
+                              <button class="btn-add-option" @click="AddFormDataM(indexs)" title="Ajouter une option">
+                                <i class="bi bi-plus-circle"></i>
+                              </button>
+                              <button class="btn-delete-option" @click="deleteRow(indexs)" title="Supprimer cette option">
+                                <i class="bi bi-trash"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
                       </BCol>
 
                       <!-- Groupe cible -->
@@ -654,27 +658,32 @@ export default {
                   </BRow>
 
                   <!-- Bouton -->
-                  <div v-if="loadings" class="d-flex justify-content-end mt-4">
-                    <q-spinner-dots color="green" size="20px" class="q-mr-sm" />
-                  </div>
-
-                  <div v-else class="d-flex justify-content-end mt-5">
-                    <BButton variant="success" class="px-5" @click="Add">Enregistrer</BButton>
+                  <div class="d-flex justify-content-end mt-5 gap-2">
+                    <BButton class="btn-modern btn-secondary-modern" @click="ajout = false">
+                      <i class="bi bi-x-circle me-2"></i>
+                      Annuler
+                    </BButton>
+                    <BButton v-if="loadings" class="btn-modern btn-success-modern" disabled>
+                      <q-spinner-dots color="white" size="20px" class="me-2" />
+                      Enregistrement...
+                    </BButton>
+                    <BButton v-else class="btn-modern btn-success-modern" @click="Add">
+                      <i class="bi bi-check-circle me-2"></i>
+                      Enregistrer
+                    </BButton>
                   </div>
                 </BForm>
-              </div>
+              </q-card-section>
             </q-card>
           </q-dialog>
         </div>
 
-        <div
-          class="ttable table-centered datatable dt-responsive nowrap table-card-list dataTable no-footer dtr-inline"
-        >
+        <div class="modern-table-container">
           <BRow>
             <BCol sm="12" md="6">
               <div id="tickets-table_length" class="dataTables_length">
                 <label class="d-inline-flex align-items-center">
-                  Trier
+                  Trier:
                   <BFormSelect v-model="perPage" size="sm" :options="pageOptions"></BFormSelect>
                 </label>
               </div>
@@ -682,11 +691,11 @@ export default {
             <BCol sm="12" md="6">
               <div id="tickets-table_filter" class="dataTables_filter text-md-end">
                 <label class="d-inline-flex align-items-center">
-                  Recheche:
+                  Recherche:
                   <BFormInput
                     v-model="filter"
                     type="search"
-                    placeholder="Recheche..."
+                    placeholder="Recherche..."
                     class="form-control form-control-sm ms-2"
                   ></BFormInput>
                 </label>
@@ -817,17 +826,18 @@ export default {
       </BCol>
     </BRow>
     <q-dialog v-model="edit" transition-show="scale" transition-hide="fade">
-      <q-card class="shadow-lg" style="width: 800px; max-width: 90vw">
-        <!-- En-tête -->
-        <q-card-section
-          class="q-pa-md text-white flex items-center justify-center"
-          style="background: linear-gradient(135deg, #0d6efd, #6610f2)"
-        >
-          <div class="text-h6">Modification</div>
+      <q-card class="modern-modal-card">
+        <!-- Header -->
+        <q-card-section class="dialog-header row items-center">
+          <div class="header-text q-ml-md">
+            <div class="name">Modifier le Sondage</div>
+            <div class="subtitle">Mettez à jour les informations du sondage</div>
+          </div>
+          <q-space />
         </q-card-section>
 
-        <!-- Contenu -->
-        <div class="q-pa-lg" style="max-height: 70vh; overflow-y: auto">
+        <!-- Formulaire -->
+        <q-card-section class="modal-form-section">
           <BForm>
             <BRow>
               <BCol cols="12">
@@ -869,25 +879,31 @@ export default {
 
                 <!-- Choix multiples -->
                 <BCol v-if="formu.type === 'CHOIX_MULTIPLE'" lg="12" class="mb-3">
-                  <BRow v-for="(option, indexs) in formu.choices" :key="indexs">
-                    <BCol lg="10" class="mb-3 floating-label">
-                      <input
-                        type="text"
-                        v-model="option.value"
-                        class="w-100 form-control-modern"
-                        placeholder=" "
-                      />
-                      <label>Option de réponse</label>
-                    </BCol>
-                    <BCol lg="2" class="d-flex align-items-center">
-                      <BButton size="sm" class="btn-success me-1" @click="AddFormDataM(indexs)">
-                        <i class="bx bx-add-to-queue"></i>
-                      </BButton>
-                      <BButton size="sm" class="btn-danger" @click="deleteRow(indexs)">
-                        <i class="dripicons-document-delete"></i>
-                      </BButton>
-                    </BCol>
-                  </BRow>
+                  <label class="form-label fw-semibold mb-3">
+                    <i class="bi bi-list-ul me-2"></i>
+                    Options de réponses
+                  </label>
+                  <div class="options-list">
+                    <div v-for="(option, indexs) in formu.choices" :key="indexs" class="option-item mb-3">
+                      <div class="option-input-wrapper">
+                        <span class="option-number">{{ indexs + 1 }}</span>
+                        <input
+                          type="text"
+                          v-model="option.value"
+                          placeholder="Entrez une option de réponse"
+                          class="form-control-modern"
+                        />
+                      </div>
+                      <div class="option-actions">
+                        <button class="btn-add-option" @click="AddFormDataMU(indexs)" title="Ajouter une option">
+                          <i class="bi bi-plus-circle"></i>
+                        </button>
+                        <button class="btn-delete-option" @click="deleteRowU(indexs)" title="Supprimer cette option">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </BCol>
 
                 <!-- Groupe cible -->
@@ -905,583 +921,184 @@ export default {
             </BRow>
 
             <!-- Bouton -->
-            <div v-if="loadings" class="d-flex justify-content-end mt-4">
-              <q-spinner-dots color="green" size="20px" class="q-mr-sm" />
-            </div>
-
-            <div v-else class="d-flex justify-content-end mt-5">
-              <BButton variant="success" class="px-5" @click="Edit">Enregistrer</BButton>
+            <div class="d-flex justify-content-end mt-5 gap-2">
+              <BButton class="btn-modern btn-secondary-modern" @click="edit = false">
+                <i class="bi bi-x-circle me-2"></i>
+                Annuler
+              </BButton>
+              <BButton v-if="loadings" class="btn-modern btn-success-modern" disabled>
+                <q-spinner-dots color="white" size="20px" class="me-2" />
+                Enregistrement...
+              </BButton>
+              <BButton v-else class="btn-modern btn-success-modern" @click="Edit">
+                <i class="bi bi-check-circle me-2"></i>
+                Enregistrer
+              </BButton>
             </div>
           </BForm>
-        </div>
+        </q-card-section>
       </q-card>
     </q-dialog>
     <q-dialog v-model="opendMdet">
-      <q-card
-        class="modern-dialog"
-        style="width: 800px; max-width: 90vw; height: 600px; max-height: 80vw"
-      >
+      <q-card class="modern-modal-card">
         <!-- Header -->
-        <q-card-section class="dialog-header row items-center q-pa-sm">
-          <div class="q-ml-sm">
-            <span v-if="loadingx" class="skeleton skeleton-title"></span>
-            <div v-else class="text-h6 text-warning">{{ selectedTask?.question }}</div>
-            <span v-if="loadingx" class="skeleton skeleton-title"></span>
-            <div v-else class="text-caption text-warning-8">
-              Type:<span
-                class="badge bg-warning-subtle text-warning me-2 fw-semibold px-3 py-1 rounded-pill"
-                >{{ selectedTask?.type }}</span
-              >
-            </div>
+        <q-card-section class="dialog-header row items-center">
+          <div class="header-text q-ml-md">
+            <div v-if="loadingx" class="skeleton skeleton-title"></div>
+            <div v-else class="name">{{ selectedTask?.question }}</div>
+            <div class="subtitle">Détails du sondage flash</div>
           </div>
           <q-space />
         </q-card-section>
 
-        <div class="q-pa-lg" style="background-color: #f9faff; overflow-y: auto">
-          <q-separator color="grey-3" />
-          <q-card-section>
-            <BCard v-if="selectedTask?.createdByBusiness" class="shadow-sm border-0 mt-3 rounded-4">
-              <div class="p-3 d-flex align-items-center gap-3">
-                <!-- Avatar généré automatiquement -->
-                <img
-                  :src="`https://ui-avatars.com/api/?name=${selectedTask?.createdByBusiness?.firstName}+${selectedTask?.createdByBusiness?.lastName}&background=random`"
-                  alt="Avatar créateur"
-                  class="rounded-circle shadow-sm"
-                  style="width: 60px; height: 60px; object-fit: cover"
-                />
-                <div>
-                  <!-- Nom et prénom -->
-                  <h5 class="mb-1 fw-bold text-primary">
-                    {{ selectedTask?.createdByBusiness?.firstName }}
-                    {{ selectedTask?.createdByBusiness?.lastName }}
-                  </h5>
-
-                  <!-- Entreprise -->
-                  <p class="mb-1 text-muted small">
-                    <i class="bi bi-building me-2"></i>
-                    {{ selectedTask?.createdByBusiness?.companyName }}
-                  </p>
-                </div>
+        <q-separator />
+        
+        <!-- Stats Section -->
+        <q-card-section class="modal-stats-section">
+          <div class="modal-stats-grid">
+            <div class="modal-stat-card modal-stat-success">
+              <div class="modal-stat-icon">
+                <i class="bi bi-check-circle-fill"></i>
               </div>
-            </BCard>
-            <BCard v-if="selectedTask?.createdByAdmin" class="shadow-sm border-0 mt-3 rounded-4">
-              <div class="p-3 d-flex align-items-center gap-3">
-                <!-- Avatar généré automatiquement -->
-                <img
-                  :src="`https://ui-avatars.com/api/?name=${selectedTask?.createdByAdmin?.firstName}+${selectedTask?.createdByAdmin?.lastName}&background=random`"
-                  alt="Avatar créateur"
-                  class="rounded-circle shadow-sm"
-                  style="width: 60px; height: 60px; object-fit: cover"
-                />
-
-                <div>
-                  <!-- Nom et prénom -->
-                  <h5 class="mb-1 fw-bold text-primary">
-                    {{ selectedTask?.createdByAdmin?.firstName }}
-                    {{ selectedTask?.createdByAdmin?.lastName }}
-                  </h5>
-
-                  <!-- Poste -->
-                  <p class="mb-1 text-muted small">
-                    <i class="bi bi-person-badge me-2"></i>
-                    Groupe des participants: {{ selectedTask?.targetGroup?.name }}
-                  </p>
+              <div class="modal-stat-content">
+                <div v-if="loadingx" class="skeleton skeleton-title"></div>
+                <div v-else class="modal-stat-value">
+                  <CountToComponent :startVal="0" :endVal="totalReponse" :duration="2000" />
                 </div>
+                <div class="modal-stat-label">Réponses</div>
               </div>
-            </BCard>
-          </q-card-section>
-          <q-card-section v-if="selectedTask?.type === 'OUI_NON'">
-            <BRow class="d-flex justify-content-center">
-              <BCol md="6" cols="xl-6"
-                ><BRow class="d-flexjustify-content-center">
-                  <BCol md="12" cols="xl-12">
-                    <BCard no-body class="shadow-sm rounded-4 stat-card shadow-success">
-                      <BCardBody
-                        class="d-flex justify-content-between align-items-center p-3 bg-light"
-                      >
-                        <div>
-                          <div class="d-flex align-items-center mb-2">
-                            <i class="bi bi-check-square text-success fs-3 me-2"></i>
-                            <h4 v-if="loadingx" class="skeleton skeleton-title"></h4>
-                            <h4 v-else class="fw-bold mb-0 fs-2">
-                              <CountToComponent
-                                :startVal="0"
-                                :endVal="totalReponse"
-                                :duration="2000"
-                              />
-                            </h4>
-                          </div>
-                          <span
-                            class="badge bg-success-subtle text-success fw-semibold px-3 py-1 rounded-pill"
-                            >Réponses</span
-                          >
-                        </div>
-                      </BCardBody>
-                    </BCard>
-                  </BCol>
-                  <BCol md="6" cols="xl-6">
-                    <BCard no-body class="shadow-sm rounded-4 stat-card shadow-success">
-                      <BCardBody
-                        class="d-flex justify-content-between align-items-center p-3 bg-light"
-                      >
-                        <div>
-                          <div class="d-flex align-items-center mb-2">
-                            <i class="bi bi-check-square text-success fs-3 me-2"></i>
-                            <h4 v-if="loadingx" class="skeleton skeleton-title"></h4>
-                            <h4 v-else class="fw-bold mb-0 fs-2">
-                              <CountToComponent :startVal="0" :endVal="totaloui" :duration="2000" />
-                            </h4>
-                          </div>
-                          <span
-                            class="badge bg-success-subtle text-success fw-semibold px-3 py-1 rounded-pill"
-                            >Nombre de OUI</span
-                          >
-                        </div>
-                      </BCardBody>
-                    </BCard>
-                  </BCol>
-                  <BCol md="6" cols="xl-6">
-                    <BCard no-body class="shadow-sm rounded-4 stat-card shadow-danger">
-                      <BCardBody
-                        class="d-flex justify-content-between align-items-center p-3 bg-light"
-                      >
-                        <div>
-                          <div class="d-flex align-items-center mb-2">
-                            <i class="bi bi-check-square text-danger fs-3 me-2"></i>
-                            <h4 v-if="loadingx" class="skeleton skeleton-title"></h4>
-                            <h4 v-else class="fw-bold mb-0 fs-2">
-                              <CountToComponent :startVal="0" :endVal="totalNon" :duration="2000" />
-                            </h4>
-                          </div>
-                          <span
-                            class="badge bg-danger-subtle text-danger fw-semibold px-3 py-1 rounded-pill"
-                            >Nombre de NON</span
-                          >
-                        </div>
-                      </BCardBody>
-                    </BCard>
-                  </BCol>
-                </BRow></BCol
-              >
-              <BCol md="6" cols="xl-6">
-                <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-                  <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-                    <apexchart
-                      type="pie"
-                      height="290"
-                      :options="chartOptions"
-                      :series="[stats.oui, stats.non]"
-                    />
-                  </BCardBody>
-                </BCard>
-              </BCol>
-            </BRow>
-          </q-card-section>
-          <q-card-section v-if="selectedTask?.type === 'CHOIX_MULTIPLE'">
-            <BRow class="d-flex justify-content-center">
-              <BCol md="6" cols="xl-6"
-                ><BRow class="d-flex justify-content-center">
-                  <BCol md="12" cols="xl-12">
-                    <BCard no-body class="shadow-sm rounded-4 stat-card shadow-success">
-                      <BCardBody
-                        class="d-flex justify-content-between align-items-center p-3 bg-light"
-                      >
-                        <div>
-                          <div class="d-flex align-items-center mb-2">
-                            <i class="bi bi-check-square text-success fs-3 me-2"></i>
-                            <h4 v-if="loadingx" class="skeleton skeleton-title"></h4>
-                            <h4 v-else class="fw-bold mb-0 fs-2">
-                              <CountToComponent
-                                :startVal="0"
-                                :endVal="totalReponse"
-                                :duration="2000"
-                              />
-                            </h4>
-                          </div>
-                          <span
-                            class="badge bg-success-subtle text-success fw-semibold px-3 py-1 rounded-pill"
-                            >Réponses</span
-                          >
-                        </div>
-                      </BCardBody>
-                    </BCard>
-                  </BCol>
-                  <BCol md="12" cols="xl-12">
-                    <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-                      <BCardBody
-                        class="d-flex justify-content-between align-items-center p-3 bg-light"
-                      >
-                        <apexchart
-                          type="pie"
-                          height="300"
-                          :options="pieOptions"
-                          :series="Object.values(statsMultiple)"
-                        />
-                      </BCardBody>
-                    </BCard>
-                  </BCol> </BRow
-              ></BCol>
-              <BCol md="6" cols="xl-6">
-                <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-                  <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-                    <apexchart
-                      type="bar"
-                      height="300"
-                      :options="barOptions"
-                      :series="[{ name: 'Réponses', data: Object.values(statsMultiple) }]"
-                    />
-                  </BCardBody>
-                </BCard>
-              </BCol>
-            </BRow>
-          </q-card-section>
-
-          <!-- Content -->
-          <q-card-section class="dialog-content">
-            <div class="info-row mb-2">
-              <span class="label">Date d'expiration:</span>
-              <span v-if="loadingx" class="skeleton skeleton-title"></span>
-              <span v-else class="value"
-                >{{
-                  new Date(selectedTask?.expiresAt).toLocaleDateString('fr-FR', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric',
-                  })
-                }}
-              </span>
-            </div>
-            <div class="info-row mb-2">
-              <span class="label">Status :</span>
-              <span v-if="loadingx" class="skeleton skeleton-title"></span>
-              <span v-else class="value">{{ selectedTask?.status }} </span>
             </div>
 
-            <div class="info-row mb-2">
-              <span class="label">Publier :</span>
-              <span v-if="loadingx" class="skeleton skeleton-title"></span>
-              <span
-                v-else
-                class="value badge badge-pill bg-soft-success font-size-12"
-                :class="{
-                  'bg-soft-success': selectedTask?.publishedAt !== null,
-
-                  'bg-soft-danger': selectedTask?.publishedAt === null,
-                }"
-                >{{ selectedTask?.publishedAt === null ? 'Non publier' : 'Publier' }}</span
-              >
+            <div class="modal-stat-card modal-stat-info">
+              <div class="modal-stat-icon">
+                <i class="bi bi-calendar-event"></i>
+              </div>
+              <div class="modal-stat-content">
+                <div v-if="loadingx" class="skeleton skeleton-title"></div>
+                <div v-else class="modal-stat-value" style="font-size: 1.2rem;">
+                  {{ selectedTask?.type }}
+                </div>
+                <div class="modal-stat-label">Type</div>
+              </div>
             </div>
-          </q-card-section>
-        </div>
+          </div>
+        </q-card-section>
 
-        <q-separator color="grey-3" />
+        <!-- Content Section -->
+        <q-card-section class="dialog-content">
+          <!-- Créateur -->
+          <div v-if="selectedTask?.createdByBusiness" class="info-card">
+            <img
+              :src="`https://ui-avatars.com/api/?name=${selectedTask?.createdByBusiness?.firstName}+${selectedTask?.createdByBusiness?.lastName}&background=667eea`"
+              alt="Avatar"
+              class="rounded-circle"
+              style="width: 40px; height: 40px; margin-right: 15px;"
+            />
+            <div class="info-text">
+              <div class="label">Créé par (Business)</div>
+              <div class="value">
+                {{ selectedTask?.createdByBusiness?.firstName }}
+                {{ selectedTask?.createdByBusiness?.lastName }}
+              </div>
+              <div style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">
+                <i class="bi bi-building me-1"></i>
+                {{ selectedTask?.createdByBusiness?.companyName }}
+              </div>
+            </div>
+          </div>
+
+          <div v-if="selectedTask?.createdByAdmin" class="info-card">
+            <img
+              :src="`https://ui-avatars.com/api/?name=${selectedTask?.createdByAdmin?.firstName}+${selectedTask?.createdByAdmin?.lastName}&background=667eea`"
+              alt="Avatar"
+              class="rounded-circle"
+              style="width: 40px; height: 40px; margin-right: 15px;"
+            />
+            <div class="info-text">
+              <div class="label">Créé par (Admin)</div>
+              <div class="value">
+                {{ selectedTask?.createdByAdmin?.firstName }}
+                {{ selectedTask?.createdByAdmin?.lastName }}
+              </div>
+              <div style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">
+                <i class="bi bi-people me-1"></i>
+                Groupe: {{ selectedTask?.targetGroup?.name }}
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <q-icon name="calendar_today" size="20px" class="icon" />
+            <div class="info-text">
+              <div class="label">Date d'expiration</div>
+              <div v-if="loadingx" class="skeleton skeleton-text"></div>
+              <div v-else class="value">
+                {{ new Date(selectedTask?.expiresAt).toLocaleDateString('fr-FR') }}
+              </div>
+            </div>
+          </div>
+        </q-card-section>
+
+        <!-- Graphiques Section Moderne -->
+        <q-card-section v-if="selectedTask?.type === 'OUI_NON'" style="padding: 30px 40px; background: #f8f9fa;">
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 15px 20px; border-radius: 12px 12px 0 0; margin-bottom: 0;">
+            <div style="display: flex; align-items: center; color: white;">
+              <i class="bi bi-pie-chart-fill" style="font-size: 1.5rem; margin-right: 12px;"></i>
+              <div>
+                <div style="font-weight: 700; font-size: 1.1rem;">Statistiques des réponses</div>
+                <div style="font-size: 0.85rem; opacity: 0.9;">Répartition OUI / NON</div>
+              </div>
+            </div>
+          </div>
+          <div style="background: white; padding: 30px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+            <apexchart
+              type="pie"
+              :options="chartOptions"
+              :series="series"
+              height="320"
+            />
+          </div>
+        </q-card-section>
+
+        <q-card-section v-if="selectedTask?.type === 'CHOIX_MULTIPLE'" style="padding: 30px 40px; background: #f8f9fa;">
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 15px 20px; border-radius: 12px 12px 0 0; margin-bottom: 0;">
+            <div style="display: flex; align-items: center; color: white;">
+              <i class="bi bi-bar-chart-fill" style="font-size: 1.5rem; margin-right: 12px;"></i>
+              <div>
+                <div style="font-weight: 700; font-size: 1.1rem;">Statistiques des réponses</div>
+                <div style="font-size: 0.85rem; opacity: 0.9;">Répartition par choix</div>
+              </div>
+            </div>
+          </div>
+          <div style="background: white; padding: 30px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+            <apexchart
+              type="bar"
+              :options="chartOptionsBar"
+              :series="seriesBar"
+              height="350"
+            />
+          </div>
+        </q-card-section>
 
         <!-- Actions -->
+        <q-card-actions align="right">
+          <q-btn
+            v-close-popup
+            flat
+            label="Fermer"
+            color="primary"
+          />
+        </q-card-actions>
       </q-card>
     </q-dialog>
   </div>
 </template>
 
 <style lang="scss">
-@import '../../../css/assets/scss/app2.scss';
-.progress-nav {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
+@import '../../../css/admin/tables-shared.scss';
+@import '../../../css/admin/surveys.scss';
+@import '../../../css/admin/badges.scss';
+@import '../../../css/admin/users-management.scss';
 
-.progress {
-  width: 100%;
-  position: absolute;
-  height: 4px;
-}
-
-.wizard-steps {
-  position: relative;
-  z-index: 3;
-  width: 100%;
-
-  .wizard-step {
-    height: 60px;
-    width: 60px;
-    border-radius: 50%;
-    border: 3px solid;
-    display: flex;
-    justify-content: center;
-    z-index: 9;
-    position: relative;
-    background: white;
-  }
-}
-
-.step-arrow-nav {
-  .nav-link {
-    background: #f3f2ee;
-    padding: 4px 0;
-    border-radius: 0 !important;
-  }
-}
-
-.wizard {
-  .nav-link:not(.active) {
-    color: #f3f2ee;
-
-    .wizard-icon {
-      color: #a5a5a5;
-    }
-  }
-}
-
-[data-bs-theme='dark'] {
-  .wizard-steps .wizard-step:not(.active) {
-    background: var(--bs-input-bg);
-  }
-
-  .step-arrow-nav {
-    .nav-link:not(.active) {
-      background: var(--bs-input-bg);
-    }
-  }
-}
-
-.table tbody tr {
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    background: #f9fcff;
-    transform: scale(1.01);
-  }
-}
-
-/* Icônes d'action */
-.list-inline-item a {
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    transform: scale(1.2) rotate(-5deg);
-    opacity: 0.8;
-  }
-}
-
-/* === Dialogues avec animation === */
-/* === Gradient header === */
-
-/* === Floating inputs === */
-.floating-label {
-  position: relative;
-
-  label {
-    position: absolute;
-    top: 50%;
-    left: 15px;
-    transform: translateY(-50%);
-    color: #6c757d;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    pointer-events: none;
-    background: white;
-    padding: 0 5px;
-  }
-
-  .form-control-modern:focus + label,
-  .form-control-modern:not(:placeholder-shown) + label {
-    top: -10px;
-    left: 10px;
-    font-size: 0.8rem;
-    color: #10d0f2;
-  }
-}
-
-.form-control-modern {
-  border-radius: 12px;
-  border: 2px solid #e0e7ff;
-  padding: 0.9rem 1rem;
-  transition: all 0.3s ease;
-  background: #fff;
-
-  &:focus {
-    border-color: #2ea3f2;
-    box-shadow: 0 0 8px rgba(46, 163, 242, 0.4);
-    transform: scale(1.01);
-  }
-}
-
-/* === Boutons modernes === */
-.btn-success {
-  background: linear-gradient(135deg, #34c38f, #2ea3f2);
-  border: none;
-  border-radius: 50px;
-  transition: all 0.3s ease;
-  font-weight: 600;
-  box-shadow: 0 4px 10px rgba(46, 163, 242, 0.3);
-
-  &:hover {
-    background: linear-gradient(135deg, #2ea3f2, #34c38f);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(46, 163, 242, 0.4);
-  }
-
-  &:active {
-    transform: scale(0.96);
-  }
-}
-
-.btn-danger {
-  background: #ff6b6b;
-  border: none;
-  border-radius: 50px;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background: #ff4c4c;
-    transform: translateY(-2px);
-  }
-
-  &:active {
-    transform: scale(0.96);
-  }
-}
-
-/* === Animation ouverture dialog === */
-.q-dialog__inner {
-  animation: fadeScale 0.35s ease forwards;
-}
-@keyframes fadeScale {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-/* Multiselect alignement */
-.multiselect {
-  border-radius: 12px !important;
-  border: 2px solid #e0e7ff !important;
-  padding: 6px 10px;
-  transition: all 0.3s ease;
-}
-.multiselect:focus-within {
-  border-color: #10d0f2 !important;
-  box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
-}
-.skeleton {
-  display: inline-block;
-  height: 1em;
-  background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
-  background-size: 200% 100%;
-  animation: skeleton-loading 1.5s infinite;
-  border-radius: 4px;
-}
-@keyframes skeleton-loading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-.skeleton-title {
-  width: 60%;
-  height: 24px;
-}
-.skeleton-text {
-  width: 100%;
-  height: 16px;
-  margin: 6px 0;
-}
-.stat-card {
-  transition: all 0.4s ease-in-out;
-  border: 2px solid transparent;
-  background: linear-gradient(135deg, #fdfdfd, #f5f5f5);
-  position: relative;
-  overflow: hidden;
-}
-.stat-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
-  border-radius: 20px;
-}
-
-.shadow-warning:hover {
-  border-color: #f1c40f;
-  background-color: linear-gradient(135deg, #f8dc9f, #fff3cc);
-  box-shadow: 0 0 18px rgba(241, 196, 15, 0.6);
-}
-.shadow-success:hover {
-  border-color: #2ecc71;
-  background: linear-gradient(135deg, #2ecc71, #d4f5e6);
-  box-shadow: 0 0 18px rgba(46, 204, 113, 0.6);
-}
-.shadow-danger:hover {
-  border-color: #e74c3c;
-  background: linear-gradient(135deg, #ffecec, #ffd9d6);
-  box-shadow: 0 0 18px rgba(231, 76, 60, 0.6);
-}
-.modern-dialog {
-  width: 500px;
-  max-width: 90vw;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
-}
-
-/* Header du dialog */
-.dialog-header {
-  padding: 16px 20px;
-}
-
-/* Section du contenu */
-.dialog-content {
-  padding: 20px;
-  background-color: #f9faff;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-
-  .info-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 12px;
-    border-radius: 8px;
-    background-color: #ffffff;
-    box-shadow: 0 2px 6px rgba(99, 102, 241, 0.08);
-    transition: all 0.2s ease;
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
-    }
-
-    .label {
-      font-weight: 600;
-      color: #4b4b4b;
-    }
-
-    .value {
-      color: #333;
-    }
-  }
-}
-
-/* Actions du dialog */
-.dialog-actions {
-  padding: 12px 20px;
-  background-color: #fafafa;
-
-  .q-btn {
-    border-radius: 12px;
-    min-width: 100px;
-    transition: all 0.3s ease;
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
-    }
-  }
-}
+// ✅ Tous les styles sont maintenant dans les fichiers SCSS partagés
 </style>

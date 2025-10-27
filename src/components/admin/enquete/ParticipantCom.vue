@@ -49,6 +49,7 @@ export default {
     })
     const selectedCriteria = ref([])
     const newCriterion = ref([])
+    const showCriteriaDropdown = ref(false)
 
     const addCriterion = (crits) => {
       crits.forEach((crit) => {
@@ -144,7 +145,7 @@ export default {
     const editingSurvey = ref(null)
     const optionl2 = ref([])
     const optionl = [
-      { label: 'Françe', value: 'FR' },
+      { label: 'Français', value: 'FR' },
       { label: 'Engletaire', value: 'EN' },
       { label: 'Espagne', value: 'ES' },
       { label: 'Itali', value: 'IT' },
@@ -366,6 +367,7 @@ export default {
       removeCriterion,
       newCriterion,
       selectedCriteria,
+      showCriteriaDropdown,
       options,
       ajout,
       openDetailModal,
@@ -456,27 +458,40 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div class="modern-enquete-container">
     <BRow>
       <BCol cols="12">
-        <div class="d-flex justify-content-between">
-          <BButton variant="success" class="waves-effect waves-light mb-3" @click="ajout = true"
-            >Créer vos Groupes</BButton
-          >
+        <div class="page-header">
+          <div class="header-content">
+            <h2 class="page-title">Gestion des Participants</h2>
+            <p class="page-subtitle">Créez et gérez vos groupes de participants</p>
+          </div>
+          <BButton variant="success" class="modern-create-btn" @click="ajout = true">
+            <i class="bi bi-people me-2"></i>
+            Créer un groupe
+          </BButton>
+        </div>
 
-          <q-dialog v-model="ajout" transition-show="scale" transition-hide="fade">
-            <q-card style="width: 800px; max-width: 90vw; border-radius: 20px" class="shadow-lg">
-              <!-- Titre -->
-              <q-card-section
-                class="q-pa-md text-white flex items-center justify-center"
-                style="background: linear-gradient(135deg, #0d6efd, #6610f2)"
-              >
-                <q-icon name="group_add" size="28px" class="q-mr-sm" />
-                <div class="text-h6 text-center">Créer un Groupes des Participant</div>
-              </q-card-section>
+        <q-dialog v-model="ajout" transition-show="scale" transition-hide="fade">
+            <q-card class="modern-modal-card">
+              <!-- Header moderne -->
+              <div class="modern-modal-header">
+                <div class="modal-header-content">
+                  <div class="modal-icon">
+                    <i class="bi bi-people-fill"></i>
+                  </div>
+                  <div class="modal-title-section">
+                    <h3 class="modal-title">Nouveau Groupe de Participants</h3>
+                    <p class="modal-subtitle">Définissez les critères pour cibler vos participants</p>
+                  </div>
+                </div>
+                <button class="modal-close-btn" @click="ajout = false">
+                  <i class="bi bi-x"></i>
+                </button>
+              </div>
 
               <!-- Formulaire -->
-              <div class="q-pa-lg" style="max-height: 82vh; overflow-y: auto">
+              <div class="modern-modal-body" style="max-height: 70vh; overflow-y: auto">
                 <BForm>
                   <BRow>
                     <BCol cols="12" class="mb-2">
@@ -507,59 +522,88 @@ export default {
                     </BCol>
                   </BRow>
 
-                  <BRow>
-                    <BCol cols="12" class="mb-3">
-                      <h4>Critères</h4>
-                    </BCol>
-                    <BCol cols="5" class="mb-4 floating-label">
-                      <Multiselect
-                        id="critère"
-                        v-model="newCriterion"
-                        :options="availableOptions"
-                        :searchable="false"
-                        :close-on-select="true"
-                        placeholder="Ajouter un critère"
-                        class="form-control-modern"
-                        mode="tags"
-                        @update:model-value="addCriterion"
-                      />
-                      <label for="critère">Critère</label>
-                    </BCol>
-                  </BRow>
-
-                  <!-- Section dynamique des critères -->
-                  <div
-                    v-for="(crit, index) in selectedCriteria"
-                    :key="index"
-                    class="criteria-section"
-                  >
-                    <div class="criteria-header">
-                      <div class="criteria-label">
-                        <strong>{{ crit }}</strong>
+                  <div class="info-section mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <h5 class="section-title mb-0">
+                        <i class="bi bi-sliders me-2"></i>
+                        Critères de sélection
+                      </h5>
+                      <div class="dropdown">
+                        <button
+                          type="button"
+                          class="btn-add-criteria-dropdown"
+                          @click="showCriteriaDropdown = !showCriteriaDropdown"
+                        >
+                          <i class="bi bi-plus-circle me-2"></i>
+                          Ajouter un critère
+                          <i class="bi bi-chevron-down ms-2"></i>
+                        </button>
+                        <div v-if="showCriteriaDropdown" class="criteria-dropdown-menu">
+                          <button
+                            v-for="option in availableOptions"
+                            :key="option.value"
+                            type="button"
+                            class="criteria-dropdown-item"
+                            @click="addCriterion([option.value]); showCriteriaDropdown = false"
+                            :disabled="selectedCriteria.includes(option.value)"
+                          >
+                            <i class="bi bi-check-circle me-2" v-if="selectedCriteria.includes(option.value)"></i>
+                            <i class="bi bi-circle me-2" v-else></i>
+                            {{ option.label }}
+                          </button>
+                        </div>
                       </div>
-                      <q-btn
-                        flat
-                        round
-                        color="red"
-                        icon="delete"
-                        size="sm"
-                        @click="removeCriterion(crit)"
-                      />
                     </div>
 
-                    <!-- Champs dynamiques selon le critère -->
-                    <div class="criteria-body mt-2">
-                      <template v-if="crit === 'Genre'">
-                        <Multiselect
-                          v-model="form.criteria.gender"
-                          :options="[
-                            { label: 'Homme', value: 'H' },
-                            { label: 'Femme', value: 'F' },
-                          ]"
-                          placeholder="Sélectionner le genre"
-                          class="form-control-modern"
-                        />
-                      </template>
+                    <!-- Section dynamique des critères -->
+                    <div
+                      v-for="(crit, index) in selectedCriteria"
+                      :key="index"
+                      class="criteria-card mb-3"
+                    >
+                      <div class="criteria-card-header">
+                        <div class="criteria-title">
+                          <i class="bi bi-filter-circle me-2"></i>
+                          <strong>{{ crit }}</strong>
+                        </div>
+                        <button
+                          type="button"
+                          class="btn-delete-criteria"
+                          @click="removeCriterion(crit)"
+                          title="Supprimer ce critère"
+                        >
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </div>
+
+                      <!-- Champs dynamiques selon le critère -->
+                      <div class="criteria-card-body">
+                        <template v-if="crit === 'Genre'">
+                          <BRow>
+                            <BCol cols="12">
+                              <div class="gender-options">
+                                <button
+                                  type="button"
+                                  class="gender-option"
+                                  :class="{ active: form.criteria.gender === 'H' }"
+                                  @click="form.criteria.gender = 'H'"
+                                >
+                                  <i class="bi bi-gender-male me-2"></i>
+                                  Homme
+                                </button>
+                                <button
+                                  type="button"
+                                  class="gender-option"
+                                  :class="{ active: form.criteria.gender === 'F' }"
+                                  @click="form.criteria.gender = 'F'"
+                                >
+                                  <i class="bi bi-gender-female me-2"></i>
+                                  Femme
+                                </button>
+                              </div>
+                            </BCol>
+                          </BRow>
+                        </template>
 
                       <template v-else-if="crit === 'Age'">
                         <div class="row">
@@ -623,26 +667,31 @@ export default {
                           </div>
                         </div>
                       </template>
+                      </div>
                     </div>
                   </div>
 
-                  <div v-if="loadings" class="d-flex justify-content-end mt-4">
-                    <q-spinner-dots color="green" size="20px" class="q-mr-sm" />
-                  </div>
-
-                  <!-- Bouton -->
-                  <div v-else class="d-flex justify-content-end mt-4">
-                    <BButton variant="success" class="px-5" @click="Add"> Enregistrer </BButton>
+                  <!-- Boutons -->
+                  <div class="modal-footer-actions">
+                    <button class="modal-btn modal-btn-cancel" @click="ajout = false">
+                      <i class="bi bi-x-circle me-2"></i>
+                      Annuler
+                    </button>
+                    <button v-if="loadings" class="modal-btn modal-btn-primary" disabled>
+                      <q-spinner-dots color="white" size="20px" class="me-2" />
+                      Enregistrement...
+                    </button>
+                    <button v-else class="modal-btn modal-btn-primary" @click="Add">
+                      <i class="bi bi-check-circle me-2"></i>
+                      Enregistrer
+                    </button>
                   </div>
                 </BForm>
               </div>
             </q-card>
-          </q-dialog>
-        </div>
+        </q-dialog>
 
-        <div
-          class="ttable table-centered datatable dt-responsive nowrap table-card-list dataTable no-footer dtr-inline"
-        >
+        <div class="modern-table-container">
           <BRow>
             <BCol sm="12" md="6">
               <div id="tickets-table_length" class="dataTables_length">
@@ -660,26 +709,28 @@ export default {
                     v-model="filter"
                     type="search"
                     placeholder="Recherche..."
-                    class="form-control-sm ms-2"
+                    class="form-control form-control-sm ms-2"
                   ></BFormInput>
                 </label>
               </div>
             </BCol>
           </BRow>
-          <div v-if="loading" class="text-center my-5">
+          <div v-if="loading" class="loading-state">
             <q-spinner-ball color="green" size="50px" />
+            <p class="loading-text">Chargement des groupes...</p>
           </div>
           <div
             v-else-if="Array.isArray(orderData) && orderData.length === 0"
-            class="text-center py-5"
+            class="empty-state"
           >
-            <i class="uil uil-folder-open text-muted" style="font-size: 3rem"></i>
-            <p class="mt-3 text-muted">Aucun groupe de participants</p>
+            <i class="bi bi-people empty-icon"></i>
+            <h4 class="empty-title">Aucun groupe trouvé</h4>
+            <p class="empty-description">Commencez par créer votre premier groupe de participants</p>
           </div>
-          <BTable
-            v-else
-            table-class="table table-centered datatable table-card-list"
-            thead-tr-class="bg-transparent"
+          <div v-else class="table-wrapper">
+            <BTable
+              table-class="modern-table"
+              thead-tr-class="table-header"
             :items="orderData"
             :fields="fields"
             responsive="sm"
@@ -735,7 +786,7 @@ export default {
                     href="#"
                     class="px-2 text-info"
                     @click.prevent="openDetailModal(data.item.id)"
-                    title="Détails"
+                    title="Voir les détails"
                   >
                     <i class="bi bi-eye" style="font-size: 18px"></i>
                   </a>
@@ -745,12 +796,11 @@ export default {
                     href="#"
                     class="px-2 text-warning"
                     @click.prevent="openEditModal(data.item)"
-                    title="Modification"
+                    title="Modifier"
                   >
                     <i class="uil uil-pen font-size-18"></i>
                   </a>
                 </li>
-
                 <li class="list-inline-item">
                   <a
                     href="#"
@@ -763,34 +813,34 @@ export default {
                 </li>
               </ul>
             </template>
-          </BTable>
+            </BTable>
+          </div>
+          <div class="pagination-container">
+            <BPagination v-model="currentPage" :total-rows="rows" :per-page="perPage" class="modern-pagination" />
+          </div>
         </div>
-        <BRow>
-          <BCol>
-            <div class="dataTables_paginate paging_simple_numbers float-end">
-              <ul class="pagination pagination-rounded">
-                <BPagination v-model="currentPage" :total-rows="rows" :per-page="perPage" />
-              </ul>
-            </div>
-          </BCol>
-        </BRow>
       </BCol>
     </BRow>
     <q-dialog v-model="edit" transition-show="scale" transition-hide="fade">
-      <q-card
-        style="width: 800px; max-width: 90vw; border-radius: 20px; overflow: hidden"
-        class="shadow-lg"
-      >
-        <!-- Titre -->
-        <q-card-section
-          class="q-pa-md text-white flex items-center justify-center"
-          style="background: linear-gradient(135deg, #0d6efd, #6610f2)"
-        >
-          <div class="text-h6 text-center">Modifier un Groupe des Participants</div>
-        </q-card-section>
+      <q-card class="modern-modal-card">
+        <!-- Header moderne -->
+        <div class="modern-modal-header">
+          <div class="modal-header-content">
+            <div class="modal-icon modal-icon-warning">
+              <i class="bi bi-pencil-square"></i>
+            </div>
+            <div class="modal-title-section">
+              <h3 class="modal-title">Modifier le Groupe</h3>
+              <p class="modal-subtitle">Modifiez les critères du groupe de participants</p>
+            </div>
+          </div>
+          <button class="modal-close-btn" @click="edit = false">
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
 
         <!-- Formulaire -->
-        <div class="q-pa-lg" style="max-height: 82vh; overflow-y: auto">
+        <div class="modern-modal-body" style="max-height: 70vh; overflow-y: auto">
           <BForm>
             <!-- Nom -->
             <BRow>
@@ -935,12 +985,20 @@ export default {
               </div>
             </div>
 
-            <!-- Bouton -->
-            <div v-if="loadings" class="d-flex justify-content-end mt-4">
-              <q-spinner-dots color="green" size="20px" class="q-mr-sm" />
-            </div>
-            <div v-else class="d-flex justify-content-end mt-4">
-              <BButton variant="success" class="px-5" @click="Edit"> Enregistrer </BButton>
+            <!-- Boutons -->
+            <div class="modal-footer-actions">
+              <button class="modal-btn modal-btn-cancel" @click="edit = false">
+                <i class="bi bi-x-circle me-2"></i>
+                Annuler
+              </button>
+              <button v-if="loadings" class="modal-btn modal-btn-warning" disabled>
+                <q-spinner-dots color="white" size="20px" class="me-2" />
+                Enregistrement...
+              </button>
+              <button v-else class="modal-btn modal-btn-warning" @click="Edit">
+                <i class="bi bi-check-circle me-2"></i>
+                Enregistrer
+              </button>
             </div>
           </BForm>
         </div>
@@ -951,209 +1009,9 @@ export default {
 
 <style lang="scss">
 @import '../../../css/assets/scss/app2.scss';
-.progress-nav {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
+@import '../../../css/admin/tables-shared.scss';
+@import '../../../css/admin/participants.scss';
+@import '../../../css/admin/badges.scss';
 
-.progress {
-  width: 100%;
-  position: absolute;
-  height: 4px;
-}
-
-.wizard-steps {
-  position: relative;
-  z-index: 3;
-  width: 100%;
-
-  .wizard-step {
-    height: 60px;
-    width: 60px;
-    border-radius: 50%;
-    border: 3px solid;
-    display: flex;
-    justify-content: center;
-    z-index: 9;
-    position: relative;
-    background: white;
-  }
-}
-
-.step-arrow-nav {
-  .nav-link {
-    background: #f3f2ee;
-    padding: 4px 0;
-    border-radius: 0 !important;
-  }
-}
-
-.wizard {
-  .nav-link:not(.active) {
-    color: #f3f2ee;
-
-    .wizard-icon {
-      color: #a5a5a5;
-    }
-  }
-}
-
-[data-bs-theme='dark'] {
-  .wizard-steps .wizard-step:not(.active) {
-    background: var(--bs-input-bg);
-  }
-
-  .step-arrow-nav {
-    .nav-link:not(.active) {
-      background: var(--bs-input-bg);
-    }
-  }
-}
-/* === Boutons modernes === */
-.btn-success {
-  background: linear-gradient(135deg, #34c38f, #2ea3f2);
-  border: none;
-  border-radius: 50px;
-  transition: all 0.3s ease;
-  font-weight: 600;
-  box-shadow: 0 4px 10px rgba(46, 163, 242, 0.3);
-
-  &:hover {
-    background: linear-gradient(135deg, #2ea3f2, #34c38f);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(46, 163, 242, 0.4);
-  }
-
-  &:active {
-    transform: scale(0.96);
-  }
-}
-
-/* === Table améliorée === */
-.table tbody tr {
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    background: #f9fcff;
-    box-shadow: #1f6bad33 0px 4px 8px;
-    transform: scale(1.01);
-  }
-}
-
-/* Icônes d'action */
-.list-inline-item a {
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    transform: scale(1.2) rotate(-5deg);
-    opacity: 0.8;
-  }
-}
-
-/* === Dialogues avec animation === */
-.q-dialog__inner {
-  animation: fadeScale 0.35s ease forwards;
-}
-
-@keyframes fadeScale {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* === Inputs flottants modernes === */
-.form-control {
-  border-radius: 12px;
-  transition: all 0.3s ease;
-
-  &:focus {
-    border-color: #2ea3f2;
-    box-shadow: 0 0 8px rgba(46, 163, 242, 0.4);
-    transform: scale(1.01);
-  }
-}
-
-.bg-gradient {
-  background: linear-gradient(135deg, #0d6efd, #6610f2);
-}
-
-/* === Champs modernes avec floating label === */
-.floating-label {
-  position: relative;
-}
-
-.form-control-modern {
-  border-radius: 12px;
-  border: 2px solid #e0e7ff;
-  padding: 0.9rem 1rem;
-  width: 100%;
-  transition: all 0.3s ease;
-  background: #fff;
-}
-
-.form-control-modern:focus {
-  border-color: #10d0f2;
-  box-shadow: 0 0 8px #06cff3;
-  transform: scale(1.01);
-}
-
-/* Labels flottants */
-.floating-label label {
-  position: absolute;
-  top: 50%;
-  left: 15px;
-  transform: translateY(-50%);
-  color: #6c757d;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  pointer-events: none;
-  background: white;
-  padding: 0 5px;
-}
-
-.form-control-modern:focus + label,
-.form-control-modern:not(:placeholder-shown) + label {
-  top: -10px;
-  left: 10px;
-  font-size: 0.8rem;
-  color: #10d0f2;
-}
-
-/* Multiselect alignement */
-.multiselect {
-  border-radius: 12px !important;
-  border: 2px solid #e0e7ff !important;
-  padding: 6px 10px;
-  transition: all 0.3s ease;
-}
-.multiselect:focus-within {
-  border-color: #10d0f2 !important;
-  box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
-}
-.criteria-section {
-  background-color: #e7f3ff;
-  border: 1px solid #b6daff;
-  border-radius: 10px;
-  padding: 15px;
-  margin-bottom: 15px;
-  transition: all 0.3s ease;
-}
-
-.criteria-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.criteria-label {
-  color: #0d6efd;
-  font-weight: 600;
-  font-size: 1rem;
-}
+// ✅ Tous les styles sont maintenant dans les fichiers SCSS partagés
 </style>

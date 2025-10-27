@@ -1,0 +1,53 @@
+/**
+ * Variables SCSS pour l'interface Business
+ */
+
+// Couleurs principales (exemple - à personnaliser)
+$business-primary: #2563eb;
+$business-secondary: #1e40af;
+$business-gradient: linear-gradient(135deg, $business-primary, $business-secondary);
+
+// Couleurs d'état
+$business-success: #059669;
+$business-warning: #d97706;
+$business-danger: #dc2626;
+$business-info: #0891b2;
+
+// Couleurs de fond
+$business-bg-light: #f8fafc;
+$business-bg-white: #ffffff;
+$business-bg-gray: #f1f5f9;
+
+// Couleurs de texte
+$business-text-primary: #1e293b;
+$business-text-secondary: #64748b;
+$business-text-muted: #94a3b8;
+
+// Bordures
+$business-border-light: #e2e8f0;
+$business-border-medium: #cbd5e1;
+$business-border-dark: #94a3b8;
+
+// Espacements
+$business-spacing-xs: 0.5rem;
+$business-spacing-sm: 0.75rem;
+$business-spacing-md: 1rem;
+$business-spacing-lg: 1.5rem;
+$business-spacing-xl: 2rem;
+
+// Border radius
+$business-radius-sm: 8px;
+$business-radius-md: 12px;
+$business-radius-lg: 16px;
+$business-radius-xl: 20px;
+
+// Ombres
+$business-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+$business-shadow-md: 0 2px 12px rgba(0, 0, 0, 0.06);
+$business-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.1);
+$business-shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.15);
+
+// Transitions
+$business-transition-fast: 0.2s ease;
+$business-transition-normal: 0.3s ease;
+$business-transition-slow: 0.5s ease;

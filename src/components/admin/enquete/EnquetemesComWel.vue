@@ -12,11 +12,6 @@ import {
   BDropdown,
   BDropdownItem,
 } from 'bootstrap-vue-next'
-import Step1 from './actions-welcome/Step1Ac.vue'
-import Step2 from './actions-welcome/Step2Ac.vue'
-import Step3 from './actions-welcome/Step3Ac.vue'
-import Step4Ac from './actions-welcome/Step4Ac.vue'
-import Step5Ac from './actions-welcome/Step5Ac.vue'
 
 import simplebar from 'simplebar-vue'
 import { api } from 'src/boot/axios.js'
@@ -36,14 +31,9 @@ export default {
     BPagination,
     BFormSelect,
     BTable,
-    Step1,
-    Step2,
-    Step3,
-    Step4Ac,
     simplebar,
     BDropdown,
     BDropdownItem,
-    Step5Ac,
   },
   data() {
     const orderData = ref([])
@@ -53,7 +43,6 @@ export default {
     const listdetail = ref([])
     const store = useRegisterStore()
     const authStore = useAuthStore()
-    const ajout = ref(false)
     const route = useRouter()
     const categories = ref([])
     const loading = ref(true)
@@ -117,27 +106,18 @@ export default {
     }
     const creaOpenModal = () => {
       store.setIdSurveyw(null)
-      ajout.value = true
+      route.push('/admin/enquetes-welcome/create')
     }
     const openEditModal = (survey) => {
       editingSurvey.value = { ...survey }
       store.setIdSurveyw(editingSurvey.value.id)
-      setTimeout(() => {
-        route.push(`/admin/enquetes-welcome-modification/${editingSurvey.value.slug}`)
-      }, 500)
-      this.activeTab = 1
-      this.progressBarValue = 15
+      route.push(`/admin/enquetes-welcome-modification/${editingSurvey.value.slug}`)
     }
 
     const openDetailModal = (survey) => {
       const id = survey ? survey.id : null
 
       route.push(`/admin/enquetes-details-bienvenue/${id}`)
-    }
-    const step3Ref = ref(0)
-
-    const refreshStep3 = async () => {
-      step3Ref.value++
     }
 
     onMounted(() => {
@@ -149,8 +129,6 @@ export default {
       openEditModal,
       deleteSurvey,
       openDetailModal,
-      refreshStep3,
-      step3Ref,
       detail,
       listdetail,
       orderData,
@@ -164,7 +142,6 @@ export default {
       filterOn: [],
       sortBy: 'age',
       sortDesc: false,
-      ajout,
       chat: ref(false),
       chatData: chatData,
       groupData: groupData,
@@ -204,9 +181,6 @@ export default {
         },
         'action',
       ],
-      progressBarValue: 10,
-      activeTab: 1,
-      activeTabArrow: 2,
       creaOpenModal,
     }
   },
@@ -231,131 +205,26 @@ export default {
       this.totalRows = filteredItems.length
       this.currentPage = 1
     },
-    toggleWizard(tab, value) {
-      this.activeTab = tab
-      this.progressBarValue = value
-    },
-
-    toggleTabWizard(tab) {
-      this.activeTabArrow = tab
-    },
-    closeModal() {
-      this.edit = false
-      this.ajout = false
-      this.gets()
-    },
   },
 }
 </script>
 
 <template>
-  <div>
+  <div class="modern-enquete-container">
     <BRow>
       <BCol cols="12">
-        <div class="d-flex justify-content-between">
-          <BButton variant="success" class="waves-effect waves-light mb-3" @click="creaOpenModal"
-            >Créer une enquête</BButton
-          >
-
-          <q-dialog v-model="ajout">
-            <q-card
-              style="
-                width: 800px;
-                max-width: 90vw;
-                background: linear-gradient(135deg, #f0f4ff, #e0f7fa);
-              "
-            >
-              <!-- Titre -->
-              <q-card-section class="q-pa-sm bg-grey-2">
-                <div class="text-h6">Créez une enquête</div>
-              </q-card-section>
-
-              <!-- Barre de progression -->
-              <div class="q-pa-sm">
-                <q-linear-progress
-                  :value="progressBarValue / 100"
-                  color="success"
-                  class="progress-bar"
-                />
-
-                <ul class="nav nav-pills d-flex justify-content-around wizard-steps" role="tablist">
-                  <li class="nav-item" role="presentation">
-                    <q-btn
-                      flat
-                      round
-                      icon="check_circle"
-                      :color="activeTab >= 1 ? 'success' : 'grey'"
-                    />
-                  </li>
-                  <li class="nav-item" role="presentation">
-                    <q-btn
-                      flat
-                      round
-                      icon="check_circle"
-                      :color="activeTab >= 2 ? 'success' : 'grey'"
-                    />
-                  </li>
-
-                  <li class="nav-item" role="presentation">
-                    <q-btn
-                      flat
-                      round
-                      icon="check_circle"
-                      :color="activeTab >= 3 ? 'success' : 'grey'"
-                    />
-                  </li>
-
-                  <li class="nav-item" role="presentation">
-                    <q-btn
-                      flat
-                      round
-                      icon="check_circle"
-                      :color="activeTab >= 4 ? 'success' : 'grey'"
-                    />
-                  </li>
-                  <li class="nav-item" role="presentation">
-                    <q-btn
-                      flat
-                      round
-                      icon="check_circle"
-                      :color="activeTab >= 5 ? 'success' : 'grey'"
-                    />
-                  </li>
-                </ul>
-              </div>
-
-              <!-- Contenu dynamique selon l'étape -->
-              <q-card-section>
-                <div v-show="activeTab === 1">
-                  <Step1 @refreshTable="gets()" @onNext="toggleWizard(2, 30)" />
-                </div>
-                <div v-show="activeTab === 2">
-                  <Step2
-                    @refreshGroups="refreshStep3()"
-                    @onBack="toggleWizard(1, 10)"
-                    @onNext="toggleWizard(3, 50)"
-                  />
-                </div>
-                <div v-show="activeTab === 3">
-                  <Step4Ac
-                    :refreshTrigger="step3Ref"
-                    @onBack="toggleWizard(2, 30)"
-                    @onNext="toggleWizard(4, 70)"
-                  />
-                </div>
-                <div v-show="activeTab === 4">
-                  <Step3 @onBack="toggleWizard(3, 50)" @onNext="toggleWizard(5, 100)" />
-                </div>
-                <div v-show="activeTab === 5">
-                  <Step5Ac @onBack="toggleWizard(4, 70)" @onNext="closeModal()" />
-                </div>
-              </q-card-section>
-            </q-card>
-          </q-dialog>
+        <div class="page-header">
+          <div class="header-content">
+            <h2 class="page-title">Enquêtes de Bienvenue</h2>
+            <p class="page-subtitle">Créez et gérez vos enquêtes de bienvenue pour accueillir vos nouveaux utilisateurs</p>
+          </div>
+          <BButton variant="success" class="modern-create-btn" @click="creaOpenModal">
+            <i class="bi bi-plus-circle me-2"></i>
+            Créer une enquête
+          </BButton>
         </div>
-        <div
-          class="ttable table-centered datatable dt-responsive nowrap table-card-list dataTable no-footer dtr-inline"
-        >
+
+        <div class="modern-table-container">
           <BRow>
             <BCol sm="12" md="6">
               <div id="tickets-table_length" class="dataTables_length">
@@ -379,29 +248,32 @@ export default {
               </div>
             </BCol>
           </BRow>
-          <div v-if="loading" class="text-center my-5">
+
+          <div v-if="loading" class="loading-state">
             <q-spinner-ball color="green" size="50px" />
+            <p class="loading-text">Chargement des enquêtes...</p>
           </div>
           <div
             v-else-if="Array.isArray(orderData) && orderData.length === 0"
-            class="text-center py-5"
+            class="empty-state"
           >
-            <i class="uil uil-folder-open text-muted" style="font-size: 3rem"></i>
-            <p class="mt-3 text-muted">Aucune enquête trouvée</p>
+            <i class="bi bi-clipboard-data empty-icon"></i>
+            <h4 class="empty-title">Aucune enquête trouvée</h4>
+            <p class="empty-description">Commencez par créer votre première enquête de bienvenue</p>
           </div>
-          <BTable
-            v-else
-            table-class="table table-centered datatable table-card-list"
-            thead-tr-class="bg-transparent"
-            :items="orderData"
-            :fields="fields"
-            responsive="sm"
-            :per-page="perPage"
-            :current-page="currentPage"
-            :filter="filter"
-            :filter-included-fields="filterOn"
-            @filtered="onFiltered"
-          >
+          <div v-else class="table-wrapper">
+            <BTable
+              table-class="modern-table"
+              thead-tr-class="table-header"
+              :items="orderData"
+              :fields="fields"
+              responsive="sm"
+              :per-page="perPage"
+              :current-page="currentPage"
+              :filter="filter"
+              :filter-included-fields="filterOn"
+              @filtered="onFiltered"
+            >
             <template v-slot:cell(check)="data">
               <div class="custom-control custom-checkbox text-center">
                 <input
@@ -421,21 +293,21 @@ export default {
             </template>
 
             <template v-slot:cell(isActive)="data">
-              <a
-                href="#"
+              <div
                 class="badge badge-pill font-size-12"
                 :class="{
                   'bg-soft-success': data.item.isActive === true,
                   'bg-soft-danger': data.item.isActive === false,
                 }"
-                >{{ data.item.isActive === true ? 'Activé' : 'Non Activé' }}</a
               >
+                {{ data.item.isActive === true ? 'Activé' : 'Non Activé' }}
+              </div>
             </template>
 
             <template v-slot:cell(displayOrder)="data">
-              <a href="#" class="text-warning"
-                ><strong>{{ data.item.displayOrder }} position</strong></a
-              >
+              <span class="text-warning">
+                <strong>{{ data.item.displayOrder }} position</strong>
+              </span>
             </template>
 
             <template v-slot:cell(status)="data">
@@ -459,56 +331,40 @@ export default {
                     href="#"
                     class="px-2 text-info"
                     @click.prevent="openDetailModal(data.item)"
-                    title="stastique"
+                    title="Voir les statistiques"
                   >
                     <i class="bi bi-eye" style="font-size: 18px"></i>
                   </a>
                 </li>
-
                 <li class="list-inline-item">
                   <a
                     href="#"
                     class="px-2 text-warning"
                     @click.prevent="openEditModal(data.item)"
-                    title="Edit"
+                    title="Modifier"
                   >
                     <i class="uil uil-pen font-size-18"></i>
                   </a>
                 </li>
-
-                <!--<li class="list-inline-item">
-                  <a
-                    href="#"
-                    class="px-2 text-primary"
-                    @click.prevent="chat = !chat"
-                    title="chat I.A"
-                  >
-                    <i class="uil uil-robot font-size-18"></i>
-                  </a>
-                </li>-->
                 <li class="list-inline-item">
                   <a
                     href="#"
                     class="px-2 text-danger"
                     @click.prevent="deleteSurvey(data.item.id)"
-                    title="Delete"
+                    title="Supprimer"
                   >
                     <i class="uil uil-trash-alt font-size-18"></i>
                   </a>
                 </li>
               </ul>
             </template>
-          </BTable>
+            </BTable>
+          </div>
+
+          <div class="pagination-container">
+            <BPagination v-model="currentPage" :total-rows="rows" :per-page="perPage" class="modern-pagination" />
+          </div>
         </div>
-        <BRow>
-          <BCol>
-            <div class="dataTables_paginate paging_simple_numbers float-end">
-              <ul class="pagination pagination-rounded">
-                <BPagination v-model="currentPage" :total-rows="rows" :per-page="perPage" />
-              </ul>
-            </div>
-          </BCol>
-        </BRow>
       </BCol>
     </BRow>
     <q-dialog v-model="chat" persistent>
@@ -566,187 +422,11 @@ export default {
 </template>
 
 <style lang="scss">
+// Import des styles globaux qui incluent maintenant les styles modernes réutilisables
 @import '../../../css/assets/scss/app2.scss';
-.progress-nav {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
+@import '../../../css/admin/tables-shared.scss';
+@import '../../../css/admin/surveys.scss';
+@import '../../../css/admin/badges.scss';
 
-.progress {
-  width: 100%;
-  position: absolute;
-  height: 4px;
-}
-
-.wizard-steps {
-  position: relative;
-  z-index: 3;
-  width: 100%;
-
-  .wizard-step {
-    height: 60px;
-    width: 60px;
-    border-radius: 50%;
-    border: 3px solid;
-    display: flex;
-    justify-content: center;
-    z-index: 9;
-    position: relative;
-    background: white;
-  }
-}
-
-.step-arrow-nav {
-  .nav-link {
-    background: #f3f2ee;
-    padding: 4px 0;
-    border-radius: 0 !important;
-  }
-}
-
-.wizard {
-  .nav-link:not(.active) {
-    color: #f3f2ee;
-
-    .wizard-icon {
-      color: #a5a5a5;
-    }
-  }
-}
-
-[data-bs-theme='dark'] {
-  .wizard-steps .wizard-step:not(.active) {
-    background: var(--bs-input-bg);
-  }
-
-  .step-arrow-nav {
-    .nav-link:not(.active) {
-      background: var(--bs-input-bg);
-    }
-  }
-}
-.btn-success {
-  background: linear-gradient(135deg, #34c38f, #2ea3f2);
-  border: none;
-  border-radius: 50px;
-  transition: all 0.3s ease;
-  font-weight: 600;
-  box-shadow: 0 4px 10px rgba(46, 163, 242, 0.3);
-
-  &:hover {
-    background: linear-gradient(135deg, #2ea3f2, #34c38f);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(46, 163, 242, 0.4);
-  }
-
-  &:active {
-    transform: scale(0.96);
-  }
-}
-.table tbody tr {
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    background: #f9fcff;
-    box-shadow: #1f6bad33 0px 4px 8px;
-    transform: scale(1.01);
-  }
-}
-
-/* Icônes d'action */
-.list-inline-item a {
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    transform: scale(1.2) rotate(-5deg);
-    opacity: 0.8;
-  }
-}
-
-/* === Dialogues avec animation === */
-.q-dialog__inner {
-  animation: fadeScale 0.35s ease forwards;
-}
-
-@keyframes fadeScale {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* === Inputs flottants modernes === */
-.form-control {
-  border-radius: 12px;
-  transition: all 0.3s ease;
-
-  &:focus {
-    border-color: #2ea3f2;
-    box-shadow: 0 0 8px rgba(46, 163, 242, 0.4);
-    transform: scale(1.01);
-  }
-}
-
-.bg-gradient {
-  background: linear-gradient(135deg, #0d6efd, #6610f2);
-}
-
-/* === Champs modernes avec floating label === */
-.floating-label {
-  position: relative;
-}
-
-.form-control-modern {
-  border-radius: 12px;
-  border: 2px solid #e0e7ff;
-  padding: 0.9rem 1rem;
-  width: 100%;
-  transition: all 0.3s ease;
-  background: #fff;
-}
-
-.form-control-modern:focus {
-  border-color: #10d0f2;
-  box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
-  transform: scale(1.01);
-}
-
-/* Labels flottants */
-.floating-label label {
-  position: absolute;
-  top: 50%;
-  left: 15px;
-  transform: translateY(-50%);
-  color: #6c757d;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  pointer-events: none;
-  background: white;
-  padding: 0 5px;
-}
-
-.form-control-modern:focus + label,
-.form-control-modern:not(:placeholder-shown) + label {
-  top: -10px;
-  left: 10px;
-  font-size: 0.8rem;
-  color: #10d0f2;
-}
-
-/* Multiselect alignement */
-.multiselect {
-  border-radius: 12px !important;
-  border: 2px solid #e0e7ff !important;
-  padding: 6px 10px;
-  transition: all 0.3s ease;
-}
-.multiselect:focus-within {
-  border-color: #10d0f2 !important;
-  box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
-}
+// ✅ Tous les styles sont maintenant dans les fichiers SCSS partagés
 </style>

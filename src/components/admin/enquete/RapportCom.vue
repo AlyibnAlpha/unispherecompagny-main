@@ -1,14 +1,10 @@
 <script>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import {
   BRow,
   BCol,
-  BButton,
   BFormInput,
   BPagination,
-  BCard,
-  BCardBody,
-  BDropdown,
 } from 'bootstrap-vue-next'
 
 import { api } from 'src/boot/axios'
@@ -27,12 +23,8 @@ export default {
   components: {
     BRow,
     BCol,
-    BButton,
     BFormInput,
     BPagination,
-    BCard,
-    BCardBody,
-    BDropdown,
     TeleDetail,
   },
   data() {
@@ -42,6 +34,12 @@ export default {
     const selectedReport = ref([])
     const isDownloading = ref(false)
     const loading = ref(false)
+    const showCreateModal = ref(false)
+    const selectedSurvey = ref('')
+    const surveys = ref([])
+    const isCreating = ref(false)
+    const loadingSurveyDetails = ref(false)
+    
     function truncate(text, length) {
       if (!text) return ''
       return text.length > length ? text.substring(0, length) + '...' : text
@@ -64,6 +62,127 @@ export default {
         loading.value = false
       }
     }
+    const openCreateModal = async () => {
+      showCreateModal.value = true
+      selectedSurvey.value = ''
+      await loadSurveys()
+    }
+
+    const loadSurveys = async () => {
+      try {
+        const response = await api.get('/admin/surveys')
+        // Charger les sondages avec leurs relations (participants, réponses, questions)
+        surveys.value = await Promise.all(
+          response.data.map(async (survey) => {
+            try {
+              const detailResponse = await api.get(`/admin/surveys/${survey.id}`)
+              return detailResponse.data
+            } catch (error) {
+              console.error(`Erreur lors du chargement du sondage ${survey.id}:`, error)
+              return survey
+            }
+          })
+        )
+      } catch (error) {
+        console.error('Erreur lors du chargement des sondages:', error)
+        Notify.create({
+          type: 'negative',
+          message: 'Erreur lors du chargement des sondages',
+          position: 'top',
+        })
+      }
+    }
+
+    const getSurveyById = (id) => {
+      return surveys.value.find(s => s.id === id)
+    }
+
+    const formatDate = (date) => {
+      if (!date) return ''
+      return new Date(date).toLocaleDateString('fr-FR', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })
+    }
+
+    const calculateCompletionRate = (surveyId) => {
+      const survey = getSurveyById(surveyId)
+      if (!survey) return 0
+      
+      const participants = survey.survey_participants || []
+      
+      if (participants.length === 0) return 0
+      
+      // Calculer le nombre de participants qui ont répondu
+      const completedCount = participants.filter(p => p.hasResponded || p.status === 'completed').length
+      const rate = (completedCount / participants.length) * 100
+      return Math.round(rate)
+    }
+
+    const getSurveyStatus = (surveyId) => {
+      const survey = getSurveyById(surveyId)
+      if (!survey) return 'draft'
+      
+      const now = new Date()
+      const startDate = new Date(survey.startDate)
+      const endDate = new Date(survey.endDate)
+      
+      if (survey.status === 'archived') return 'archived'
+      if (survey.status === 'closed') return 'closed'
+      if (now < startDate) return 'draft'
+      if (now > endDate) return 'closed'
+      return 'active'
+    }
+
+    const getSurveyStatusLabel = (surveyId) => {
+      const status = getSurveyStatus(surveyId)
+      const labels = {
+        draft: 'Brouillon',
+        active: 'En cours',
+        closed: 'Terminé',
+        archived: 'Archivé'
+      }
+      return labels[status] || 'Inconnu'
+    }
+
+    const canCreateReport = (surveyId) => {
+      if (!surveyId) return false
+      const status = getSurveyStatus(surveyId)
+      // On peut créer un rapport seulement si le sondage est terminé ou archivé
+      return status === 'closed' || status === 'archived'
+    }
+
+    const createReport = async () => {
+      if (!selectedSurvey.value) return
+      
+      try {
+        isCreating.value = true
+        await api.post('/admin/reports', {
+          surveyId: selectedSurvey.value
+        })
+        
+        Notify.create({
+          type: 'positive',
+          message: 'Rapport créé avec succès !',
+          position: 'top',
+        })
+        
+        showCreateModal.value = false
+        selectedSurvey.value = ''
+        await gets()
+      } catch (error) {
+        console.error('Erreur lors de la création du rapport:', error)
+        Notify.create({
+          type: 'negative',
+          message: 'Erreur lors de la création du rapport',
+          position: 'top',
+        })
+      } finally {
+        isCreating.value = false
+      }
+    }
+
     const ajout = () => {
       router.push('/admin/rapport-add')
     }
@@ -100,6 +219,16 @@ export default {
         return choice ? choice.label : val
       })
     }
+    // Watcher pour simuler le chargement des détails du sondage
+    watch(selectedSurvey, async (newVal) => {
+      if (newVal) {
+        loadingSurveyDetails.value = true
+        // Simuler un petit délai pour le chargement
+        await new Promise(resolve => setTimeout(resolve, 500))
+        loadingSurveyDetails.value = false
+      }
+    })
+
     onMounted(() => {
       gets()
     })
@@ -125,6 +254,19 @@ export default {
       activeTab: 1,
       activeTabArrow: 2,
       loading,
+      showCreateModal,
+      selectedSurvey,
+      surveys,
+      isCreating,
+      openCreateModal,
+      getSurveyById,
+      formatDate,
+      createReport,
+      calculateCompletionRate,
+      getSurveyStatus,
+      getSurveyStatusLabel,
+      canCreateReport,
+      loadingSurveyDetails,
     }
   },
   computed: {
@@ -345,16 +487,30 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div class="modern-admin-page">
+    <!-- Carte d'en-tête séparée -->
+    <div class="header-card mb-4">
+      <div class="section-header-modern">
+        <div class="section-title-wrapper">
+          <div class="section-icon-modern">
+            <i class="bi bi-file-earmark-bar-graph"></i>
+          </div>
+          <div class="section-title-content">
+            <h3 class="section-title-modern">Mes Rapports</h3>
+            <p class="section-subtitle-modern">Consultez et téléchargez vos rapports d'enquêtes</p>
+          </div>
+        </div>
+        <button class="btn-create-report" @click="openCreateModal">
+          <i class="bi bi-plus-circle-fill me-2"></i>
+          Créer un Rapport
+        </button>
+      </div>
+    </div>
+
+    <!-- Section rapports -->
     <BRow>
       <BCol cols="12">
-        <div class="d-flex justify-content-between">
-          <BButton variant="success" class="btn-success" @click="ajout()">Créer un Rapport</BButton>
-        </div>
-
-        <div
-          class="ttable table-centered datatable dt-responsive nowrap table-card-list dataTable no-footer dtr-inline"
-        >
+        <div class="reports-section-card">
           <BRow>
             <BCol cols="auto" md="12" class="d-flex justify-content-end mb-3">
               <div class="search-wrapper-modern">
@@ -368,15 +524,18 @@ export default {
             </BCol>
           </BRow>
           <div v-if="loading" class="text-center my-5">
-            <q-spinner-ball color="green" size="50px" />
+            <q-spinner-ball color="primary" size="50px" />
+            <p class="mt-3 text-muted">Chargement des rapports...</p>
           </div>
           <div
             v-else-if="Array.isArray(paginatedData) && paginatedData.length === 0"
-            class="text-center py-5"
-            style="margin-top: 5px"
+            class="empty-state"
           >
-            <i class="uil uil-folder-open text-muted" style="font-size: 3rem"></i>
-            <p class="mt-3 text-muted">Aucun Rapport</p>
+            <div class="empty-state-icon">
+              <i class="bi bi-inbox"></i>
+            </div>
+            <h5 class="empty-state-title">Aucun rapport disponible</h5>
+            <p class="empty-state-text">Créez votre premier rapport pour commencer.</p>
           </div>
           <BRow v-else style="margin-top: 5px">
             <BCol
@@ -389,64 +548,58 @@ export default {
               v-for="(item, index) in paginatedData"
               :key="index"
             >
-              <BCard no-body class="ultra-card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                  <h5 class="card-title mb-0">Rapport: {{ truncate(item.survey.title, 40) }}</h5>
-                  <BDropdown toggle-class=" p-0" no-caret menu-class="dropdown-menu-end">
-                    <template #button-content>
-                      <i class="uil uil-ellipsis-h dropdown-icon"></i>
-                    </template>
-                    <!--<a class="dropdown-item" href="#" @click.prevent="openEditModal(item.id)">
-                      <i class="uil uil-pen me-1"></i> Modifier
-                    </a>-->
-                    <a class="dropdown-item" href="#" @click.prevent="deleteRow(item.id)">
-                      <i class="uil uil-trash-alt me-1"></i> Supprimer
-                    </a>
-                  </BDropdown>
+              <div class="modern-report-card">
+                <!-- Header badges -->
+                <div class="report-card-top">
+                  <span class="report-badge report-badge-survey">
+                    <i class="bi bi-bar-chart-fill me-1"></i>
+                    Rapport
+                  </span>
+                  <button 
+                    class="report-delete-btn" 
+                    @click.stop="deleteRow(item.id)"
+                    title="Supprimer"
+                  >
+                    <i class="bi bi-trash"></i>
+                  </button>
                 </div>
 
-                <BCardBody>
-                  <div class="card-stats">
-                    <div
-                      class="stat"
-                      v-for="(stat, i) in [
-                        {
-                          icon: 'uil-users-alt',
-                          value: item.totalParticipants,
-                          label: 'Participations',
-                        },
-                        { icon: 'uil-check-circle', value: item.totalResponses, label: 'Réponses' },
-                        { icon: 'uil-star', value: item.participationRate, label: 'Moyenne' },
-                      ]"
-                      :key="i"
-                    >
-                      <i :class="stat.icon"></i>
-                      <span class="stat-value">{{ stat.value }}</span>
-                      <small>{{ stat.label }}</small>
+                <!-- Titre du sondage -->
+                <div class="report-card-body" @click="downloadReport(item.survey.id)">
+                  <h3 class="report-card-title">{{ item.survey.title }}</h3>
+                </div>
+
+                <!-- Footer avec icônes -->
+                <div class="report-card-bottom">
+                  <div class="report-icons-group">
+                    <div class="report-icon-item" :title="`${item.totalParticipants} Participations`">
+                      <i class="bi bi-people-fill"></i>
+                      <span class="report-icon-value">{{ item.totalParticipants }}</span>
+                    </div>
+                    <div class="report-icon-item" :title="`${item.totalResponses} Réponses`">
+                      <i class="bi bi-check-circle-fill"></i>
+                      <span class="report-icon-value">{{ item.totalResponses }}</span>
+                    </div>
+                    <div class="report-icon-item" :title="`Taux: ${item.participationRate}`">
+                      <i class="bi bi-star-fill"></i>
+                      <span class="report-icon-value">{{ item.participationRate }}</span>
                     </div>
                   </div>
+                </div>
 
-                  <p class="card-description mt-3">
-                    Ce rapport présente un résumé complet des participations et réponses pour le
-                    sondage
-                    <strong style="color: black">{{ truncate(item.survey.title, 40) }}</strong
-                    >. Analysez les performances et exportez les données pour plus de détails.
-                  </p>
-                </BCardBody>
-
-                <BCardBody class="text-center">
-                  <BButton
-                    variant="download"
-                    class="btn-download"
+                <!-- Bouton télécharger -->
+                <div class="report-card-actions">
+                  <button 
+                    class="btn-download-report"
                     @click="downloadReport(item.survey.id)"
                     :disabled="isDownloading"
                   >
-                    <i v-if="!isDownloading" class="uil uil-file-download-alt me-1"></i>
-                    <i v-else class="spinner-border spinner-border-sm me-2"></i>
+                    <i v-if="!isDownloading" class="bi bi-download me-2"></i>
+                    <q-spinner-dots v-else color="white" size="20px" class="me-2" />
                     {{ isDownloading ? 'Téléchargement...' : 'Télécharger' }}
-                  </BButton>
-                </BCardBody>
-              </BCard>
+                  </button>
+                </div>
+              </div>
             </BCol>
             <div
               ref="statDetail"
@@ -455,320 +608,182 @@ export default {
               <TeleDetail v-if="selectedReport" :report="selectedReport" />
             </div>
           </BRow>
+          <!-- Pagination -->
+          <div class="reports-pagination">
+            <BPagination
+              v-model="currentPage"
+              :total-rows="filteredData.length"
+              :per-page="perPage"
+              class="modern-pagination"
+            />
+          </div>
         </div>
-        <BRow>
-          <BCol>
-            <div class="dataTables_paginate paging_simple_numbers float-end">
-              <ul class="pagination pagination-rounded">
-                <BPagination
-                  v-model="currentPage"
-                  :total-rows="filteredData.length"
-                  :per-page="perPage"
-                  align="right"
-                  size="md"
-                />
-              </ul>
-            </div>
-          </BCol>
-        </BRow>
       </BCol>
     </BRow>
+
+    <!-- Modal de création de rapport -->
+    <q-dialog v-model="showCreateModal" transition-show="scale" transition-hide="fade">
+      <q-card class="create-report-modal">
+        <div class="modal-header-create">
+          <div class="modal-header-content">
+            <div class="modal-icon-wrapper">
+              <i class="bi bi-file-earmark-plus"></i>
+            </div>
+            <div>
+              <h4 class="modal-title">Créer un nouveau rapport</h4>
+              <p class="modal-subtitle">Sélectionnez un sondage pour générer son rapport</p>
+            </div>
+          </div>
+          <button class="modal-close-btn" @click="showCreateModal = false">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+
+        <div class="modal-body-create">
+          <div class="survey-selection-wrapper">
+            <label class="selection-label">
+              <i class="bi bi-ui-checks me-2"></i>
+              Sélectionnez un sondage
+            </label>
+            <select v-model="selectedSurvey" class="modern-select">
+              <option value="">-- Choisir un sondage --</option>
+              <option v-for="survey in surveys" :key="survey.id" :value="survey.id">
+                {{ survey.title }}
+              </option>
+            </select>
+          </div>
+
+          <div v-if="selectedSurvey" class="survey-preview">
+            <div class="preview-header">
+              <i class="bi bi-eye me-2"></i>
+              Aperçu du sondage sélectionné
+            </div>
+            
+            <!-- Loader pendant le chargement -->
+            <div v-if="loadingSurveyDetails" class="preview-loader">
+              <q-spinner-dots color="primary" size="50px" />
+              <p>Chargement des détails...</p>
+            </div>
+
+            <div v-else class="preview-content">
+              <!-- Titre + Badge de statut -->
+              <div class="preview-title-section">
+                <h5 class="preview-title">{{ getSurveyById(selectedSurvey)?.title }}</h5>
+                <span class="status-badge-inline" :class="'status-' + getSurveyStatus(selectedSurvey)">
+                  <i class="bi bi-circle-fill me-1"></i>
+                  {{ getSurveyStatusLabel(selectedSurvey) }}
+                </span>
+              </div>
+
+              <!-- Statistiques (au-dessus de la description) -->
+              <div class="preview-statistics">
+                <div class="stat-card">
+                  <div class="stat-icon stat-icon-blue">
+                    <i class="bi bi-patch-question-fill"></i>
+                  </div>
+                  <div class="stat-content">
+                    <span class="stat-value">{{ getSurveyById(selectedSurvey)?.survey_questions?.length || 0 }}</span>
+                    <span class="stat-label">Questions</span>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon stat-icon-green">
+                    <i class="bi bi-people-fill"></i>
+                  </div>
+                  <div class="stat-content">
+                    <span class="stat-value">{{ getSurveyById(selectedSurvey)?.survey_participants?.length || 0 }}</span>
+                    <span class="stat-label">Participants</span>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon stat-icon-purple">
+                    <i class="bi bi-check-circle-fill"></i>
+                  </div>
+                  <div class="stat-content">
+                    <span class="stat-value">{{ getSurveyById(selectedSurvey)?.responses?.length || 0 }}</span>
+                    <span class="stat-label">Réponses</span>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon stat-icon-orange">
+                    <i class="bi bi-graph-up-arrow"></i>
+                  </div>
+                  <div class="stat-content">
+                    <span class="stat-value">{{ calculateCompletionRate(selectedSurvey) }}%</span>
+                    <span class="stat-label">Taux de complétion</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Description -->
+              <div class="preview-description-section">
+                <h6 class="description-title">
+                  <i class="bi bi-text-paragraph me-2"></i>
+                  Description
+                </h6>
+                <p class="preview-description">{{ getSurveyById(selectedSurvey)?.description || 'Aucune description disponible' }}</p>
+              </div>
+
+              <!-- Dates en badges -->
+              <div class="preview-dates-badges">
+                <div class="date-badge date-badge-start">
+                  <i class="bi bi-calendar-event me-2"></i>
+                  <span class="date-badge-label">Début:</span>
+                  <span class="date-badge-value">{{ formatDate(getSurveyById(selectedSurvey)?.startDate) }}</span>
+                </div>
+                <div class="date-badge date-badge-end">
+                  <i class="bi bi-calendar-check me-2"></i>
+                  <span class="date-badge-label">Fin:</span>
+                  <span class="date-badge-value">{{ formatDate(getSurveyById(selectedSurvey)?.endDate) }}</span>
+                </div>
+              </div>
+
+              <!-- Alerte si sondage en cours ou brouillon -->
+              <div v-if="!canCreateReport(selectedSurvey)" class="preview-alert">
+                <div class="alert-icon">
+                  <i class="bi bi-exclamation-triangle-fill"></i>
+                </div>
+                <div class="alert-content">
+                  <h6 class="alert-title">Impossible de créer un rapport</h6>
+                  <p class="alert-message">
+                    <span v-if="getSurveyStatus(selectedSurvey) === 'draft'">
+                      Ce sondage est encore en brouillon. Vous devez le publier et attendre sa clôture avant de générer un rapport.
+                    </span>
+                    <span v-else-if="getSurveyStatus(selectedSurvey) === 'active'">
+                      Ce sondage est actuellement en cours. Vous devez attendre sa date de fin ({{ formatDate(getSurveyById(selectedSurvey)?.endDate) }}) avant de générer un rapport.
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer-create">
+          <button class="btn-cancel" @click="showCreateModal = false">
+            <i class="bi bi-x-circle me-2"></i>
+            Annuler
+          </button>
+          <button 
+            class="btn-confirm" 
+            @click="createReport" 
+            :disabled="!selectedSurvey || isCreating || !canCreateReport(selectedSurvey)"
+          >
+            <i v-if="!isCreating" class="bi bi-check-circle-fill me-2"></i>
+            <q-spinner-dots v-else color="white" size="20px" class="me-2" />
+            {{ isCreating ? 'Création...' : 'Créer le rapport' }}
+          </button>
+        </div>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
 <style lang="scss">
-.dropdown-menu {
-  z-index: 1050 !important;
-}
-@keyframes gradientBG {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
+@import '../../../css/assets/scss/app2.scss';
+@import '../../../css/admin/modern-shared.scss';
+@import '../../../css/admin/reports.scss';
 
-.ultra-card {
-  min-height: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  background: linear-gradient(270deg, #b2f2fa, #83eefc, #4edaec, #b2f2fa);
-  background-size: 800% 800%;
-  border-radius: 20px;
-  overflow: hidden;
-  color: #141313;
-  position: relative;
-  transition: all 0.5s ease;
-  cursor: pointer;
-  animation: gradientBG 10s ease infinite;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(12px);
-
-  &:hover {
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
-  }
-
-  .card-header {
-    padding: 1rem;
-    font-weight: 700;
-    font-size: 1.1rem;
-
-    .dropdown-icon {
-      transition:
-        transform 0.3s ease,
-        color 0.3s ease;
-    }
-
-    .dropdown-icon:hover {
-      transform: rotate(15deg) scale(1.3);
-      color: #3b3602;
-    }
-  }
-
-  .card-stats {
-    display: flex;
-    justify-content: space-around;
-
-    .stat {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      font-weight: 600;
-      transition: transform 0.3s ease;
-
-      i {
-        font-size: 1.8rem;
-        margin-bottom: 5px;
-        transition: all 0.3s ease;
-      }
-
-      .stat-value {
-        font-size: 1.3rem;
-        margin-bottom: 2px;
-        animation: countUp 1s ease;
-      }
-
-      small {
-        font-size: 0.75rem;
-        opacity: 0.8;
-      }
-
-      &:hover {
-        transform: scale(1.1);
-        i {
-          color: #4edaec;
-          transform: scale(1.3) rotate(-10deg);
-        }
-      }
-    }
-  }
-
-  .card-description {
-    font-size: 0.85rem;
-    line-height: 1.4;
-    opacity: 0.95;
-  }
-
-  .btn-download {
-    background: rgba(255, 255, 255, 0.2);
-    color: #fff;
-    border-radius: 50px;
-    padding: 0.4rem 1.2rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.4);
-      transform: scale(1.1) translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    }
-
-    i {
-      margin-right: 5px;
-    }
-  }
-}
-.BCardBody.text-center {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap; // pour que le bouton descende si l'écran est petit
-}
-
-/* Animation stat-count */
-@keyframes countUp {
-  0% {
-    transform: scale(0.5);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-.search-wrapper-modern {
-  position: relative;
-  width: 300px; // largeur du champ
-  display: flex;
-  align-items: center;
-
-  .search-icon {
-    position: absolute;
-    left: 12px;
-    font-size: 1.2rem;
-    color: #10d0f2;
-    pointer-events: none;
-  }
-
-  .form-control-modern {
-    width: 100%;
-    padding: 0.55rem 1rem 0.55rem 2.5rem; // padding gauche pour icône
-    border-radius: 50px;
-    border: 2px solid #e0e7ff;
-    font-size: 0.95rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(16, 208, 242, 0.2);
-
-    &:focus {
-      border-color: #10d0f2;
-      box-shadow: 0 0 12px rgba(16, 208, 242, 0.4);
-      transform: scale(1.02);
-    }
-
-    &::placeholder {
-      color: #a0a0a0;
-      font-weight: 500;
-    }
-  }
-}
-/* === Boutons modernes === */
-.btn-success {
-  background: linear-gradient(135deg, #34c38f, #2ea3f2);
-  border: none;
-  border-radius: 50px;
-  transition: all 0.3s ease;
-  font-weight: 600;
-  box-shadow: 0 4px 10px rgba(46, 163, 242, 0.3);
-
-  &:hover {
-    background: linear-gradient(135deg, #2ea3f2, #34c38f);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(46, 163, 242, 0.4);
-  }
-
-  &:active {
-    transform: scale(0.96);
-  }
-}
-
-/* === Table améliorée === */
-.table tbody tr {
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    background: #f9fcff;
-    transform: scale(1.01);
-  }
-}
-
-/* Icônes d'action */
-.list-inline-item a {
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    transform: scale(1.2) rotate(-5deg);
-    opacity: 0.8;
-  }
-}
-
-/* === Dialogues avec animation === */
-.q-dialog__inner {
-  animation: fadeScale 0.35s ease forwards;
-}
-
-@keyframes fadeScale {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* === Inputs flottants modernes === */
-.form-control {
-  border-radius: 12px;
-  transition: all 0.3s ease;
-
-  &:focus {
-    border-color: #2ea3f2;
-    box-shadow: 0 0 8px rgba(46, 163, 242, 0.4);
-    transform: scale(1.01);
-  }
-}
-
-.bg-gradient {
-  background: linear-gradient(135deg, #0d6efd, #6610f2);
-}
-
-/* === Champs modernes avec floating label === */
-.floating-label {
-  position: relative;
-}
-
-.form-control-modern {
-  border-radius: 12px;
-  border: 2px solid #e0e7ff;
-  padding: 0.9rem 1rem;
-  width: 100%;
-  transition: all 0.3s ease;
-  background: #fff;
-}
-
-.form-control-modern:focus {
-  border-color: #10d0f2;
-  box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
-  transform: scale(1.01);
-}
-
-/* Labels flottants */
-.floating-label label {
-  position: absolute;
-  top: 50%;
-  left: 15px;
-  transform: translateY(-50%);
-  color: #6c757d;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  pointer-events: none;
-  background: white;
-  padding: 0 5px;
-}
-
-.form-control-modern:focus + label,
-.form-control-modern:not(:placeholder-shown) + label {
-  top: -10px;
-  left: 10px;
-  font-size: 0.8rem;
-  color: #10d0f2;
-}
-
-/* Multiselect alignement */
-.multiselect {
-  border-radius: 12px !important;
-  border: 2px solid #e0e7ff !important;
-  padding: 6px 10px;
-  transition: all 0.3s ease;
-}
-.multiselect:focus-within {
-  border-color: #10d0f2 !important;
-  box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
-}
+// ✅ Tous les styles sont maintenant dans les fichiers SCSS partagés
+// Ajoutez ici uniquement les styles spécifiques à ce composant si nécessaire
 </style>

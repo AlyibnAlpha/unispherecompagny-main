@@ -1,102 +1,137 @@
 <template>
-  <BRow class="justify-content-center" style="height: auto">
+  <div class="step-form-container">
+    <p class="text-muted mb-4" style="font-size: 0.9375rem;">Vérifiez et publiez votre enquête</p>
+    
     <q-inner-loading v-if="loading" :showing="loading" background-color="rgba(0,0,0,0.4)">
       <q-spinner-bars color="green" size="50px" />
     </q-inner-loading>
-    <BCol v-else cols="12">
-      <div v-if="orderData" class="p-4 bg-light border-0 shadow rounded">
-        <div class="text-center mb-4">
-          <h2 class="fw-bold text-primary mb-2">
-            {{ orderData.title }}({{ orderData.bonusPoints }} Points)
-          </h2>
-          <p class="text-secondary fs-6 mx-auto" style="max-width: 600px">
+    <div v-else>
+      <div v-if="orderData" class="finalization-card">
+        <!-- Header avec titre et description -->
+        <div class="finalization-header">
+          <div class="header-icon">
+            <i class="bi bi-clipboard-check-fill"></i>
+          </div>
+          <h2 class="header-title">{{ orderData.title }}</h2>
+          <p class="header-description">
             {{ orderData.description }}
           </p>
         </div>
 
-        <hr />
-
         <!-- Groupes de questions -->
-        <div v-for="group in orderData.questionGroups" :key="group.id" class="mb-4">
-          <h5 class="text-primary">Groupe: {{ group.title }}</h5>
-          <p class="text-muted mb-2">description: {{ group.description }}</p>
-
-          <ul class="list-group">
-            <li
-              v-for="question in group.questions"
-              :key="question.id"
-              class="list-group-item mb-2 p-3 border rounded"
-            >
-              <div class="d-flex flex-wrap align-items-center gap-2">
-                <strong>Position {{ question.position }} - {{ question.title }}</strong>
-                <span
-                  class="badge"
-                  :class="{
-                    'bg-info': question.type === 'single_choice',
-                    'bg-primary': question.type === 'multiple_choice',
-                    'bg-warning text-dark': question.type === 'text',
-                  }"
-                >
-                  {{
-                    question.type === 'single_choice'
-                      ? 'Choix unique'
-                      : question.type === 'multiple_choice'
-                        ? 'Choix multiple'
-                        : 'Réponse texte'
-                  }}
-                </span>
+        <div class="groups-section">
+          <h3 class="section-title">
+            <i class="bi bi-collection me-2"></i>
+            Groupes et Questions
+          </h3>
+          <div v-for="group in orderData.question_groups" :key="group.id" class="group-summary mb-4">
+            <div class="group-summary-header">
+              <i class="bi bi-folder2-open"></i>
+              <div>
+                <h5 class="group-summary-title">{{ group.title }}</h5>
+                <p class="group-summary-description">{{ group.description }}</p>
               </div>
-              <p class="text-muted mb-1">{{ question.description }}</p>
-              <ul
-                v-if="question.type === 'single_choice' || question.type === 'multiple_choice'"
-                class="ps-4 mt-2"
+            </div>
+
+            <div class="questions-list">
+              <div
+                v-for="question in group.questions"
+                :key="question.id"
+                class="question-summary"
               >
-                <li v-for="choice in question.choices" :key="choice.id">{{ choice.label }}</li>
-              </ul>
-            </li>
-          </ul>
+                <div class="question-summary-header">
+                  <span class="question-position">{{ question.position }}</span>
+                  <div class="question-info">
+                    <strong class="question-summary-title">{{ question.title }}</strong>
+                    <span
+                      class="question-type-badge"
+                      :class="{
+                        'type-single': question.type === 'single_choice',
+                        'type-multiple': question.type === 'multiple_choice',
+                        'type-text': question.type === 'text',
+                      }"
+                    >
+                      {{
+                        question.type === 'single_choice'
+                          ? 'Choix unique'
+                          : question.type === 'multiple_choice'
+                            ? 'Choix multiple'
+                            : 'Réponse texte'
+                      }}
+                    </span>
+                  </div>
+                </div>
+                <p class="question-summary-description">{{ question.description }}</p>
+                <ul
+                  v-if="question.type === 'single_choice' || question.type === 'multiple_choice'"
+                  class="choices-list"
+                >
+                  <li v-for="choice in question.choices" :key="choice.id">
+                    <i class="bi bi-check-circle me-2"></i>
+                    {{ choice.label }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="form-check form-switch mb-4 gap-2 d-flex align-items-center">
-          <input
-            class="form-check-input"
-            type="checkbox"
-            id="publishCheck"
-            v-model="isPublished"
-            style="width: 50px; height: 25px"
-          />
-          <label class="form-check-label fw-semibold" for="publishCheck">
-            Publier ce sondage
-          </label>
-        </div>
-
-        <div class="d-flex justify-content-end justify-content-md-between">
-          <BButton variant="outline-secondary" class="px-4" @click="$emit('onBack')">
-            ⬅ Retour
-          </BButton>
-          <q-spinner-dots v-if="loadings" color="green" size="20px" class="q-mr-sm" />
-          <BButton v-else variant="success" class="ms-2" @click.prevent="Add">
-            <span class="px-4">Finish</span>
-          </BButton>
+        <!-- Section Publication -->
+        <div class="publish-section">
+          <div class="publish-card">
+            <div class="publish-icon">
+              <i class="bi bi-rocket-takeoff-fill"></i>
+            </div>
+            <div class="publish-content">
+              <h4>Publier votre enquête</h4>
+              <p>Activez cette option pour rendre votre enquête accessible aux participants</p>
+            </div>
+            <div class="publish-toggle">
+              <div class="form-check form-switch">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="publishCheck"
+                  v-model="isPublished"
+                />
+                <label class="form-check-label" for="publishCheck">Publier</label>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </BCol>
-  </BRow>
+
+      <!-- Navigation -->
+      <div class="d-flex justify-content-between mt-4 w-100">
+        <BButton
+          class="btn-modern btn-secondary-modern"
+          @click="$emit('onBack')"
+        >
+          <i class="bi bi-arrow-left me-2"></i>
+          Retour
+        </BButton>
+        <q-spinner-dots v-if="loadings" color="green" size="20px" class="q-mr-sm" />
+        <BButton v-else class="btn-modern btn-success-modern" @click.prevent="Add">
+          <i class="bi bi-check-circle-fill me-2"></i>
+          Terminer
+        </BButton>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import { BButton, BCol, BRow } from 'bootstrap-vue-next'
+import { BButton } from 'bootstrap-vue-next'
 import { onMounted, ref, watch } from 'vue'
 import { api } from 'src/boot/axios'
 import { useRegisterStore } from 'src/stores/useRegisterStore'
 import Swal from 'sweetalert2'
+import { useAuthStore } from 'src/stores/auth'
 import { useRoute, useRouter } from 'vue-router'
 
 export default {
   components: {
     BButton,
-    BCol,
-    BRow,
   },
   setup() {
     const orderData = ref([])
@@ -108,25 +143,36 @@ export default {
     const route = useRoute()
     const router = useRouter()
 
+    const aurh = useAuthStore()
+
     const gets = async () => {
       if (
-        store.surveyDataw &&
-        Object.keys(store.surveyDataw).length > 0 &&
-        store.surveyDataw.slug === route.params.id
+        store.surveyData &&
+        Object.keys(store.surveyData).length > 0 &&
+        store.surveyData.slug === route.params.id
       ) {
-        orderData.value = store.surveyDataw
+        orderData.value = store.surveyData
         isPublished.value = orderData.value.isPublished
         original.value = orderData.value.isPublished
       } else {
         try {
           loading.value = true
+          const role = aurh.roles[0]
           const id = route.params.id
-          const response = await api.get('/admin/welcome-surveys')
-          const found = response.data.find((item) => item.slug === id)
-          orderData.value = found
 
-          isPublished.value = orderData.value.isPublished
-          original.value = orderData.value.isPublished
+          if (role === import.meta.env.VITE_DEFAULT_ROLEB) {
+            const response = await api.get('/business/dashboard/overview')
+            const found = response.data.surveys.find((item) => item.slug === id)
+            orderData.value = found
+            isPublished.value = orderData.value.isPublished
+            original.value = orderData.value.isPublished
+          } else if (role === import.meta.env.VITE_DEFAULT_ROLEA) {
+            const response = await api.get('/admin/dashboard/overview')
+            const found = response.data.surveys.find((item) => item.slug === id)
+            orderData.value = found
+            isPublished.value = orderData.value.isPublished
+            original.value = orderData.value.isPublished
+          }
         } catch (error) {
           console.error('Error fetching survey data:', error)
           Swal.fire({
@@ -143,23 +189,47 @@ export default {
     }
 
     const Add = async () => {
-      if (original.value === isPublished.value) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Enregistre avec success',
-          showConfirmButton: true,
-          timer: 2000,
-        })
-        store.setIdSurveyw('')
-        router.push('/admin/enquetes-bienvenue')
-        return
-      }
-      if (isPublished.value) {
-        if (!orderData.value.isPublished) {
+      const role = aurh.roles[0]
+      if (role === import.meta.env.VITE_DEFAULT_ROLEB) {
+        if (original.value === isPublished.value) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Enregistre avec success',
+            showConfirmButton: true,
+            timer: 2000,
+          })
+          store.setIdSurvey('')
+          router.push('/business/enquetes-mes')
+          return
+        }
+        if (isPublished.value) {
+          if (orderData.value.isPublished === false) {
+            try {
+              loadings.value = true
+              await api.post(`/surveys/${orderData.value.id}/publish`).then(() => {
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Enregistre avec success',
+                  showConfirmButton: true,
+                  timer: 2000,
+                })
+              })
+              store.setIdSurvey('')
+              router.push('/business/enquetes-mes')
+            } catch (error) {
+              Swal.fire({
+                icon: 'error',
+                title: 'Erreur',
+                text: error.response.data.message || 'Une erreur est survenue',
+              })
+            } finally {
+              loadings.value = false
+            }
+          }
+        } else {
           try {
             loadings.value = true
-
-            await api.post(`/admin/welcome-surveys/${orderData.value.id}/publish`).then(() => {
+            await api.post(`/surveys/${orderData.value.id}/unpublish`).then(() => {
               Swal.fire({
                 icon: 'success',
                 title: 'Enregistre avec success',
@@ -167,44 +237,81 @@ export default {
                 timer: 2000,
               })
             })
-            store.setIdSurveyw('')
-            router.push('/admin/enquetes-bienvenue')
+            store.setIdSurvey('')
+            router.push('/business/enquetes-mes')
           } catch (error) {
             Swal.fire({
               icon: 'error',
               title: 'Erreur',
               text: error.response.data.message || 'Une erreur est survenue',
             })
-          } finally {
-            loadings.value = false
           }
         }
-      } else {
-        try {
-          loadings.value = true
-          console.log(orderData.value.id)
-          await api.post(`/admin/welcome-surveys/${orderData.value.id}/unpublish`).then(() => {
-            Swal.fire({
-              icon: 'success',
-              title: 'Enregistre avec success',
-              showConfirmButton: true,
-              timer: 2000,
-            })
-          })
-          store.setIdSurveyw('')
-          router.push('/admin/enquetes-bienvenue')
-        } catch (error) {
+      }
+      if (role === import.meta.env.VITE_DEFAULT_ROLEA) {
+        if (original.value === isPublished.value) {
           Swal.fire({
-            icon: 'error',
-            title: 'Erreur',
-            text: error.response.data.message || 'Une erreur est survenue',
+            icon: 'success',
+            title: 'Enregistre avec success',
+            showConfirmButton: true,
+            timer: 2000,
           })
+          store.setIdSurvey('')
+          router.push('/admin/enquetes-mes')
+          return
+        }
+        if (isPublished.value) {
+          if (!orderData.value.isPublished) {
+            try {
+              loadings.value = true
+
+              await api.post(`/surveys/${orderData.value.id}/publish`).then(() => {
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Enregistre avec success',
+                  showConfirmButton: true,
+                  timer: 2000,
+                })
+              })
+              store.setIdSurvey('')
+              router.push('/admin/enquetes-mes')
+            } catch (error) {
+              Swal.fire({
+                icon: 'error',
+                title: 'Erreur',
+                text: error.response.data.message || 'Une erreur est survenue',
+              })
+            } finally {
+              loadings.value = false
+            }
+          }
+        } else {
+          try {
+            loadings.value = true
+            console.log(orderData.value.id)
+            await api.post(`/surveys/${orderData.value.id}/unpublish`).then(() => {
+              Swal.fire({
+                icon: 'success',
+                title: 'Enregistre avec success',
+                showConfirmButton: true,
+                timer: 2000,
+              })
+            })
+            store.setIdSurvey('')
+            router.push('/admin/enquetes-mes')
+          } catch (error) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Erreur',
+              text: error.response.data.message || 'Une erreur est survenue',
+            })
+          }
         }
       }
     }
 
     watch(
-      () => store.surveyDataw,
+      () => store.surveyData,
       (newData) => {
         if (newData && Object.keys(newData).length > 0) {
           orderData.value = newData

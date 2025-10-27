@@ -1,6 +1,6 @@
 <script>
 import { onMounted, ref } from 'vue'
-import { BRow, BCol, BFormInput, BPagination, BFormSelect, BTable } from 'bootstrap-vue-next'
+import { BFormInput, BPagination } from 'bootstrap-vue-next'
 import { api } from 'src/boot/axios'
 import Swal from 'sweetalert2'
 /**
@@ -8,13 +8,8 @@ import Swal from 'sweetalert2'
  */
 export default {
   components: {
-    BRow,
-    BCol,
-
     BFormInput,
     BPagination,
-    BFormSelect,
-    BTable,
   },
   data() {
     const orderData = ref([])
@@ -71,12 +66,33 @@ export default {
         }
       })
     }
+    const truncateMessage = (message, length = 120) => {
+      if (!message) return ''
+      return message.length > length ? message.substring(0, length) + '...' : message
+    }
+
+    const formatDate = (date) => {
+      if (!date) return ''
+      return new Date(date).toLocaleDateString('fr-FR', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })
+    }
+
+    const formatTime = (date) => {
+      if (!date) return ''
+      return new Date(date).toLocaleTimeString('fr-FR', {
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    }
+
     onMounted(() => {
       gets()
     })
     return {
       openEditModal,
-
       deleteRow,
       orderData,
       formu,
@@ -84,48 +100,35 @@ export default {
       editingSurvey,
       totalRows: 1,
       currentPage: 1,
-      perPage: 10,
+      perPage: 12,
       pageOptions: [10, 25, 50, 100],
       filter: null,
       filterOn: [],
       sortBy: 'age',
       sortDesc: false,
-
       chat: ref(false),
-      fields: [
-        {
-          key: 'check',
-          label: '',
-        },
-        {
-          key: 'email',
-          label: 'Email',
-          sortable: true,
-        },
-        {
-          key: 'subject',
-          label: 'Object',
-          sortable: true,
-        },
-        {
-          key: 'message',
-          label: 'Message',
-        },
-
-        'action',
-      ],
-      progressBarValue: 15,
-      activeTab: 1,
-      activeTabArrow: 2,
       loading,
+      truncateMessage,
+      formatDate,
+      formatTime,
     }
   },
   computed: {
-    /**
-     * Total no. of records
-     */
-    rows() {
-      return this.orderData.length
+    filteredContacts() {
+      if (!this.filter) return this.orderData
+      const search = this.filter.toLowerCase()
+      return this.orderData.filter(
+        (contact) =>
+          contact.email?.toLowerCase().includes(search) ||
+          contact.subject?.toLowerCase().includes(search) ||
+          contact.message?.toLowerCase().includes(search) ||
+          `${contact.firstName} ${contact.lastName}`.toLowerCase().includes(search)
+      )
+    },
+    paginatedContacts() {
+      const start = (this.currentPage - 1) * this.perPage
+      const end = start + this.perPage
+      return this.filteredContacts.slice(start, end)
     },
   },
   mounted() {
@@ -146,249 +149,185 @@ export default {
 </script>
 
 <template>
-  <div>
-    <BRow>
-      <BCol cols="12">
-        <div
-          class="ttable table-centered datatable dt-responsive nowrap table-card-list dataTable no-footer dtr-inline"
-        >
-          <BRow>
-            <BCol sm="12" md="6">
-              <div id="tickets-table_length" class="dataTables_length">
-                <label class="d-inline-flex align-items-center">
-                  Show
-                  <BFormSelect v-model="perPage" size="sm" :options="pageOptions"></BFormSelect
-                  >entries
-                </label>
-              </div>
-            </BCol>
-            <BCol sm="12" md="6">
-              <div id="tickets-table_filter" class="dataTables_filter text-md-end">
-                <label class="d-inline-flex align-items-center">
-                  Recherche:
-                  <BFormInput
-                    v-model="filter"
-                    type="search"
-                    placeholder="Search..."
-                    class="form-control form-control-sm ms-2"
-                  ></BFormInput>
-                </label>
-              </div>
-            </BCol>
-          </BRow>
-          <div v-if="loading" class="text-center my-5">
-            <q-spinner-ball color="green" size="50px" />
+  <div class="modern-admin-page">
+    <!-- Header Section -->
+    <div class="header-card mb-4">
+      <div class="section-header-modern">
+        <div class="section-title-wrapper">
+          <div class="section-icon-modern">
+            <i class="bi bi-envelope-fill"></i>
           </div>
-          <div
-            v-else-if="Array.isArray(orderData) && orderData.length === 0"
-            class="text-center py-5"
-          >
-            <i class="uil uil-folder-open text-muted" style="font-size: 3rem"></i>
-            <p class="mt-3 text-muted">Aucun Contact</p>
+          <div class="section-title-content">
+            <h3 class="section-title-modern">Messages de Contact</h3>
+            <p class="section-subtitle-modern">Gérez les messages reçus via le formulaire de contact</p>
           </div>
-          <BTable
-            v-else
-            table-class="table table-centered datatable table-card-list"
-            thead-tr-class="bg-transparent"
-            :items="orderData"
-            :fields="fields"
-            responsive="sm"
-            :per-page="perPage"
-            :current-page="currentPage"
-            :filter="filter"
-            :filter-included-fields="filterOn"
-            @filtered="onFiltered"
-          >
-            <template v-slot:cell(check)="data">
-              <div class="custom-control custom-checkbox text-center">
-                <input
-                  type="checkbox"
-                  class="form-check-input"
-                  :id="`contacusercheck${data.item.id}`"
-                />
-              </div>
-            </template>
-
-            <template v-slot:cell(email)="data">
-              <a href="#" class="text-body">{{ data.item.email }}</a>
-            </template>
-
-            <template v-slot:cell(subject)="data">
-              <a href="#" class="text-body">{{ data.item.subject }}</a>
-            </template>
-            <template v-slot:cell(message)="data">
-              <a href="#" class="text-body">{{ data.item.message }}</a>
-            </template>
-            >
-
-            <template v-slot:cell(action)="data">
-              <ul class="list-inline mb-0">
-                <li class="list-inline-item">
-                  <a
-                    href="#"
-                    class="px-2 text-primary"
-                    @click.prevent="openEditModal(data.item)"
-                    title="détails"
-                  >
-                    <i class="uil uil-book font-size-18"></i>
-                  </a>
-                </li>
-                <q-dialog v-model="edit">
-                  <q-card
-                    style="width: 800px; max-width: 95vw; border-radius: 12px; overflow: hidden"
-                  >
-                    <!-- Barre type Gmail -->
-                    <q-card-section class="row items-center bg-green-6 text-white q-pa-sm">
-                      <div class="q-ml-md">
-                        <div class="text-subtitle1">{{ formu.firstName }} {{ formu.lastName }}</div>
-                        <div class="text-caption">
-                          <q-icon name="mail" size="16px" class="q-mr-xs" />{{ formu.email }}
-                        </div>
-                      </div>
-                      <q-space />
-                    </q-card-section>
-
-                    <!-- Sujet + Date -->
-                    <q-card-section class="row items-center q-pa-md">
-                      <div class="col">
-                        <div class="text-h6 text-bold">
-                          <q-icon name="chat" size="20px" class="q-mr-sm text-grey-8" />{{
-                            formu.subject
-                          }}
-                        </div>
-                      </div>
-                      <div class="col-auto text-caption text-grey">
-                        {{ new Date(formu.createdAt).toLocaleString() }}
-                      </div>
-                    </q-card-section>
-
-                    <q-separator />
-
-                    <!-- Contenu du message -->
-                    <q-card-section
-                      class="q-pa-md"
-                      style="background-color: #fafafa; min-height: 200px"
-                    >
-                      <p class="text-body1" style="white-space: pre-line; line-height: 1.6">
-                        {{ formu.message }}
-                      </p>
-                    </q-card-section>
-
-                    <q-separator />
-
-                    <!-- Actions style Gmail -->
-                    <q-card-actions class="bg-grey-2 justify-end items-center q-gutter-sm">
-                      <BRow>
-                        <!--<BCol lg="4"
-                          ><q-btn flat icon="reply" label="Répondre" color="primary"
-                        /></BCol>-->
-
-                        <BCol lg="6" class="text-center"
-                          ><q-btn
-                            flat
-                            icon="delete"
-                            label="Supprimer"
-                            color="negative"
-                            @click="deleteRow(formu.id)" /></BCol
-                        ><BCol lg="6" class="text-center"
-                          ><q-btn
-                            flat
-                            icon="close"
-                            label="Fermer"
-                            color="grey"
-                            v-close-popup /></BCol
-                      ></BRow>
-                    </q-card-actions>
-                  </q-card>
-                </q-dialog>
-
-                <li class="list-inline-item">
-                  <a
-                    href="#"
-                    class="px-2 text-danger"
-                    @click.prevent="deleteRow(data.item.id)"
-                    title="Delete"
-                  >
-                    <i class="uil uil-trash-alt font-size-18"></i>
-                  </a>
-                </li>
-              </ul>
-            </template>
-          </BTable>
         </div>
-        <BRow>
-          <BCol>
-            <div class="dataTables_paginate paging_simple_numbers float-end">
-              <ul class="pagination pagination-rounded">
-                <BPagination v-model="currentPage" :total-rows="rows" :per-page="perPage" />
-              </ul>
+      </div>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="contacts-section-card">
+      <div class="contacts-toolbar">
+        <div class="search-wrapper">
+          <i class="bi bi-search search-icon"></i>
+          <BFormInput
+            v-model="filter"
+            type="search"
+            placeholder="Rechercher par email, sujet ou message..."
+            class="modern-search-input"
+          />
+        </div>
+        <div class="toolbar-actions">
+          <span class="results-count">{{ filteredContacts.length }} message(s)</span>
+        </div>
+      </div>
+      <!-- Loading State -->
+      <div v-if="loading" class="loading-state">
+        <q-spinner-dots color="primary" size="50px" />
+        <p>Chargement des messages...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div v-else-if="filteredContacts.length === 0" class="empty-state-modern">
+        <i class="bi bi-inbox empty-icon"></i>
+        <h3>Aucun message</h3>
+        <p v-if="filter">Aucun résultat pour votre recherche</p>
+        <p v-else>Vous n'avez reçu aucun message pour le moment</p>
+      </div>
+
+      <!-- Contacts Grid -->
+      <div v-else class="contacts-grid">
+        <div
+          v-for="contact in paginatedContacts"
+          :key="contact.id"
+          class="contact-card"
+          @click="openEditModal(contact)"
+        >
+          <div class="contact-card-header">
+            <div class="contact-avatar">
+              <i class="bi bi-person-fill"></i>
             </div>
-          </BCol>
-        </BRow>
-      </BCol>
-    </BRow>
+            <div class="contact-info">
+              <h4 class="contact-name">{{ contact.firstName }} {{ contact.lastName }}</h4>
+              <a :href="`mailto:${contact.email}`" class="contact-email" @click.stop>
+                <i class="bi bi-envelope me-1"></i>
+                {{ contact.email }}
+              </a>
+            </div>
+            <button class="btn-delete-contact" @click.stop="deleteRow(contact.id)" title="Supprimer">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+
+          <div class="contact-card-body">
+            <div class="contact-subject">
+              <i class="bi bi-chat-left-text me-2"></i>
+              <strong>{{ contact.subject }}</strong>
+            </div>
+            <p class="contact-message">{{ truncateMessage(contact.message) }}</p>
+          </div>
+
+          <div class="contact-card-footer">
+            <span class="contact-date">
+              <i class="bi bi-calendar3 me-1"></i>
+              {{ formatDate(contact.createdAt) }}
+            </span>
+            <span class="contact-time">
+              <i class="bi bi-clock me-1"></i>
+              {{ formatTime(contact.createdAt) }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div v-if="!loading && filteredContacts.length > 0" class="pagination-wrapper">
+        <BPagination
+          v-model="currentPage"
+          :total-rows="filteredContacts.length"
+          :per-page="perPage"
+          class="modern-pagination"
+        />
+      </div>
+    </div>
+
+    <!-- Modal de détails moderne -->
+    <q-dialog v-model="edit" transition-show="scale" transition-hide="fade">
+      <q-card class="contact-detail-modal">
+        <!-- Header avec gradient -->
+        <div class="modal-header-contact">
+          <div class="modal-header-left">
+            <div class="modal-avatar-large">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <div class="modal-user-info">
+              <h3 class="modal-user-name">{{ formu.firstName }} {{ formu.lastName }}</h3>
+              <a :href="`mailto:${formu.email}`" class="modal-user-email">
+                <i class="bi bi-envelope-fill me-2"></i>
+                {{ formu.email }}
+              </a>
+            </div>
+          </div>
+          <button class="modal-close-btn-contact" @click="edit = false">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+
+        <!-- Sujet et métadonnées -->
+        <div class="modal-subject-section">
+          <div class="subject-wrapper">
+            <div class="subject-icon">
+              <i class="bi bi-chat-left-text-fill"></i>
+            </div>
+            <div class="subject-content">
+              <span class="subject-label">Sujet</span>
+              <h4 class="subject-title">{{ formu.subject }}</h4>
+            </div>
+          </div>
+          <div class="subject-meta">
+            <div class="meta-item-modal">
+              <i class="bi bi-calendar3"></i>
+              <span>{{ formatDate(formu.createdAt) }}</span>
+            </div>
+            <div class="meta-item-modal">
+              <i class="bi bi-clock"></i>
+              <span>{{ formatTime(formu.createdAt) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Message -->
+        <div class="modal-message-section">
+          <div class="message-header">
+            <i class="bi bi-file-text me-2"></i>
+            <span>Message</span>
+          </div>
+          <div class="message-content">
+            <p>{{ formu.message }}</p>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="modal-footer-contact">
+          <button class="btn-modal-delete" @click="deleteRow(formu.id)">
+            <i class="bi bi-trash me-2"></i>
+            Supprimer
+          </button>
+          <button class="btn-modal-close" @click="edit = false">
+            <i class="bi bi-x-circle me-2"></i>
+            Fermer
+          </button>
+        </div>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
 <style lang="scss">
 @import '../../../css/assets/scss/app2.scss';
-.progress-nav {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
+@import '../../../css/admin/modern-shared.scss';
+@import '../../../css/admin/contacts.scss';
 
-.progress {
-  width: 100%;
-  position: absolute;
-  height: 4px;
-}
-
-.wizard-steps {
-  position: relative;
-  z-index: 3;
-  width: 100%;
-
-  .wizard-step {
-    height: 60px;
-    width: 60px;
-    border-radius: 50%;
-    border: 3px solid;
-    display: flex;
-    justify-content: center;
-    z-index: 9;
-    position: relative;
-    background: white;
-  }
-}
-
-.step-arrow-nav {
-  .nav-link {
-    background: #f3f2ee;
-    padding: 4px 0;
-    border-radius: 0 !important;
-  }
-}
-
-.wizard {
-  .nav-link:not(.active) {
-    color: #f3f2ee;
-
-    .wizard-icon {
-      color: #a5a5a5;
-    }
-  }
-}
-
-[data-bs-theme='dark'] {
-  .wizard-steps .wizard-step:not(.active) {
-    background: var(--bs-input-bg);
-  }
-
-  .step-arrow-nav {
-    .nav-link:not(.active) {
-      background: var(--bs-input-bg);
-    }
-  }
-}
+// ✅ Tous les styles sont maintenant dans les fichiers SCSS partagés
+// Ajoutez ici uniquement les styles spécifiques à ce composant si nécessaire
 </style>

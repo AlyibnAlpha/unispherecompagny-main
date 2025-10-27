@@ -7,8 +7,6 @@ import {
   BPagination,
   BFormSelect,
   BTable,
-  BCardBody,
-  BCard,
   BButton,
 } from 'bootstrap-vue-next'
 import { api } from 'src/boot/axios'
@@ -27,10 +25,8 @@ export default {
     BPagination,
     BFormSelect,
     BTable,
-    CountToComponent,
-    BCardBody,
-    BCard,
     BButton,
+    CountToComponent,
   },
   data() {
     const orderDatas = ref([])
@@ -449,97 +445,81 @@ export default {
 </script>
 
 <template>
-  <div>
-    <BRow class="d-flex justify-content-center">
-      <BCol md="4" cols="xl-4">
-        <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-          <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-            <div>
-              <div class="d-flex align-items-center mb-2">
-                <i class="bi bi-people text-warning fs-3 me-2"></i>
-                <h4 class="fw-bold mb-0 fs-2">
-                  <CountToComponent :startVal="0" :endVal="totalBusinnes" :duration="2000" />
-                </h4>
-              </div>
+  <div class="modern-admin-page">
+    <!-- Header moderne -->
+    <div class="modern-page-header">
+      <div class="header-left">
+        <h1 class="page-title-modern">
+          <i class="bi bi-shield-lock-fill"></i>
+          Gestion des Administrateurs
+        </h1>
+        <p class="page-subtitle-modern">Gérez les comptes administrateurs et leurs permissions</p>
+      </div>
+      <div class="header-right">
+        <button class="btn-header-action" @click="ajout = true">
+          <i class="bi bi-plus-circle"></i>
+          Créer un Administrateur
+        </button>
+      </div>
+    </div>
 
-              <span class="badge bg-warning-subtle text-warning fw-semibold px-3 py-1 rounded-pill"
-                >Administrateurs</span
-              >
-            </div>
-          </BCardBody>
-        </BCard>
-      </BCol>
-      <BCol md="4" cols="xl-4">
-        <BCard no-body class="shadow-sm rounded-4 stat-card shadow-success">
-          <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-            <div>
-              <div class="d-flex align-items-center mb-2">
-                <i class="bi bi-people text-success fs-3 me-2"></i>
-                <h4 class="fw-bold mb-0 fs-2">
-                  <CountToComponent :startVal="0" :endVal="totalBusinnesA" :duration="2000" />
-                </h4>
-              </div>
-              <span class="badge bg-success-subtle text-success fw-semibold px-3 py-1 rounded-pill"
-                >Administrateurs Activé</span
-              >
-            </div>
-          </BCardBody>
-        </BCard>
-      </BCol>
-      <BCol md="4" cols="xl-4">
-        <BCard no-body class="shadow-sm rounded-4 stat-card shadow-danger">
-          <BCardBody class="d-flex justify-content-between align-items-center p-3 bg-light">
-            <div>
-              <div class="d-flex align-items-center mb-2">
-                <i class="bi bi-people text-danger fs-3 me-2"></i>
-                <h4 class="fw-bold mb-0 fs-2">
-                  <CountToComponent :startVal="0" :endVal="totalBusinnesAN" :duration="2000" />
-                </h4>
-              </div>
+    <!-- Cartes de statistiques modernes -->
+    <div class="stats-grid-modern">
+      <div class="stat-card-modern stat-card-primary">
+        <div class="stat-icon-wrapper">
+          <i class="bi bi-people-fill"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-value">
+            <CountToComponent :startVal="0" :endVal="totalBusinnes" :duration="2000" />
+          </h3>
+          <p class="stat-label">Total Administrateurs</p>
+        </div>
+        <div class="stat-progress-bar"></div>
+      </div>
 
-              <span class="badge bg-danger-subtle text-danger fw-semibold px-1 py-1 rounded-pill">
-                Administrateurs Non Activé</span
-              >
-            </div>
-          </BCardBody>
-        </BCard>
-      </BCol>
-    </BRow>
-    <BButton
-      variant="success"
-      class="waves-effect waves-light mb-3 btn-success"
-      @click="ajout = true"
-      >Créer un Administrateur</BButton
-    >
-    <BRow>
-      <BCol cols="12">
-        <div class="tabs-morphing-container">
-          <div
-            class="ttable table-centered datatable dt-responsive nowrap table-card-list dataTable no-footer dtr-inline"
-          >
-            <BRow>
-              <BCol sm="12" md="6">
-                <div id="tickets-table_length" class="dataTables_length">
-                  <label class="d-inline-flex align-items-center">
-                    Trier:
-                    <BFormSelect v-model="perPages" size="sm" :options="pageOptionss"></BFormSelect>
-                  </label>
-                </div>
-              </BCol>
-              <BCol sm="12" md="6">
-                <div id="tickets-table_filter" class="dataTables_filter text-md-end">
-                  <label class="d-inline-flex align-items-center">
-                    Recherche:
-                    <BFormInput
-                      v-model="filters"
-                      type="search"
-                      placeholder="Recherche..."
-                      class="form-control form-control-sm ms-2"
-                    ></BFormInput>
-                  </label>
-                </div>
-              </BCol>
-            </BRow>
+      <div class="stat-card-modern stat-card-success">
+        <div class="stat-icon-wrapper">
+          <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-value">
+            <CountToComponent :startVal="0" :endVal="totalBusinnesA" :duration="2000" />
+          </h3>
+          <p class="stat-label">Activés</p>
+        </div>
+        <div class="stat-progress-bar"></div>
+      </div>
+
+      <div class="stat-card-modern stat-card-danger">
+        <div class="stat-icon-wrapper">
+          <i class="bi bi-x-circle-fill"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-value">
+            <CountToComponent :startVal="0" :endVal="totalBusinnesAN" :duration="2000" />
+          </h3>
+          <p class="stat-label">Non Activés</p>
+        </div>
+        <div class="stat-progress-bar"></div>
+      </div>
+    </div>
+    <!-- Tableau moderne -->
+    <div class="table-container-modern">
+      <div class="table-toolbar">
+        <div class="table-control-item">
+          <BFormSelect v-model="perPages" :options="pageOptionss" class="modern-select"></BFormSelect>
+        </div>
+        <div class="search-wrapper-table">
+          <i class="bi bi-search search-icon-table"></i>
+          <BFormInput
+            v-model="filters"
+            type="search"
+            placeholder="Rechercher un administrateur..."
+            class="search-input-table"
+          ></BFormInput>
+        </div>
+      </div>
             <div v-if="loading" class="text-center my-5">
               <q-spinner-ball color="green" size="50px" />
             </div>
@@ -550,19 +530,19 @@ export default {
               <i class="uil uil-folder-open text-muted" style="font-size: 3rem"></i>
               <p class="mt-3 text-muted">Aucun Administrateur</p>
             </div>
-            <BTable
-              v-else
-              table-class="table table-centered datatable table-card-list"
-              thead-tr-class="bg-transparent"
-              :items="orderDatas"
-              :fields="fieldss"
-              responsive="sm"
-              :per-page="perPages"
-              :current-page="currentPages"
-              :filter="filters"
-              :filter-included-fields="filterOns"
-              @filtered="onFiltereds"
-            >
+      <div v-else class="table-wrapper">
+        <BTable
+          table-class="modern-table"
+          thead-tr-class="table-header"
+          :items="orderDatas"
+          :fields="fieldss"
+          responsive="sm"
+          :per-page="perPages"
+          :current-page="currentPages"
+          :filter="filters"
+          :filter-included-fields="filterOns"
+          @filtered="onFiltereds"
+        >
               <template v-slot:cell(check)="data">
                 <div class="custom-control custom-checkbox text-center">
                   <input
@@ -573,20 +553,22 @@ export default {
                 </div>
               </template>
               <template v-slot:cell(position)="data">
-                <a
-                  href="#"
-                  class="badge"
-                  :class="{
-                    'bg-info': data.item.admin.isSuperAdmin === false,
-
-                    'bg-warning': data.item.admin.isSuperAdmin === true,
+                <span
+                  :style="{
+                    padding: '4px 12px',
+                    borderRadius: '20px',
+                    fontSize: '0.8rem',
+                    fontWeight: '600',
+                    background: data.item.admin.isSuperAdmin === true ? '#fef3c7' : '#dbeafe',
+                    color: data.item.admin.isSuperAdmin === true ? '#d97706' : '#2563eb'
                   }"
-                  >{{
-                    data.item.admin.isSuperAdmin === true
-                      ? 'Super Administrateur'
-                      : 'Administrateur'
-                  }}</a
                 >
+                  {{
+                    data.item.admin.isSuperAdmin === true
+                      ? 'Super Admin'
+                      : 'Admin'
+                  }}
+                </span>
               </template>
 
               <template v-slot:cell(lastName)="data">
@@ -600,101 +582,104 @@ export default {
               </template>
 
               <template v-slot:cell(gender)="data">
-                <a
-                  href="#"
-                  class="badge"
-                  :class="{
-                    'bg-info': data.item.admin.gender === 'M',
-
-                    'bg-pink': data.item.admin.gender === 'F',
+                <span
+                  :style="{
+                    padding: '4px 12px',
+                    borderRadius: '20px',
+                    fontSize: '0.8rem',
+                    fontWeight: '600',
+                    background: data.item.admin.gender === 'M' ? '#dbeafe' : '#fce7f3',
+                    color: data.item.admin.gender === 'M' ? '#2563eb' : '#ec4899'
                   }"
-                  >{{ data.item.admin.gender === 'M' ? 'Homme' : 'Femme' }}</a
                 >
+                  {{ data.item.admin.gender === 'M' ? 'Homme' : 'Femme' }}
+                </span>
               </template>
 
               <template v-slot:cell(country)="data">
                 <a href="#" class="text-body">{{ data.item.admin.country }}</a>
               </template>
               <template v-slot:cell(enabled)="data">
-                <a
-                  href="#"
-                  class="badge"
-                  :class="{
-                    'bg-success': data.item.enabled === true,
-
-                    'bg-danger': data.item.enabled === null || data.item.enabled === false,
+                <span
+                  :style="{
+                    padding: '4px 12px',
+                    borderRadius: '20px',
+                    fontSize: '0.8rem',
+                    fontWeight: '600',
+                    background: data.item.enabled === true ? '#d1fae5' : '#fee2e2',
+                    color: data.item.enabled === true ? '#059669' : '#dc2626'
                   }"
-                  >{{
+                >
+                  {{
                     data.item.enabled === null || data.item.enabled === false
                       ? 'Non Activé'
                       : 'Activé'
-                  }}</a
-                >
+                  }}
+                </span>
               </template>
               <template v-slot:cell(action)="data">
-                <ul class="list-inline mb-0">
-                  <li class="list-inline-item">
-                    <a
-                      href="#"
-                      class="px-2 text-info"
-                      @click.prevent="openDetailModals(data.item)"
-                      title="Détails"
-                    >
-                      <i class="bi bi-eye" style="font-size: 18px"></i>
-                    </a>
-                  </li>
-                  <li class="list-inline-item">
-                    <a
-                      href="#"
-                      class="px-2 text-warning"
-                      @click.prevent="openEditModal(data.item)"
-                      title="Modifier"
-                    >
-                      <i class="uil uil-pen fs-5"></i>
-                    </a>
-                  </li>
+                <div class="action-buttons">
+                  <button
+                    class="action-btn action-btn-info"
+                    @click="openDetailModals(data.item)"
+                    title="Détails"
+                  >
+                    <i class="bi bi-eye"></i>
+                  </button>
+                  <button
+                    class="action-btn action-btn-warning"
+                    @click="openEditModal(data.item)"
+                    title="Modifier"
+                  >
+                    <i class="bi bi-pencil"></i>
+                  </button>
 
-                  <li class="list-inline-item">
-                    <a
-                      v-if="data.item.enabled === null || data.item.enabled === false"
-                      href="#"
-                      class="px-2 text-success"
-                      @click.prevent="Active(data.item.id)"
-                      title="active"
-                    >
-                      <q-spinner-orbit color="green" size="18px" v-if="loadings" />
-                      <i v-else class="uil uil-check font-size-18"></i>
-                    </a>
-                  </li>
+                  <button
+                    v-if="data.item.enabled === null || data.item.enabled === false"
+                    class="action-btn action-btn-success"
+                    @click="Active(data.item.id)"
+                    title="Activer"
+                  >
+                    <q-spinner-orbit color="white" size="14px" v-if="loadings" />
+                    <i v-else class="bi bi-check-circle"></i>
+                  </button>
 
-                  <li class="list-inline-item">
-                    <a
-                      v-if="data.item.enabled === true"
-                      href="#"
-                      class="px-2 text-danger"
-                      @click.prevent="Desact(data.item.id)"
-                      title="Désactiver"
-                    >
-                      <q-spinner-orbit color="red" size="18px" v-if="loadings" />
-                      <i v-else class="uil uil-exclamation-octagon font-size-18"></i>
-                    </a>
-                  </li>
-                </ul>
+                  <button
+                    v-if="data.item.enabled === true"
+                    class="action-btn action-btn-danger"
+                    @click="Desact(data.item.id)"
+                    title="Désactiver"
+                  >
+                    <q-spinner-orbit color="white" size="14px" v-if="loadings" />
+                    <i v-else class="bi bi-x-circle"></i>
+                  </button>
+                </div>
               </template>
-            </BTable>
-            <q-dialog v-model="ajout" transition-show="scale" transition-hide="fade">
-              <q-card style="width: 800px; max-width: 90vw; border-radius: 20px" class="shadow-lg">
-                <!-- Titre -->
-                <q-card-section
-                  class="q-pa-md text-white flex items-center justify-center"
-                  style="background: linear-gradient(135deg, #0d6efd, #6610f2)"
-                >
-                  <div class="text-h6 text-center">Ajouter un compte administrateur</div>
+        </BTable>
+      </div>
+
+      <!-- Pagination moderne -->
+      <div class="pagination-container">
+        <BPagination v-model="currentPages" :total-rows="rowss" :per-page="perPages" class="modern-pagination" />
+      </div>
+    </div>
+
+    <!-- Modal d'ajout -->
+    <q-dialog v-model="ajout" transition-show="scale" transition-hide="fade">
+              <q-card class="modern-modal-card">
+                <!-- Header -->
+                <q-card-section class="dialog-header row items-center">
+                  <div class="header-text q-ml-md">
+                    <div class="name">Ajouter un Administrateur</div>
+                    <div class="subtitle">Créer un nouveau compte administrateur</div>
+                  </div>
+                  <q-space />
                 </q-card-section>
 
                 <!-- Formulaire -->
-                <div class="q-pa-lg">
+                <q-card-section class="modal-form-section">
                   <BForm>
+                    <div class="form-section-title">Informations de connexion</div>
                     <BRow>
                       <BCol cols="6" class="mb-4 floating-label">
                         <input
@@ -714,6 +699,10 @@ export default {
                         />
                         <label>Mot de passe<span class="text-danger">*</span></label>
                       </BCol>
+                    </BRow>
+
+                    <div class="form-section-title">Informations personnelles</div>
+                    <BRow>
                       <!-- Prénom -->
                       <BCol cols="6" class="mb-4 floating-label">
                         <input
@@ -757,27 +746,38 @@ export default {
                         />
                         <label>Poste</label>
                       </BCol>
-                      <BCol cols="6" class="mb-4 mt-3 floating-label">
-                        <BRow>
-                          <BCol cols="6">
-                            <input
-                              v-model="formule.adminAccount.gender"
-                              type="radio"
-                              value="M"
-                              name="gender"
-                            />
-                            Homme
-                          </BCol>
-                          <BCol cols="6">
-                            <input
-                              v-model="formule.adminAccount.gender"
-                              type="radio"
-                              value="F"
-                              name="gender"
-                            />
-                            Femme
-                          </BCol>
-                        </BRow>
+                      <BCol cols="6">
+                        <div class="radio-group-modern">
+                          <span class="radio-group-label">Genre</span>
+                          <div class="radio-options">
+                            <div class="radio-option">
+                              <input
+                                v-model="formule.adminAccount.gender"
+                                type="radio"
+                                value="M"
+                                name="gender"
+                                id="gender-m"
+                              />
+                              <label for="gender-m">
+                                <i class="bi bi-gender-male"></i>
+                                Homme
+                              </label>
+                            </div>
+                            <div class="radio-option">
+                              <input
+                                v-model="formule.adminAccount.gender"
+                                type="radio"
+                                value="F"
+                                name="gender"
+                                id="gender-f"
+                              />
+                              <label for="gender-f">
+                                <i class="bi bi-gender-female"></i>
+                                Femme
+                              </label>
+                            </div>
+                          </div>
+                        </div>
                       </BCol>
                       <BCol cols="6" class="mb-4 floating-label">
                         <Multiselect
@@ -795,145 +795,127 @@ export default {
                       </BCol>
 
                       <!-- Super Admin -->
-                      <BCol cols="12" class="mb-3">
-                        <div class="form-check form-switch">
+                      <BCol cols="12">
+                        <div class="form-switch-modern">
+                          <div class="switch-label">
+                            <i class="bi bi-shield-fill-check"></i>
+                            <div class="switch-text">
+                              <div class="title">Super Administrateur</div>
+                              <div class="description">Accès complet à toutes les fonctionnalités</div>
+                            </div>
+                          </div>
                           <input
-                            style="border: 1px solid #0d6efd"
                             class="form-check-input"
                             type="checkbox"
                             id="isSuperAdmin"
                             v-model="formule.adminAccount.isSuperAdmin"
                           />
-                          <label class="form-check-label fw-semibold" for="isSuperAdmin">
-                            Super Administrateur
-                          </label>
                         </div>
                       </BCol>
 
                       <!-- Permissions -->
                       <BCol cols="12">
-                        <h6 class="fw-bold text-primary mb-3">Permissions</h6>
-                        <BRow>
-                          <BCol cols="6" class="mb-2">
-                            <div class="form-check">
-                              <input
-                                style="border: 1px solid #0d6efd"
-                                class="form-check-input"
-                                type="checkbox"
-                                id="view_logs"
-                                v-model="formule.adminAccount.permissions.view_logs"
-                              />
-                              <label class="form-check-label" for="view_logs">
-                                Voir les logs
-                              </label>
-                            </div>
-                          </BCol>
+                        <div class="form-section-title">
+                          <i class="bi bi-key-fill"></i>
+                          Permissions
+                        </div>
+                        <div class="form-check-group">
+                          <div class="form-check">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              id="view_logs"
+                              v-model="formule.adminAccount.permissions.view_logs"
+                            />
+                            <label class="form-check-label" for="view_logs">
+                              Voir les logs
+                            </label>
+                          </div>
 
-                          <BCol cols="6" class="mb-2">
-                            <div class="form-check">
-                              <input
-                                style="border: 1px solid #0d6efd"
-                                class="form-check-input"
-                                type="checkbox"
-                                id="export_data"
-                                v-model="formule.adminAccount.permissions.export_data"
-                              />
-                              <label class="form-check-label" for="export_data">
-                                Exporter les données
-                              </label>
-                            </div>
-                          </BCol>
+                          <div class="form-check">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              id="export_data"
+                              v-model="formule.adminAccount.permissions.export_data"
+                            />
+                            <label class="form-check-label" for="export_data">
+                              Exporter les données
+                            </label>
+                          </div>
 
-                          <BCol cols="6" class="mb-2">
-                            <div class="form-check">
-                              <input
-                                style="border: 1px solid #0d6efd"
-                                class="form-check-input"
-                                type="checkbox"
-                                id="manage_tasks"
-                                v-model="formule.adminAccount.permissions.manage_tasks"
-                              />
-                              <label class="form-check-label" for="manage_tasks">
-                                Gérer les tâches
-                              </label>
-                            </div>
-                          </BCol>
+                          <div class="form-check">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              id="manage_tasks"
+                              v-model="formule.adminAccount.permissions.manage_tasks"
+                            />
+                            <label class="form-check-label" for="manage_tasks">
+                              Gérer les tâches
+                            </label>
+                          </div>
 
-                          <BCol cols="6" class="mb-2">
-                            <div class="form-check">
-                              <input
-                                style="border: 1px solid #0d6efd"
-                                class="form-check-input"
-                                type="checkbox"
-                                id="manage_users"
-                                v-model="formule.adminAccount.permissions.manage_users"
-                              />
-                              <label class="form-check-label" for="manage_users">
-                                Gérer les utilisateurs
-                              </label>
-                            </div>
-                          </BCol>
+                          <div class="form-check">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              id="manage_users"
+                              v-model="formule.adminAccount.permissions.manage_users"
+                            />
+                            <label class="form-check-label" for="manage_users">
+                              Gérer les utilisateurs
+                            </label>
+                          </div>
 
-                          <BCol cols="6" class="mb-2">
-                            <div class="form-check">
-                              <input
-                                style="border: 1px solid #0d6efd"
-                                class="form-check-input"
-                                type="checkbox"
-                                id="manage_reports"
-                                v-model="formule.adminAccount.permissions.manage_reports"
-                              />
-                              <label class="form-check-label" for="manage_reports">
-                                Gérer les rapports
-                              </label>
-                            </div>
-                          </BCol>
+                          <div class="form-check">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              id="manage_reports"
+                              v-model="formule.adminAccount.permissions.manage_reports"
+                            />
+                            <label class="form-check-label" for="manage_reports">
+                              Gérer les rapports
+                            </label>
+                          </div>
 
-                          <BCol cols="6" class="mb-2">
-                            <div class="form-check">
-                              <input
-                                style="border: 1px solid #0d6efd"
-                                class="form-check-input"
-                                type="checkbox"
-                                id="manage_surveys"
-                                v-model="formule.adminAccount.permissions.manage_surveys"
-                              />
-                              <label class="form-check-label" for="manage_surveys">
-                                Gérer les sondages
-                              </label>
-                            </div>
-                          </BCol>
+                          <div class="form-check">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              id="manage_surveys"
+                              v-model="formule.adminAccount.permissions.manage_surveys"
+                            />
+                            <label class="form-check-label" for="manage_surveys">
+                              Gérer les sondages
+                            </label>
+                          </div>
 
-                          <BCol cols="6" class="mb-2">
-                            <div class="form-check">
-                              <input
-                                style="border: 1px solid #0d6efd"
-                                class="form-check-input"
-                                type="checkbox"
-                                id="manage_permissions"
-                                v-model="formule.adminAccount.permissions.manage_permissions"
-                              />
-                              <label class="form-check-label" for="manage_permissions">
-                                Gérer les permissions
-                              </label>
-                            </div>
-                          </BCol>
+                          <div class="form-check">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              id="manage_permissions"
+                              v-model="formule.adminAccount.permissions.manage_permissions"
+                            />
+                            <label class="form-check-label" for="manage_permissions">
+                              Gérer les permissions
+                            </label>
+                          </div>
 
-                          <BCol cols="6" class="mb-2">
-                            <div class="form-check">
-                              <input
-                                style="border: 1px solid #0d6efd"
-                                class="form-check-input"
-                                type="checkbox"
-                                id="manage_targeting_rules"
-                                v-model="formule.adminAccount.permissions.manage_targeting_rules"
-                              />
-                              <label class="form-check-label" for="manage_targeting_rules">
-                                Gérer les règles de ciblage
-                              </label>
-                            </div>
-                          </BCol>
-                        </BRow>
+                          <div class="form-check">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              id="manage_targeting_rules"
+                              v-model="formule.adminAccount.permissions.manage_targeting_rules"
+                            />
+                            <label class="form-check-label" for="manage_targeting_rules">
+                              Gérer les règles de ciblage
+                            </label>
+                          </div>
+                        </div>
                       </BCol>
                     </BRow>
 
@@ -945,23 +927,22 @@ export default {
                       <BButton variant="success" class="px-5" @click="Add">Enregistrer</BButton>
                     </div>
                   </BForm>
-                </div>
+                </q-card-section>
               </q-card>
             </q-dialog>
             <q-dialog v-model="edit" transition-show="scale" transition-hide="fade">
-              <q-card style="width: 800px; max-width: 90vw; border-radius: 20px" class="shadow-lg">
-                <!-- Titre -->
-                <q-card-section
-                  class="q-pa-md text-white flex items-center justify-center"
-                  style="background: linear-gradient(135deg, #0d6efd, #6610f2)"
-                >
-                  <div class="text-h6 text-center">
-                    Modifier le compte administrateur - {{ detailData?.email }}
+              <q-card class="modern-modal-card">
+                <!-- Header -->
+                <q-card-section class="dialog-header row items-center">
+                  <div class="header-text q-ml-md">
+                    <div class="name">{{ detailData?.email }}</div>
+                    <div class="subtitle">Modifier le compte administrateur</div>
                   </div>
+                  <q-space />
                 </q-card-section>
 
                 <!-- Formulaire -->
-                <div class="q-pa-lg">
+                <q-card-section class="modal-form-section">
                   <BForm>
                     <BRow>
                       <!-- Prénom -->
@@ -1159,673 +1140,153 @@ export default {
                       <BButton variant="success" class="px-5" @click="Edit">Enregistrer</BButton>
                     </div>
                   </BForm>
-                </div>
+                </q-card-section>
               </q-card>
             </q-dialog>
 
             <q-dialog v-model="ajouts">
-              <q-card
-                class="business-dashboard-dialog"
-                style="width: 800px; max-width: 90vw; height: 500px; max-height: 80vw"
-              >
+              <q-card class="modern-modal-card">
                 <!-- Header -->
-                <q-card-section class="dialog-header row items-center q-pa-sm">
-                  <div class="q-ml-sm">
-                    <span v-if="loadingx" class="skeleton skeleton-title"></span>
-                    <div v-else class="text-h6 text-warning">{{ detailData?.email }}</div>
-                    <div class="text-caption text-warning">Détails de l'utilisateur</div>
+                <q-card-section class="dialog-header row items-center">
+                  <div class="header-text q-ml-md">
+                    <div v-if="loadingx" class="skeleton skeleton-title"></div>
+                    <div v-else class="name">{{ detailData?.email }}</div>
+                    <div class="subtitle">Détails de l'Administrateur</div>
                   </div>
                   <q-space />
                 </q-card-section>
 
-                <q-separator color="grey-3" />
-                <q-card-section>
-                  <BRow class="d-flex justify-content-center">
-                    <BCol md="4" cols="xl-4">
-                      <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-                        <BCardBody
-                          class="d-flex justify-content-between align-items-center p-3 bg-light"
-                        >
-                          <div>
-                            <div class="d-flex align-items-center mb-2">
-                              <i class="bi bi-people text-warning fs-3 me-2"></i>
-                              <h4 v-if="loadingx" class="skeleton skeleton-title"></h4>
-                              <h4 v-else class="fw-bold mb-0 fs-2">
-                                <CountToComponent
-                                  :startVal="0"
-                                  :endVal="stats.sondage"
-                                  :duration="2000"
-                                />
-                              </h4>
-                            </div>
+                <q-separator />
+                <q-card-section class="modal-stats-section">
+                  <div class="modal-stats-grid modal-stats-grid-3">
+                    <div class="modal-stat-card modal-stat-warning">
+                      <div class="modal-stat-icon">
+                        <i class="bi bi-clipboard-data-fill"></i>
+                      </div>
+                      <div class="modal-stat-content">
+                        <div v-if="loadingx" class="skeleton skeleton-title"></div>
+                        <div v-else class="modal-stat-value">
+                          <CountToComponent
+                            :startVal="0"
+                            :endVal="stats.sondage"
+                            :duration="2000"
+                          />
+                        </div>
+                        <div class="modal-stat-label">Sondages</div>
+                      </div>
+                    </div>
 
-                            <span
-                              class="badge bg-warning-subtle text-warning fw-semibold px-3 py-1 rounded-pill"
-                              >Sondages</span
-                            >
-                          </div>
-                        </BCardBody>
-                      </BCard>
-                    </BCol>
+                    <div class="modal-stat-card modal-stat-success">
+                      <div class="modal-stat-icon">
+                        <i class="bi bi-check-circle-fill"></i>
+                      </div>
+                      <div class="modal-stat-content">
+                        <div v-if="loadingx" class="skeleton skeleton-title"></div>
+                        <div v-else class="modal-stat-value">
+                          <CountToComponent
+                            :startVal="0"
+                            :endVal="stats.sondageP"
+                            :duration="2000"
+                          />
+                        </div>
+                        <div class="modal-stat-label">Sondages Publiés</div>
+                      </div>
+                    </div>
 
-                    <BCol md="4" cols="xl-4">
-                      <BCard no-body class="shadow-sm rounded-4 stat-card shadow-success">
-                        <BCardBody
-                          class="d-flex justify-content-between align-items-center p-3 bg-light"
-                        >
-                          <div>
-                            <div class="d-flex align-items-center mb-2">
-                              <i class="bi bi-people text-success fs-3 me-2"></i>
-                              <h4 v-if="loadingx" class="skeleton skeleton-title"></h4>
-                              <h4 v-else class="fw-bold mb-0 fs-2">
-                                <CountToComponent
-                                  :startVal="0"
-                                  :endVal="stats.sondageP"
-                                  :duration="2000"
-                                />
-                              </h4>
-                            </div>
-                            <span
-                              class="badge bg-success-subtle text-success fw-semibold px-3 py-1 rounded-pill"
-                              >Sondages Publier</span
-                            >
-                          </div>
-                        </BCardBody>
-                      </BCard>
-                    </BCol>
-
-                    <BCol md="4" cols="xl-4">
-                      <BCard no-body class="shadow-sm rounded-4 stat-card shadow-success">
-                        <BCardBody
-                          class="d-flex justify-content-between align-items-center p-3 bg-light"
-                        >
-                          <div>
-                            <div class="d-flex align-items-center mb-2">
-                              <i class="bi bi-people text-success fs-3 me-2"></i>
-                              <h4 v-if="loadingx" class="skeleton skeleton-title"></h4>
-                              <h4 v-else class="fw-bold mb-0 fs-2">
-                                <CountToComponent
-                                  :startVal="0"
-                                  :endVal="stats.ReponseN"
-                                  :duration="2000"
-                                />
-                              </h4>
-                            </div>
-                            <span
-                              class="badge bg-success-subtle text-success fw-semibold px-3 py-1 rounded-pill"
-                              >Réponses</span
-                            >
-                          </div>
-                        </BCardBody>
-                      </BCard>
-                    </BCol>
-                  </BRow>
+                    <div class="modal-stat-card modal-stat-info">
+                      <div class="modal-stat-icon">
+                        <i class="bi bi-chat-dots-fill"></i>
+                      </div>
+                      <div class="modal-stat-content">
+                        <div v-if="loadingx" class="skeleton skeleton-title"></div>
+                        <div v-else class="modal-stat-value">
+                          <CountToComponent
+                            :startVal="0"
+                            :endVal="stats.ReponseN"
+                            :duration="2000"
+                          />
+                        </div>
+                        <div class="modal-stat-label">Réponses</div>
+                      </div>
+                    </div>
+                  </div>
                 </q-card-section>
 
                 <q-card-section class="dialog-content">
-                  <BRow>
-                    <BCol md="6" cols="xl-6">
-                      <div class="info-card">
-                        <q-icon name="person" size="20px" class="icon" />
-                        <div class="info-text">
-                          <div class="label">Nom d'utilisateur</div>
-                          <div v-if="loadingx" class="skeleton skeleton-text"></div>
-                          <div v-else class="value">
-                            {{ detailData.admin?.lastName }}
-                            {{ detailData.admin?.firstName }}
-                          </div>
-                        </div>
+                  <div class="info-card">
+                    <q-icon name="person" size="20px" class="icon" />
+                    <div class="info-text">
+                      <div class="label">Nom d'utilisateur</div>
+                      <div v-if="loadingx" class="skeleton skeleton-text"></div>
+                      <div v-else class="value">
+                        {{ detailData.admin?.lastName }}
+                        {{ detailData.admin?.firstName }}
                       </div>
-                    </BCol>
-                    <BCol md="6" cols="xl-6">
-                      <div class="info-card">
-                        <i class="bi bi-postcard-fill icon" style="font-size: 20px"></i>
-                        <div class="info-text">
-                          <div class="label">Positions</div>
-                          <div v-if="loadingx" class="skeleton skeleton-text"></div>
-                          <div v-else class="value">
-                            {{ detailData.admin?.position }}
-                          </div>
-                        </div>
-                      </div>
-                    </BCol>
-                  </BRow>
+                    </div>
+                  </div>
 
-                  <BRow>
-                    <BCol md="4" cols="xl-4">
-                      <div class="info-card">
-                        <q-icon name="phone" size="20px" class="icon" />
-                        <div class="info-text">
-                          <div class="label">Téléphone</div>
-                          <div v-if="loadingx" class="skeleton skeleton-text"></div>
-                          <div v-else class="value">
-                            {{ detailData.admin?.phone }}
-                          </div>
-                        </div>
+                  <div class="info-card">
+                    <i class="bi bi-postcard-fill icon" style="font-size: 20px"></i>
+                    <div class="info-text">
+                      <div class="label">Position</div>
+                      <div v-if="loadingx" class="skeleton skeleton-text"></div>
+                      <div v-else class="value">
+                        {{ detailData.admin?.position }}
                       </div>
-                    </BCol>
-                    <BCol md="4" cols="xl-4">
-                      <div class="info-card">
-                        <q-icon name="wc" size="20px" class="icon" />
-                        <div class="info-text">
-                          <div class="label">Genre</div>
-                          <div v-if="loadingx" class="skeleton skeleton-text"></div>
-                          <div v-else class="value">
-                            {{ detailData.admin?.gender === 'M' ? 'Homme' : 'Femme' }}
-                          </div>
-                        </div>
+                    </div>
+                  </div>
+
+                  <div class="info-card">
+                    <q-icon name="phone" size="20px" class="icon" />
+                    <div class="info-text">
+                      <div class="label">Téléphone</div>
+                      <div v-if="loadingx" class="skeleton skeleton-text"></div>
+                      <div v-else class="value">
+                        {{ detailData.admin?.phone }}
                       </div>
-                    </BCol>
-                    <BCol md="4" cols="xl-4">
-                      <div class="info-card">
-                        <i class="bi bi-geo-alt icon" style="font-size: 20px"></i>
-                        <div class="info-text">
-                          <div class="label">Localité</div>
-                          <div v-if="loadingx" class="skeleton skeleton-text"></div>
-                          <div v-else class="value">
-                            {{ detailData.admin?.country }}
-                          </div>
-                        </div>
+                    </div>
+                  </div>
+
+                  <div class="info-card">
+                    <q-icon name="wc" size="20px" class="icon" />
+                    <div class="info-text">
+                      <div class="label">Genre</div>
+                      <div v-if="loadingx" class="skeleton skeleton-text"></div>
+                      <div v-else class="value">
+                        {{ detailData.admin?.gender === 'M' ? 'Homme' : 'Femme' }}
                       </div>
-                    </BCol>
-                  </BRow>
+                    </div>
+                  </div>
+
+                  <div class="info-card">
+                    <i class="bi bi-geo-alt icon" style="font-size: 20px"></i>
+                    <div class="info-text">
+                      <div class="label">Localité</div>
+                      <div v-if="loadingx" class="skeleton skeleton-text"></div>
+                      <div v-else class="value">
+                        {{ detailData.admin?.country }}
+                      </div>
+                    </div>
+                  </div>
                 </q-card-section>
 
                 <!-- Actions -->
+                <q-card-actions align="right">
+                  <q-btn
+                    v-close-popup
+                    flat
+                    label="Fermer"
+                    color="primary"
+                  />
+                </q-card-actions>
               </q-card>
             </q-dialog>
-          </div>
-          <BRow>
-            <BCol>
-              <div class="dataTables_paginate paging_simple_numbers float-end">
-                <ul class="pagination pagination-rounded">
-                  <BPagination v-model="currentPage" :total-rows="rows" :per-page="perPage" />
-                </ul>
-              </div>
-            </BCol>
-          </BRow>
-        </div>
-      </BCol>
-    </BRow>
   </div>
 </template>
+
 <style lang="scss">
-@import '../../../css/assets/scss/app2.scss';
-.stat-card {
-  transition: all 0.4s ease-in-out;
-  border: 2px solid transparent;
-  background: linear-gradient(135deg, #fdfdfd, #f5f5f5);
-  position: relative;
-  overflow: hidden;
-}
-.stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
-  border-radius: 20px;
-}
-
-.shadow-warning:hover {
-  border-color: #f1c40f;
-  background-color: linear-gradient(135deg, #f8dc9f, #fff3cc);
-  box-shadow: 0 0 18px rgba(241, 196, 15, 0.6);
-}
-.shadow-success:hover {
-  border-color: #2ecc71;
-  background: linear-gradient(135deg, #2ecc71, #d4f5e6);
-  box-shadow: 0 0 18px rgba(46, 204, 113, 0.6);
-}
-.shadow-danger:hover {
-  border-color: #e74c3c;
-  background: linear-gradient(135deg, #ffecec, #ffd9d6);
-  box-shadow: 0 0 18px rgba(231, 76, 60, 0.6);
-}
-.business-dashboard-dialog {
-  width: 800px;
-  max-width: 90vw;
-  max-height: 80vh;
-  border-radius: 14px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-
-  .dialog-header {
-    padding: 16px;
-
-    .header-text {
-      .name {
-        font-weight: 700;
-        font-size: 1.3rem;
-      }
-      .subtitle {
-        font-size: 0.85rem;
-        opacity: 0.85;
-      }
-    }
-
-    q-btn {
-      &:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-      }
-    }
-  }
-
-  .stat-card {
-    transition: all 0.4s ease-in-out;
-    border: 2px solid transparent;
-    background: linear-gradient(135deg, #fdfdfd, #f5f5f5);
-    position: relative;
-    overflow: hidden;
-  }
-  .stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
-    border-radius: 20px;
-  }
-
-  .shadow-warning:hover {
-    border-color: #f1c40f;
-    background-color: linear-gradient(135deg, #f8dc9f, #fff3cc);
-    box-shadow: 0 0 18px rgba(241, 196, 15, 0.6);
-  }
-  .shadow-success:hover {
-    border-color: #2ecc71;
-    background: linear-gradient(135deg, #2ecc71, #d4f5e6);
-    box-shadow: 0 0 18px rgba(46, 204, 113, 0.6);
-  }
-  .shadow-danger:hover {
-    border-color: #e74c3c;
-    background: linear-gradient(135deg, #ffecec, #ffd9d6);
-    box-shadow: 0 0 18px rgba(231, 76, 60, 0.6);
-  }
-
-  .dialog-content {
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-
-    .info-card {
-      display: flex;
-      align-items: center;
-      background: #f8f9fa;
-      border-radius: 8px;
-      padding: 10px 14px;
-      transition: all 0.2s;
-
-      &:hover {
-        background: #e9ecef;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-      }
-
-      .icon {
-        color: #0d6efd;
-        margin-right: 12px;
-      }
-
-      .info-text {
-        display: flex;
-        flex-direction: column;
-
-        .label {
-          font-size: 0.8rem;
-          color: #6c757d;
-        }
-
-        .value {
-          font-weight: 600;
-          font-size: 1rem;
-          color: #212529;
-        }
-
-        .skeleton {
-          height: 18px;
-          width: 130px;
-        }
-      }
-    }
-  }
-}
-
-.tabs-morphing-container {
-  position: relative;
-  padding: 20px;
-  border-radius: 30px;
-  overflow: hidden;
-  z-index: 0;
-  background: linear-gradient(135deg, #f8f9ff, #eef2ff);
-}
-
-/* Les onglets */
-.morph-tabs .nav-tabs {
-  border: none;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 16px;
-  padding: 6px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
-
-/* Chaque onglet */
-.morph-tabs .nav-link {
-  border-radius: 12px;
-  padding: 10px 20px;
-  margin: 0 5px;
-  color: #444;
-  transition: all 0.3s ease-in-out;
-}
-
-/* Hover */
-.morph-tabs .nav-link:hover {
-  background: rgba(99, 102, 241, 0.1); /* indigo clair */
-  color: #4f46e5;
-}
-
-/* Actif */
-.morph-tabs .nav-link.active {
-  background: linear-gradient(135deg, #4f46e5, #6366f1);
-  color: #fff !important;
-  box-shadow: 0 3px 8px rgba(79, 70, 229, 0.3);
-  transform: scale(1.05);
-}
-
-.progress {
-  width: 100%;
-  position: absolute;
-  height: 4px;
-}
-
-.wizard-steps {
-  position: relative;
-  z-index: 3;
-  width: 100%;
-
-  .wizard-step {
-    height: 60px;
-    width: 60px;
-    border-radius: 50%;
-    border: 3px solid;
-    display: flex;
-    justify-content: center;
-    z-index: 9;
-    position: relative;
-    background: white;
-  }
-}
-
-.step-arrow-nav {
-  .nav-link {
-    background: #f3f2ee;
-    padding: 4px 0;
-    border-radius: 0 !important;
-  }
-}
-
-.wizard {
-  .nav-link:not(.active) {
-    color: #f3f2ee;
-
-    .wizard-icon {
-      color: #a5a5a5;
-    }
-  }
-}
-
-[data-bs-theme='dark'] {
-  .wizard-steps .wizard-step:not(.active) {
-    background: var(--bs-input-bg);
-  }
-
-  .step-arrow-nav {
-    .nav-link:not(.active) {
-      background: var(--bs-input-bg);
-    }
-  }
-}
-/* === Boutons modernes === */
-.btn-success {
-  background: linear-gradient(135deg, #34c38f, #2ea3f2);
-  border: none;
-  border-radius: 50px;
-  transition: all 0.3s ease;
-  font-weight: 600;
-  box-shadow: 0 4px 10px rgba(46, 163, 242, 0.3);
-
-  &:hover {
-    background: linear-gradient(135deg, #2ea3f2, #34c38f);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(46, 163, 242, 0.4);
-  }
-
-  &:active {
-    transform: scale(0.96);
-  }
-}
-
-/* === Table améliorée === */
-.table tbody tr {
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    background: #f9fcff;
-    box-shadow: #1f6bad33 0px 4px 8px;
-    transform: scale(1.01);
-  }
-}
-
-/* Icônes d'action */
-.list-inline-item a {
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    transform: scale(1.2) rotate(-5deg);
-    opacity: 0.8;
-  }
-}
-
-/* === Dialogues avec animation === */
-.q-dialog__inner {
-  animation: fadeScale 0.35s ease forwards;
-}
-
-@keyframes fadeScale {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* === Inputs flottants modernes === */
-.form-control {
-  border-radius: 12px;
-  transition: all 0.3s ease;
-
-  &:focus {
-    border-color: #2ea3f2;
-    box-shadow: 0 0 8px rgba(46, 163, 242, 0.4);
-    transform: scale(1.01);
-  }
-}
-
-.bg-gradient {
-  background: linear-gradient(135deg, #0d6efd, #6610f2);
-}
-
-/* === Champs modernes avec floating label === */
-.floating-label {
-  position: relative;
-}
-
-.form-control.form-control-modern {
-  border-radius: 12px;
-  border: 2px solid #e0e7ff;
-  padding: 0.9rem 1rem;
-  width: 100%;
-  transition: all 0.3s ease;
-  background: #fff;
-}
-
-.form-control.form-control-modern:focus {
-  border-color: #10d0f2;
-  box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
-  transform: scale(1.01);
-}
-
-/* Labels flottants */
-.floating-label label {
-  position: absolute;
-  top: 50%;
-  left: 15px;
-  transform: translateY(-50%);
-  color: #6c757d;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  pointer-events: none;
-  background: white;
-  padding: 0 5px;
-}
-
-.form-control-modern:focus + label,
-.form-control-modern:not(:placeholder-shown) + label {
-  top: -10px;
-  left: 10px;
-  font-size: 0.8rem;
-  color: #10d0f2;
-}
-
-/* Multiselect alignement */
-.multiselect {
-  border-radius: 12px !important;
-  border: 2px solid #e0e7ff !important;
-  padding: 6px 10px;
-  transition: all 0.3s ease;
-}
-.multiselect:focus-within {
-  border-color: #10d0f2 !important;
-  box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
-}
-/* Card principal du dialog */
-.contact-dashboard-dialog {
-  width: 460px;
-  max-width: 90vw;
-  border-radius: 14px;
-  overflow: hidden;
-
-  .dialog-header {
-    background: linear-gradient(135deg, #0d6efd, #6610f2);
-    color: white;
-    padding: 16px;
-    .header-text {
-      .name {
-        font-weight: 700;
-        font-size: 1.3rem;
-      }
-      .subtitle {
-        font-size: 0.85rem;
-        opacity: 0.8;
-      }
-    }
-    q-btn {
-      &:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-      }
-    }
-  }
-
-  .dialog-content {
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-
-    .info-card {
-      display: flex;
-      align-items: center;
-      background: #f8f9fa;
-      border-radius: 8px;
-      padding: 10px 14px;
-      transition: all 0.2s;
-      cursor: default;
-
-      &:hover {
-        background: #e9ecef;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      }
-
-      .icon {
-        color: #0d6efd;
-        margin-right: 12px;
-      }
-
-      .info-text {
-        display: flex;
-        flex-direction: column;
-
-        .label {
-          font-size: 0.8rem;
-          color: #6c757d;
-        }
-
-        .value {
-          font-weight: 600;
-          font-size: 1rem;
-          color: #212529;
-        }
-
-        .skeleton {
-          height: 18px;
-          width: 130px;
-        }
-      }
-    }
-  }
-}
-
-/* Animation d'ouverture */
-.q-dialog__inner {
-  animation: fadeScale 0.35s ease forwards;
-}
-
-@keyframes fadeScale {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-.skeleton {
-  display: inline-block;
-  height: 1em;
-  background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
-  background-size: 200% 100%;
-  animation: skeleton-loading 1.5s infinite;
-  border-radius: 4px;
-}
-@keyframes skeleton-loading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-.skeleton-title {
-  width: 60%;
-  height: 24px;
-}
-.skeleton-text {
-  width: 100%;
-  height: 16px;
-  margin: 6px 0;
-}
-.bg-pink {
-  background-color: #ff69b4; /* rose */
-  color: white; /* texte blanc pour le contraste */
-}
+@import '../../../css/admin/users-management.scss';
+@import '../../../css/admin/tables-shared.scss';
+@import '../../../css/admin/badges.scss';
 </style>
+

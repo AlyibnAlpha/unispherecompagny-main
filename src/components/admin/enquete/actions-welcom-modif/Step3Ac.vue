@@ -1,45 +1,67 @@
 <template>
-  <BRow style="height: auto">
-    <BCol cols="12" class="d-flex justify-content-center">
-      <BCard class="shadow-sm rounded-3 p-4 w-75">
-        <div class="text-center">
-          <h2 class="text-success mb-3">
-            <i class="bi bi-check2-all"></i>
-          </h2>
-          <h3 class="mb-4">Choisissez vos groupes de participants</h3>
+  <div class="step-form-container">
+    <!-- Description -->
+    <p class="text-muted mb-4" style="font-size: 0.9375rem;">Sélectionnez ou créez des groupes pour cibler votre enquête</p>
 
-          <BRow class="form-group mb-3">
-            <BCol>
-              <Multiselect
-                name="lang"
-                id="lang"
-                square
-                outlined
-                v-model="part"
-                mode="tags"
-                :options="orderData"
-                :searchable="true"
-                :close-on-select="true"
-                :clear-on-select="false"
-                placeholder="Sélectionnez ou ajoutez un groupe"
-              />
-            </BCol>
-          </BRow>
-          <BButton
-            variant="success"
-            class="waves-effect waves-light mb-3"
-            @click="ajout = !ajout"
-            >{{ ajout ? 'Fermer' : 'Créer vos participants' }}</BButton
+    <!-- Sélection des groupes -->
+    <div class="selection-card mb-4">
+      <label class="form-label fw-semibold mb-3">
+        <i class="bi bi-funnel me-2"></i>
+        Groupes sélectionnés
+      </label>
+      <Multiselect
+        name="lang"
+        id="lang"
+        v-model="part"
+        mode="tags"
+        :options="orderData"
+        :searchable="true"
+        :close-on-select="false"
+        :clear-on-select="false"
+        placeholder="Rechercher et sélectionner des groupes..."
+        class="form-control-modern"
+      />
+    </div>
+
+    <!-- Bouton créer -->
+    <div v-if="!ajout" class="mb-4">
+      <button
+        class="btn-create-group-outline"
+        @click="ajout = true"
+      >
+        <i class="bi bi-plus-circle me-2"></i>
+        Créer un nouveau groupe
+      </button>
+    </div>
+
+    <!-- Formulaire de création -->
+    <div v-if="ajout" class="creation-form">
+      <div class="form-header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h4 class="mb-1 fw-bold">
+              <i class="bi bi-person-plus me-2"></i>
+              Créer un nouveau groupe
+            </h4>
+            <p class="text-muted mb-0">Remplissez les informations pour créer un groupe de participants</p>
+          </div>
+          <button
+            class="btn-close-form"
+            @click="ajout = false"
+            title="Fermer le formulaire"
           >
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+      </div>
 
-          <!-- Formulaire -->
-          <div v-if="ajout" class="mt-4 text-start">
-            <BForm>
-              <BRow>
-                <BRow>
-                  <BCol cols="12" class="mb-2">
-                    <h4>Informations générales</h4>
-                  </BCol>
+      <BForm>
+        <div class="info-section mb-4">
+          <h5 class="section-title">
+            <i class="bi bi-info-circle me-2"></i>
+            Informations générales
+          </h5>
+          <BRow>
                   <!-- Nom -->
                   <BCol cols="6" md="6" class="mb-2 floating-label">
                     <input
@@ -64,153 +86,192 @@
                     <label for="desc">Description</label>
                   </BCol>
                 </BRow>
-                <!-- Nom -->
+        </div>
 
-                <BRow>
-                  <BCol cols="12" class="mb-3">
-                    <h4>Critères</h4>
-                  </BCol>
-                  <BCol cols="5" class="mb-4 floating-label">
-                    <Multiselect
-                      id="critère"
-                      v-model="newCriterion"
-                      :options="availableOptions"
-                      :searchable="false"
-                      :close-on-select="true"
-                      placeholder="Ajouter un critère"
-                      class="form-control-modern"
-                      mode="tags"
-                      @update:model-value="addCriterion"
-                    />
-                    <label for="critère">Critère</label>
-                  </BCol>
-                </BRow>
-
-                <!-- Section dynamique des critères -->
-                <div
-                  v-for="(crit, index) in selectedCriteria"
-                  :key="index"
-                  class="criteria-section"
+        <div class="info-section mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="section-title mb-0">
+              <i class="bi bi-sliders me-2"></i>
+              Critères de sélection
+            </h5>
+            <div class="dropdown">
+              <button
+                class="btn-add-criteria-dropdown"
+                @click="showCriteriaDropdown = !showCriteriaDropdown"
+              >
+                <i class="bi bi-plus-circle me-2"></i>
+                Ajouter un critère
+                <i class="bi bi-chevron-down ms-2"></i>
+              </button>
+              <div v-if="showCriteriaDropdown" class="criteria-dropdown-menu">
+                <button
+                  v-for="option in availableOptions"
+                  :key="option"
+                  class="criteria-dropdown-item"
+                  @click="addCriterion(option); showCriteriaDropdown = false"
+                  :disabled="selectedCriteria.includes(option)"
                 >
-                  <div class="criteria-header">
-                    <div class="criteria-label">
+                  <i class="bi bi-check-circle me-2" v-if="selectedCriteria.includes(option)"></i>
+                  <i class="bi bi-circle me-2" v-else></i>
+                  {{ option }}
+                </button>
+              </div>
+            </div>
+          </div>
+          <BRow>
+
+            <!-- Section dynamique des critères -->
+            <BCol cols="12">
+              <div
+                v-for="(crit, index) in selectedCriteria"
+                :key="index"
+                class="criteria-card mb-3"
+              >
+                  <div class="criteria-card-header">
+                    <div class="criteria-title">
+                      <i class="bi bi-filter-circle me-2"></i>
                       <strong>{{ crit }}</strong>
                     </div>
-                    <q-btn
-                      flat
-                      round
-                      color="red"
-                      icon="delete"
-                      size="sm"
+                    <button
+                      class="btn-delete-criteria"
                       @click="removeCriterion(crit)"
-                    />
+                      title="Supprimer ce critère"
+                    >
+                      <i class="bi bi-trash"></i>
+                    </button>
                   </div>
 
                   <!-- Champs dynamiques selon le critère -->
-                  <div class="criteria-body mt-2">
+                  <div class="criteria-card-body">
                     <template v-if="crit === 'Genre'">
-                      <Multiselect
-                        v-model="forms.criteria.gender"
-                        :options="[
-                          { label: 'Homme', value: 'H' },
-                          { label: 'Femme', value: 'F' },
-                        ]"
-                        placeholder="Sélectionner le genre"
-                        class="form-control-modern"
-                      />
+                      <BRow>
+                        <BCol cols="12">
+                          <div class="gender-options">
+                            <button
+                              type="button"
+                              class="gender-option"
+                              :class="{ active: forms.criteria.gender === 'H' }"
+                              @click="forms.criteria.gender = 'H'"
+                            >
+                              <i class="bi bi-gender-male me-2"></i>
+                              Homme
+                            </button>
+                            <button
+                              type="button"
+                              class="gender-option"
+                              :class="{ active: forms.criteria.gender === 'F' }"
+                              @click="forms.criteria.gender = 'F'"
+                            >
+                              <i class="bi bi-gender-female me-2"></i>
+                              Femme
+                            </button>
+                          </div>
+                        </BCol>
+                      </BRow>
                     </template>
 
                     <template v-else-if="crit === 'Age'">
-                      <div class="row">
-                        <div class="col-md-6 mb-2">
+                      <BRow>
+                        <BCol cols="12" md="6" class="mb-3 mb-md-0">
                           <input
                             v-model="forms.criteria.age.min"
                             type="number"
                             class="form-control-modern"
                             placeholder="Âge minimum"
                           />
-                        </div>
-                        <div class="col-md-6 mb-2">
+                        </BCol>
+                        <BCol cols="12" md="6">
                           <input
                             v-model="forms.criteria.age.max"
                             type="number"
                             class="form-control-modern"
                             placeholder="Âge maximum"
                           />
-                        </div>
-                      </div>
+                        </BCol>
+                      </BRow>
                     </template>
 
                     <template v-else-if="crit === 'Localité'">
-                      <div class="row">
-                        <div class="col-md-6 mb-2">
+                      <BRow>
+                        <BCol cols="12" md="6" class="mb-3 mb-md-0">
                           <input
                             v-model="forms.criteria.location.city"
                             type="text"
                             class="form-control-modern"
                             placeholder="Ville"
                           />
-                        </div>
-                        <div class="col-md-6 mb-2">
+                        </BCol>
+                        <BCol cols="12" md="6">
                           <Multiselect
                             v-model="forms.criteria.location.country"
                             :options="optionl"
                             placeholder="Pays"
                             class="form-control-modern"
                           />
-                        </div>
-                      </div>
+                        </BCol>
+                      </BRow>
                     </template>
 
                     <template v-else-if="crit === 'Secteur'">
-                      <div class="row">
-                        <div class="col-md-6 mb-2">
+                      <BRow>
+                        <BCol cols="12" md="6" class="mb-3 mb-md-0">
                           <input
                             v-model="forms.criteria.profession.type"
                             type="text"
                             class="form-control-modern"
                             placeholder="Type de profession"
                           />
-                        </div>
-                        <div class="col-md-6 mb-2">
+                        </BCol>
+                        <BCol cols="12" md="6">
                           <Multiselect
                             v-model="forms.criteria.profession.sector"
                             :options="optionl2"
                             placeholder="Sélectionner un secteur"
                             class="form-control-modern"
                           />
-                        </div>
-                      </div>
+                        </BCol>
+                      </BRow>
                     </template>
-                  </div>
                 </div>
-              </BRow>
-
-              <!-- Bouton -->
-              <div class="d-flex justify-content-end mt-4">
-                <BButton variant="success" class="px-5" @click="Adds"> Enregistrer </BButton>
               </div>
-            </BForm>
-          </div>
+            </BCol>
+          </BRow>
         </div>
-      </BCard>
-    </BCol>
-  </BRow>
-  <div v-if="!ajout" class="d-flex justify-content-between mt-4 w-100">
-    <BButton variant="outline-secondary" class="px-4" @click="$emit('onBack')"> ⬅ Retour </BButton>
-    <q-spinner-dots v-if="loadings" color="green" size="20px" class="q-mr-sm" />
-    <BButton v-else variant="success" class="px-4" @click="handleNext"> Suivant ➡ </BButton>
+
+        <!-- Bouton -->
+        <div class="d-flex justify-content-end mt-4">
+          <button class="btn-save-group" @click="Adds">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            Enregistrer le groupe
+          </button>
+        </div>
+      </BForm>
+    </div>
+
+    <!-- Navigation -->
+    <div v-if="!ajout" class="d-flex justify-content-between mt-4 w-100">
+      <BButton class="btn-modern btn-secondary-modern" @click="$emit('onBack')"> 
+        <i class="bi bi-arrow-left me-2"></i>
+        Retour 
+      </BButton>
+      <q-spinner-dots v-if="loadings" color="green" size="20px" class="q-mr-sm" />
+      <BButton v-else class="btn-modern btn-success-modern" @click="handleNext"> 
+        Suivant
+        <i class="bi bi-arrow-right ms-2"></i>
+      </BButton>
+    </div>
   </div>
 </template>
 <script>
 import { BButton, BCol, BRow } from 'bootstrap-vue-next'
 import Multiselect from '@vueform/multiselect'
-import { computed, getCurrentInstance, onMounted, ref } from 'vue'
+import { getCurrentInstance, onMounted, ref } from 'vue'
 import { api } from 'src/boot/axios'
 import { useRegisterStore } from 'src/stores/useRegisterStore'
 import { Notify } from 'quasar'
 import { useAuthStore } from 'src/stores/auth'
 import { useRoute } from 'vue-router'
+import Swal from 'sweetalert2'
 
 export default {
   components: {
@@ -230,7 +291,7 @@ export default {
     const loadings = ref(false)
     const route = useRoute()
     const optionl = [
-      { label: 'Françe', value: 'FR' },
+      { label: 'Français', value: 'FR' },
       { label: 'Engletaire', value: 'EN' },
       { label: 'Espagne', value: 'ES' },
       { label: 'Itali', value: 'IT' },
@@ -286,21 +347,15 @@ export default {
       { label: 'Localité', value: 'Localité' },
       { label: 'Secteur', value: 'Secteur' },
     ]
-    const availableOptions = computed(() => {
-      return options.filter((opt) => !selectedCriteria.value.includes(opt.value ?? opt))
-    })
+    const availableOptions = ['Genre', 'Age', 'Localité', 'Secteur']
     const selectedCriteria = ref([])
     const newCriterion = ref([])
+    const showCriteriaDropdown = ref(false)
 
-    const addCriterion = (crits) => {
-      crits.forEach((crit) => {
-        // Si c'est un objet avec value (depuis options) ou juste un string (nouveau tag)
-        const value = crit.value ?? crit
-        if (!selectedCriteria.value.includes(value)) {
-          selectedCriteria.value.push(value)
-        }
-      })
-      newCriterion.value = []
+    const addCriterion = (crit) => {
+      if (!selectedCriteria.value.includes(crit)) {
+        selectedCriteria.value.push(crit)
+      }
     }
 
     const removeCriterion = (value) => {
@@ -367,34 +422,61 @@ export default {
       if (part.value === null || part.value.length === 0) {
         return true
       }
-
-      try {
-        loadings.value = true
-        const id = route.params.id
-        const sch = await api.get(`/admin/welcome-surveys`)
-        const surveys = sch.data.find((s) => s.slug === id)
-        store.idsurveyw = surveys.id
-        await api
-          .post(`/admin/welcome-surveys/${store.idsurveyw}/assign-participants`, {
-            participantGroups: part.value,
-          })
-          .then(() => {
-            Notify.create({
-              type: 'positive',
-              message: 'Participants assignés avec succès',
+      const role = aurh.roles[0]
+      if (role === import.meta.env.VITE_DEFAULT_ROLEB) {
+        try {
+          loadings.value = true
+          const id = route.params.id
+          const sch = await api.get(`/admin/surveys`)
+          const surveys = sch.data.find((s) => s.slug === id)
+          store.idsurvey = surveys.id
+          await api
+            .post(`/surveys/${store.idsurvey}/assign-participants`, {
+              participantGroups: part.value,
             })
+            .then(() => {
+              Notify.create({
+                type: 'positive',
+                message: 'Participants assignés avec succès',
+              })
+            })
+          return true
+        } catch (error) {
+          console.error('Error assigning participants:', error)
+          Notify.create({
+            type: 'negative',
+            message: "Erreur lors de l'assignation des participants.",
           })
-        return true
-      } catch (error) {
-        console.error('Error assigning participants:', error)
-        Notify.create({
-          type: 'negative',
-          message: "Erreur lors de l'assignation des participants.",
-        })
-        return false
-      } finally {
-        loadings.value = false
-        store.setIdSurvey('')
+        } finally {
+          loadings.value = false
+        }
+      } else if (role === import.meta.env.VITE_DEFAULT_ROLEA) {
+        try {
+          loadings.value = true
+          const id = route.params.id
+          const sch = await api.get(`/admin/surveys`)
+          const surveys = sch.data.find((s) => s.slug === id)
+          store.idsurvey = surveys.id
+          await api
+            .post(`/admin/surveys/${store.idsurvey}/assign-participants`, {
+              participantGroups: part.value,
+            })
+            .then(() => {
+              Notify.create({
+                type: 'positive',
+                message: 'Participants assignés avec succès',
+              })
+            })
+          return true
+        } catch (error) {
+          console.error('Error assigning participants:', error)
+          Notify.create({
+            type: 'negative',
+            message: "Erreur lors de l'assignation des participants.",
+          })
+        } finally {
+          loadings.value = false
+        }
       }
     }
     const Adds = async () => {
@@ -425,7 +507,12 @@ export default {
           })
         }
         gets()
-
+        Swal.fire({
+          icon: 'success',
+          title: 'Enregistre avec success',
+          showConfirmButton: true,
+          timer: 2000,
+        })
         ajout.value = false
       } catch (error) {
         Notify.create(
@@ -436,6 +523,7 @@ export default {
           5000,
         )
         console.error(error)
+        return false
       }
     }
     const handleNext = async () => {
@@ -465,8 +553,31 @@ export default {
       optionl,
       optionl2,
       loadings,
+      showCriteriaDropdown,
     }
   },
   emits: ['onBack', 'close'],
 }
 </script>
+<style>
+.criteria-section {
+  background-color: #e7f3ff;
+  border: 1px solid #b6daff;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+}
+
+.criteria-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.criteria-label {
+  color: #0d6efd;
+  font-weight: 600;
+  font-size: 1rem;
+}
+</style>

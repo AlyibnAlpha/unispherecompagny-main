@@ -18,15 +18,6 @@ export default {
   data() {
     return {
       title: 'Dashboard',
-      items: [
-        {
-          text: 'Admin',
-        },
-        {
-          text: 'Dashboard',
-          active: true,
-        },
-      ],
     }
   },
   components: {

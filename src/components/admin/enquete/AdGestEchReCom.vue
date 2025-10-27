@@ -186,32 +186,46 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div class="modern-admin-page">
+    <!-- En-tête moderne -->
+    <div class="section-header-modern mb-4">
+      <div class="section-title-wrapper">
+        <div class="section-icon-modern">
+          <i class="bi bi-arrow-left-right"></i>
+        </div>
+        <div class="section-title-content">
+          <h3 class="section-title-modern">Échanges de Récompenses</h3>
+          <p class="section-subtitle-modern">Gérez les demandes d'échange de récompenses</p>
+        </div>
+      </div>
+    </div>
+
     <BRow>
       <BCol cols="12">
-        <BRow>
-          <BCol sm="12" md="6">
-            <div id="tickets-table_length" class="dataTables_length">
-              <label class="d-inline-flex align-items-center">
-                Trier:
-                <BFormSelect v-model="perPage" size="sm" :options="pageOptions"></BFormSelect>
-              </label>
-            </div>
-          </BCol>
-          <BCol sm="12" md="6">
-            <div id="tickets-table_filter" class="dataTables_filter text-md-end">
-              <label class="d-inline-flex align-items-center">
-                Recherche:
-                <BFormInput
-                  v-model="filter"
-                  type="search"
-                  placeholder="Recherche..."
-                  class="form-control form-control-sm ms-2"
-                ></BFormInput>
-              </label>
-            </div>
-          </BCol>
-        </BRow>
+        <div class="modern-table-container">
+          <BRow>
+            <BCol sm="12" md="6">
+              <div id="tickets-table_length" class="dataTables_length">
+                <label class="d-inline-flex align-items-center">
+                  Trier:
+                  <BFormSelect v-model="perPage" size="sm" :options="pageOptions"></BFormSelect>
+                </label>
+              </div>
+            </BCol>
+            <BCol sm="12" md="6">
+              <div id="tickets-table_filter" class="dataTables_filter text-md-end">
+                <label class="d-inline-flex align-items-center">
+                  Recherche:
+                  <BFormInput
+                    v-model="filter"
+                    type="search"
+                    placeholder="Recherche..."
+                    class="form-control form-control-sm ms-2"
+                  ></BFormInput>
+                </label>
+              </div>
+            </BCol>
+          </BRow>
         <div v-if="loading" class="text-center my-5">
           <q-spinner-ball color="green" size="50px" />
         </div>
@@ -328,114 +342,164 @@ export default {
           </template>
         </BTable>
         <q-dialog v-model="ajout">
-          <q-card class="modern-dialog" style="width: 700px; max-width: 90vw">
-            <!-- Header -->
-            <q-card-section class="dialog-header row items-center q-pa-sm">
-              <div class="q-ml-sm">
-                <div class="text-h6 text-warning">Détail de la rédemption</div>
-                <div class="text-caption text-warning">Identifiant : #{{ detailData.id }}</div>
+          <q-card class="modern-dialog-card modern-dialog-details">
+            <!-- En-tête moderne -->
+            <q-card-section class="modern-dialog-header">
+              <div class="dialog-header-content">
+                <div class="dialog-icon dialog-icon-info">
+                  <i class="bi bi-receipt"></i>
+                </div>
+                <div class="dialog-title-wrapper">
+                  <span v-if="loadingx" class="skeleton skeleton-title"></span>
+                  <h5 v-else class="dialog-title">Rédemption #{{ detailData.id }}</h5>
+                  <p class="dialog-subtitle">Détails de la demande d'échange</p>
+                </div>
               </div>
-              <q-space />
+              <q-btn flat round dense icon="close" v-close-popup class="dialog-close-btn" />
             </q-card-section>
 
-            <q-separator color="grey-3" />
+            <!-- Informations de la récompense -->
+            <q-card-section class="details-section">
+              <h6 class="section-title-small">
+                <i class="bi bi-gift-fill me-2"></i>
+                Informations de la récompense
+              </h6>
+              <BRow class="g-3">
+                <BCol cols="12" md="6">
+                  <div class="info-card-modern">
+                    <div class="info-label">
+                      <i class="bi bi-tag-fill me-2"></i>
+                      Récompense
+                    </div>
+                    <div class="info-value">
+                      <span v-if="loadingx" class="skeleton skeleton-text"></span>
+                      <span v-else>{{ detailData.reward?.name || 'Aucune donnée' }}</span>
+                    </div>
+                  </div>
+                </BCol>
 
-            <!-- Contenu principal -->
-            <q-card-section class="dialog-content">
-              <div class="info-row">
-                <span class="label">Récompense :</span>
-                <span v-if="loadingx" class="skeleton skeleton-title"></span>
-                <span v-else class="value">{{ detailData.reward?.name || 'Aucune donnée' }}</span>
-              </div>
+                <BCol cols="12" md="6">
+                  <div class="info-card-modern">
+                    <div class="info-label">
+                      <i class="bi bi-calendar-event me-2"></i>
+                      Date de demande
+                    </div>
+                    <div class="info-value">
+                      <span v-if="loadingx" class="skeleton skeleton-text"></span>
+                      <span v-else>
+                        {{
+                          new Date(detailData.redeemedAt).toLocaleString('fr-FR', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })
+                        }}
+                      </span>
+                    </div>
+                  </div>
+                </BCol>
 
-              <div class="info-row">
-                <span class="label">Date de demande :</span>
-                <span v-if="loadingx" class="skeleton skeleton-title"></span>
-                <span v-else class="value">
-                  {{
-                    new Date(detailData.redeemedAt).toLocaleString('fr-FR', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })
-                  }}
-                </span>
-              </div>
-
-              <div class="info-row">
-                <span class="label">Statut :</span>
-                <span v-if="loadingx" class="skeleton skeleton-title"></span>
-                <span
-                  v-else
-                  class="badge"
-                  :class="{
-                    'bg-warning': detailData.status === 'pending',
-                    'bg-success': detailData.status === 'delivered',
-                    'bg-danger': detailData.status === 'cancelled',
-                  }"
-                >
-                  {{
-                    detailData.status === 'pending'
-                      ? 'En attente'
-                      : detailData.status === ' delivered'
-                        ? 'Livré'
-                        : 'Annuler'
-                  }}
-                </span>
-              </div>
+                <BCol cols="12">
+                  <div class="info-card-modern">
+                    <div class="info-label">
+                      <i class="bi bi-info-circle-fill me-2"></i>
+                      Statut
+                    </div>
+                    <div class="info-value">
+                      <span v-if="loadingx" class="skeleton skeleton-text"></span>
+                      <span
+                        v-else
+                        class="badge"
+                        :class="{
+                          'bg-warning': detailData.status === 'pending',
+                          'bg-success': detailData.status === 'delivered',
+                          'bg-danger': detailData.status === 'cancelled',
+                        }"
+                      >
+                        {{
+                          detailData.status === 'pending'
+                            ? 'En attente'
+                            : detailData.status === 'delivered'
+                              ? 'Livré'
+                              : 'Annulé'
+                        }}
+                      </span>
+                    </div>
+                  </div>
+                </BCol>
+              </BRow>
             </q-card-section>
 
-            <q-separator color="grey-3" />
+            <!-- Informations du participant -->
+            <q-card-section class="details-section">
+              <h6 class="section-title-small">
+                <i class="bi bi-person-fill me-2"></i>
+                Informations du participant
+              </h6>
+              <div v-if="detailData.participant">
+                <BRow class="g-3">
+                  <BCol cols="12" md="6">
+                    <div class="info-card-modern">
+                      <div class="info-label">
+                        <i class="bi bi-person-badge me-2"></i>
+                        Nom complet
+                      </div>
+                      <div class="info-value">
+                        {{ detailData.participant.firstName }} {{ detailData.participant.lastName }}
+                      </div>
+                    </div>
+                  </BCol>
 
-            <!-- Section du participant -->
-            <q-card-section class="dialog-content">
-              <div class="text-subtitle1 q-mb-sm">Informations du participant</div>
-              <div v-if="detailData.participant" class="q-mt-sm">
-                <div class="info-row">
-                  <span class="label">Nom complet :</span>
-                  <span class="value">
-                    {{ detailData.participant.firstName }} {{ detailData.participant.lastName }}
-                  </span>
-                </div>
+                  <BCol cols="12" md="6">
+                    <div class="info-card-modern">
+                      <div class="info-label">
+                        <i class="bi bi-telephone-fill me-2"></i>
+                        Téléphone
+                      </div>
+                      <div class="info-value">
+                        {{ detailData.participant.phone || 'Non renseigné' }}
+                      </div>
+                    </div>
+                  </BCol>
 
-                <div class="info-row mt-2">
-                  <span class="label">Téléphone :</span>
-                  <span class="value">{{ detailData.participant.phone || 'Non renseigné' }}</span>
-                </div>
+                  <BCol cols="12" md="6">
+                    <div class="info-card-modern">
+                      <div class="info-label">
+                        <i class="bi bi-cake2-fill me-2"></i>
+                        Date de naissance
+                      </div>
+                      <div class="info-value">
+                        {{
+                          new Date(detailData.participant.birthDate).toLocaleDateString('fr-FR', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                          })
+                        }}
+                      </div>
+                    </div>
+                  </BCol>
 
-                <div class="info-row mt-2">
-                  <span class="label">Date de naissance :</span>
-                  <span class="value">
-                    {{
-                      new Date(detailData.participant.birthDate).toLocaleDateString('fr-FR', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })
-                    }}
-                  </span>
-                </div>
-
-                <div class="info-row mt-2">
-                  <span class="label">Email :</span>
-                  <span class="value">{{ detailData.participant.email || 'Non renseigné' }}</span>
-                </div>
+                  <BCol cols="12" md="6">
+                    <div class="info-card-modern">
+                      <div class="info-label">
+                        <i class="bi bi-envelope-fill me-2"></i>
+                        Email
+                      </div>
+                      <div class="info-value">
+                        {{ detailData.participant.email || 'Non renseigné' }}
+                      </div>
+                    </div>
+                  </BCol>
+                </BRow>
               </div>
-              <div v-else>
-                <q-banner dense class="bg-grey-3 text-grey-8 q-pa-sm">
-                  Aucun participant associé à cette rédemption.
-                </q-banner>
+              <div v-else class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                Aucun participant associé à cette rédemption.
               </div>
             </q-card-section>
-
-            <q-separator color="grey-3" />
-
-            <!-- Actions -->
-            <q-card-actions align="right" class="dialog-actions">
-              <q-btn flat color="primary" label="Fermer" v-close-popup />
-            </q-card-actions>
           </q-card>
         </q-dialog>
 
@@ -448,12 +512,282 @@ export default {
             </div>
           </BCol>
         </BRow>
+        </div>
       </BCol>
     </BRow>
   </div>
 </template>
 <style lang="scss">
 @import '../../../css/assets/scss/app2.scss';
+
+/* === Page moderne === */
+.modern-admin-page {
+  padding: 1.5rem;
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+/* === En-tête de section moderne === */
+.section-header-modern {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+
+  .section-title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .section-icon-modern {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.8rem;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .section-title-content {
+      .section-title-modern {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .section-subtitle-modern {
+        font-size: 0.95rem;
+        color: #64748b;
+        margin: 0;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+/* === Container de table moderne === */
+.modern-table-container {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  
+  .dataTables_length,
+  .dataTables_filter {
+    label {
+      font-weight: 600;
+      color: #374151;
+      font-size: 0.9rem;
+    }
+
+    select,
+    input {
+      border-radius: 10px;
+      border: 2px solid #e5e7eb;
+      transition: all 0.3s ease;
+
+      &:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+    }
+  }
+}
+
+/* === Table améliorée === */
+.table {
+  thead {
+    th {
+      background: #f8fafc;
+      color: #1e293b;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.5px;
+      padding: 1rem;
+      border: none;
+    }
+  }
+
+  tbody {
+    tr {
+      transition: all 0.3s ease;
+      border-bottom: 1px solid #f1f5f9;
+
+      &:hover {
+        background: linear-gradient(135deg, #f8fafc, #ffffff);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+        transform: translateX(4px);
+      }
+
+      td {
+        padding: 1rem;
+        vertical-align: middle;
+        color: #475569;
+        font-weight: 500;
+
+        a {
+          font-weight: 600;
+          text-decoration: none;
+          transition: all 0.2s ease;
+
+          &:hover {
+            transform: scale(1.05);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          }
+        }
+
+        .badge {
+          padding: 0.5rem 1rem;
+          border-radius: 20px;
+          font-weight: 600;
+          font-size: 0.75rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+      }
+    }
+  }
+}
+
+/* === Modaux modernes === */
+.modern-dialog-card {
+  width: 60vw !important;
+  max-width: 950px !important;
+  margin: 20px auto;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modern-dialog-details {
+  max-height: 90vh !important;
+  overflow-y: auto;
+
+  .dialog-icon-info {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+  }
+}
+
+.modern-dialog-header {
+  background: linear-gradient(135deg, rgb(240, 244, 255), rgb(224, 247, 250));
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+
+  .dialog-header-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+
+    .dialog-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      flex-shrink: 0;
+    }
+
+    .dialog-title-wrapper {
+      .dialog-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0 0 0.25rem 0;
+      }
+
+      .dialog-subtitle {
+        font-size: 0.9rem;
+        color: #64748b;
+        margin: 0;
+      }
+    }
+  }
+
+  .dialog-close-btn {
+    color: #64748b;
+    transition: all 0.3s ease;
+
+    &:hover {
+      color: #ef4444;
+      transform: rotate(90deg);
+    }
+  }
+}
+
+.details-section {
+  background: white;
+  padding: 1.5rem;
+
+  .section-title-small {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+
+    i {
+      color: #667eea;
+    }
+  }
+
+  .info-card-modern {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 1rem;
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: #667eea;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+    }
+
+    .info-label {
+      font-size: 0.75rem;
+      color: #64748b;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+
+      i {
+        color: #667eea;
+      }
+    }
+
+    .info-value {
+      font-size: 0.9rem;
+      color: #1e293b;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+  }
+}
+
 .stat-card {
   transition: all 0.4s ease-in-out;
   border: 2px solid transparent;

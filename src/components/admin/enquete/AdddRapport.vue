@@ -1,39 +1,51 @@
 <template>
-  <hr />
-  <div class="mb-3 text-end">
-    <BRow class="d-flex justify-content-between align-items-center">
-      <BCol cols="auto"
-        ><router-link class="btn btn-link text-muted" to="/admin/rapport">
-          <i class="uil uil-arrow-left me-1"></i> Retour
-        </router-link></BCol
-      >
-      <BCol cols="auto">
-        <BButton
-          variant="success"
-          placeholder="Sélectionnez le sondage"
-          class="shadow-sm px-3"
-          @click="Add"
-          @update:modelValue="gets"
-        >
-          Créer le rapport
-        </BButton>
-      </BCol>
-    </BRow>
-  </div>
+  <div class="modern-admin-page">
+    <!-- Bouton retour flottant -->
+    <router-link class="btn-back-floating" to="/admin/rapport">
+      <i class="bi bi-arrow-left"></i>
+    </router-link>
 
-  <div>
-    <BRow>
-      <BCol lg="12">
+    <!-- Carte d'en-tête séparée -->
+    <div class="header-card mb-4">
+      <div class="section-header-modern">
+        <div class="section-title-wrapper">
+          <div class="section-icon-modern">
+            <i class="bi bi-file-earmark-plus"></i>
+          </div>
+          <div class="section-title-content">
+            <h3 class="section-title-modern">Créer un Rapport</h3>
+            <p class="section-subtitle-modern">Générez un rapport détaillé pour votre sondage</p>
+          </div>
+        </div>
+        <button class="btn-create-report" @click="Add">
+          <i class="bi bi-check-circle-fill me-2"></i>
+          Créer le rapport
+        </button>
+      </div>
+    </div>
+
+    <!-- Section sélection du sondage -->
+    <div class="selection-card mb-4">
+      <div class="selection-card-header">
+        <i class="bi bi-ui-checks me-2"></i>
+        <h5 class="selection-card-title">Sélectionnez un sondage</h5>
+      </div>
+      <div class="selection-card-body">
         <Multiselect
           v-model="rapport"
-          placeholder="Sélectionnez le sondage"
+          placeholder="Rechercher et sélectionner un sondage..."
           :searchable="true"
           :close-on-select="true"
           :clear-on-select="false"
           :options="optionl2"
+          class="multiselect-modern"
         />
-      </BCol>
-      <BCol lg="12" style="margin-top: 15px">
+      </div>
+    </div>
+
+    <!-- Section contenu du rapport -->
+    <BRow>
+      <BCol lg="12">
         <div id="stat-detail">
           <div class="text-center mb-4">
             <BCard
@@ -118,17 +130,27 @@
             </BCard>
           </div>
           <StatDetail :survey="form" />
-          <!-- 🔹 Graphique ApexCharts -->
-          <BCard class="mb-4">
-            <div class="p-3">
+          
+          <!-- Graphique principal -->
+          <div class="modern-chart-card mb-4">
+            <div class="chart-card-header">
+              <i class="bi bi-bar-chart-fill me-2"></i>
+              <h5 class="chart-card-title">Statistiques globales</h5>
+            </div>
+            <div class="chart-card-body">
               <apexchart type="bar" height="350" :options="chartOptions" :series="chartSeries" />
             </div>
-          </BCard>
+          </div>
 
+          <!-- Graphiques secondaires -->
           <BRow>
             <BCol lg="6">
-              <BCard class="mb-4">
-                <div class="p-3">
+              <div class="modern-chart-card mb-4">
+                <div class="chart-card-header">
+                  <i class="bi bi-people-fill me-2"></i>
+                  <h5 class="chart-card-title">Répartition par âge</h5>
+                </div>
+                <div class="chart-card-body">
                   <apexchart
                     type="bar"
                     height="330"
@@ -136,11 +158,15 @@
                     :series="ageChartSeries"
                   />
                 </div>
-              </BCard>
+              </div>
             </BCol>
             <BCol lg="6">
-              <BCard class="mb-4">
-                <div class="p-3">
+              <div class="modern-chart-card mb-4">
+                <div class="chart-card-header">
+                  <i class="bi bi-gender-ambiguous me-2"></i>
+                  <h5 class="chart-card-title">Répartition par genre</h5>
+                </div>
+                <div class="chart-card-body">
                   <apexchart
                     type="pie"
                     height="390"
@@ -148,47 +174,54 @@
                     :series="genderChartSeries"
                   />
                 </div>
-              </BCard>
+              </div>
             </BCol>
           </BRow>
         </div>
 
-        <!-- 🔹 Tableau récapitulatif -->
-        <BCard class="mb-4" id="table-recap">
-          <div class="p-3">
-            <h5 class="font-size-16 mb-3">Résumé des réponses</h5>
-            <table class="table table-hover table-bordered align-middle text-center">
-              <thead class="table-dark">
-                <tr>
-                  <th>#</th>
-                  <th>Question</th>
-                  <th>Type</th>
-                  <th>Total réponses</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="quest in questionsList" :key="'resume-' + quest.id">
-                  <td>
-                    <strong>{{ quest.position }}</strong>
-                  </td>
-                  <td class="text-start">{{ quest.title }}</td>
-                  <td>
-                    <span class="badge bg-info">{{ quest.type }}</span>
-                  </td>
-                  <td>
-                    <span class="badge bg-primary">{{ quest.answers.length }}</span>
-                  </td>
-                </tr>
-                <tr class="table-success fw-bold">
-                  <td colspan="3" class="text-end">Moyenne par question</td>
-                  <td>
-                    <span class="badge bg-success">{{ moyenneReponses }}</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+        <!-- Tableau récapitulatif moderne -->
+        <div class="modern-table-card mb-4" id="table-recap">
+          <div class="table-card-header">
+            <i class="bi bi-table me-2"></i>
+            <h5 class="table-card-title">Résumé des réponses</h5>
           </div>
-        </BCard>
+          <div class="table-card-body">
+            <div class="table-responsive">
+              <table class="modern-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Question</th>
+                    <th>Type</th>
+                    <th>Total réponses</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="quest in questionsList" :key="'resume-' + quest.id">
+                    <td>
+                      <span class="table-badge table-badge-number">{{ quest.position }}</span>
+                    </td>
+                    <td class="text-start">{{ quest.title }}</td>
+                    <td>
+                      <span class="table-badge table-badge-info">{{ quest.type }}</span>
+                    </td>
+                    <td>
+                      <span class="table-badge table-badge-primary">{{ quest.answers.length }}</span>
+                    </td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr class="table-footer-row">
+                    <td colspan="3" class="text-end fw-bold">Moyenne par question</td>
+                    <td>
+                      <span class="table-badge table-badge-success">{{ moyenneReponses }}</span>
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
 
         <div id="addproduct-accordion" class="custom-accordion">
           <BCard no-body v-for="quest in questionsList" :key="quest.id">
@@ -333,7 +366,7 @@
 </template>
 
 <script>
-import { BRow, BCol, BCard, BCollapse, BButton, BBadge } from 'bootstrap-vue-next'
+import { BRow, BCol, BCard, BCollapse, BBadge } from 'bootstrap-vue-next'
 import { computed, onMounted, ref, watch } from 'vue'
 import ApexCharts from 'vue3-apexcharts'
 import StatDetail from '../dashboard/components/StatDetail.vue'
@@ -351,7 +384,6 @@ export default {
     BCollapse,
     apexchart: ApexCharts,
     StatDetail,
-    BButton,
     BBadge,
     Multiselect,
   },
@@ -653,6 +685,367 @@ export default {
 
 <style lang="scss">
 @import '../../../css/assets/scss/app2.scss';
+
+/* === Page moderne === */
+.modern-admin-page {
+  padding: 1.5rem;
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+/* === Carte d'en-tête === */
+.header-card {
+  background: white;
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border: 2px solid #f1f5f9;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #e2e8f0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* === En-tête de section moderne === */
+.section-header-modern {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  .section-title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .section-icon-modern {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.8rem;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .section-title-content {
+      .section-title-modern {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .section-subtitle-modern {
+        font-size: 0.95rem;
+        color: #64748b;
+        margin: 0;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+}
+
+/* === Bouton Retour Flottant === */
+.btn-back-floating {
+  position: fixed;
+  top: 100px;
+  left: 20px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  text-decoration: none;
+
+  &:hover {
+    background: #667eea;
+    border-color: #667eea;
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
+  }
+
+  i {
+    font-size: 1.3rem;
+  }
+}
+
+/* === Bouton Créer Rapport === */
+.btn-create-report {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border: none;
+  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
+  color: white;
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    background: linear-gradient(135deg, #764ba2, #667eea);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  i {
+    font-size: 1.2rem;
+  }
+}
+
+/* === Carte de sélection === */
+.selection-card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border: 2px solid #f1f5f9;
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #e2e8f0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.selection-card-header {
+  background: linear-gradient(135deg, #f8fafc, #ffffff);
+  padding: 1.25rem 1.5rem;
+  border-bottom: 2px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+
+  i {
+    color: #667eea;
+    font-size: 1.3rem;
+  }
+
+  .selection-card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+  }
+}
+
+.selection-card-body {
+  padding: 1.5rem;
+}
+
+/* === Multiselect moderne === */
+.multiselect-modern {
+  --ms-border-color: #e2e8f0;
+  --ms-border-width: 2px;
+  --ms-radius: 12px;
+  --ms-py: 0.75rem;
+  --ms-px: 1rem;
+  --ms-ring-width: 3px;
+  --ms-ring-color: rgba(102, 126, 234, 0.1);
+  --ms-option-bg-selected: #667eea;
+  --ms-option-bg-selected-pointed: #764ba2;
+}
+
+/* === Cartes de graphiques modernes === */
+.modern-chart-card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border: 2px solid #f1f5f9;
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #e2e8f0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.chart-card-header {
+  background: linear-gradient(135deg, #f8fafc, #ffffff);
+  padding: 1.25rem 1.5rem;
+  border-bottom: 2px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+
+  i {
+    color: #667eea;
+    font-size: 1.3rem;
+  }
+
+  .chart-card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+  }
+}
+
+.chart-card-body {
+  padding: 1.5rem;
+}
+
+/* === Carte de tableau moderne === */
+.modern-table-card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border: 2px solid #f1f5f9;
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #e2e8f0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.table-card-header {
+  background: linear-gradient(135deg, #f8fafc, #ffffff);
+  padding: 1.25rem 1.5rem;
+  border-bottom: 2px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+
+  i {
+    color: #667eea;
+    font-size: 1.3rem;
+  }
+
+  .table-card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+  }
+}
+
+.table-card-body {
+  padding: 1.5rem;
+}
+
+/* === Tableau moderne === */
+.modern-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+
+  thead {
+    tr {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+
+      th {
+        padding: 1rem;
+        text-align: center;
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: white;
+        border: none;
+
+        &:first-child {
+          border-top-left-radius: 12px;
+        }
+
+        &:last-child {
+          border-top-right-radius: 12px;
+        }
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #f8fafc;
+      }
+
+      td {
+        padding: 1rem;
+        text-align: center;
+        border-bottom: 1px solid #f1f5f9;
+        color: #475569;
+      }
+    }
+  }
+
+  tfoot {
+    .table-footer-row {
+      background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+
+      td {
+        padding: 1rem;
+        border: none;
+        color: #065f46;
+      }
+    }
+  }
+}
+
+.table-badge {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  &.table-badge-number {
+    background: #f1f5f9;
+    color: #475569;
+  }
+
+  &.table-badge-info {
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    color: #1e40af;
+    border: 1px solid #93c5fd;
+  }
+
+  &.table-badge-primary {
+    background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+    color: #4338ca;
+    border: 1px solid #a5b4fc;
+  }
+
+  &.table-badge-success {
+    background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+    color: #065f46;
+    border: 1px solid #6ee7b7;
+  }
+}
+
 .progress-nav {
   position: relative;
   display: flex;
