@@ -1,8 +1,8 @@
 <template>
   <BRow>
     <BCol md="6" cols="xl-6">
-      <BCard no-body class="shadow-sm rounded-4 stat-card shadow-warning">
-        <BCardBody class="d-flex justify-content-between align-items-center p-4 bg-light">
+      <BCard no-body class="business-card stat-card shadow-warning">
+        <BCardBody class="business-card-body d-flex justify-content-between align-items-center">
           <div>
             <h4 class="fw-bold mb-1 fs-5">
               <div class="d-flex align-items-center mb-2">
@@ -31,8 +31,8 @@
     </BCol>
 
     <BCol md="6" cols="xl-6">
-      <BCard no-body class="shadow-sm rounded-4 stat-card shadow-success">
-        <BCardBody class="d-flex justify-content-between align-items-center p-4 bg-light">
+      <BCard no-body class="business-card stat-card shadow-success">
+        <BCardBody class="business-card-body d-flex justify-content-between align-items-center">
           <div>
             <div class="d-flex align-items-center mb-2">
               <i class="bi bi-check2-square text-success fs-3 me-2"></i>
@@ -172,8 +172,3 @@ export default {
   },
 }
 </script>
-
-<style lang="scss">
-@import '../../../../css/assets/scss/app2.scss';
-@import '../../../../css/admin/dashboard.scss';
-</style>

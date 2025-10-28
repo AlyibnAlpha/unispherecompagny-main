@@ -24,6 +24,9 @@ export default defineConfig((/* ctx */) => {
       '~bootstrap-icons/font/bootstrap-icons.css',
       '~@fortawesome/fontawesome-free/css/all.css',
       '~boxicons/css/boxicons.min.css',
+      // Styles globaux spécifiques au projet
+      'assets/scss/app2.scss',
+      'business/index.scss',
       // depuis node_modules
     ],
 

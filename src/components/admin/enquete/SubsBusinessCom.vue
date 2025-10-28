@@ -8,8 +8,6 @@ import {
   BPagination,
   BFormSelect,
   BTable,
-  BCardBody,
-  BCard,
   BForm,
 } from 'bootstrap-vue-next'
 import { api } from 'src/boot/axios'
@@ -27,8 +25,6 @@ export default {
     BFormInput,
     BPagination,
     BFormSelect,
-    BCardBody,
-    BCard,
     BTable,
     BForm,
   },
@@ -234,46 +230,71 @@ export default {
 </script>
 
 <template>
-  <div>
-    <BRow v-if="expired" class="gy-4">
-      <BCol md="3" v-for="sub in subscriptions" :key="sub.id">
-        <BCard no-body class="sub-card shadow-sm rounded-4">
-          <BCardBody class="p-4 d-flex flex-column align-items-center text-center">
-            <!-- Icône avec fond -->
-            <div class="icon-box mb-3" :class="sub.colorClass">
+  <div class="modern-admin-page">
+    <!-- Section Plans d'abonnement -->
+    <div v-if="expired" class="subscription-plans-section">
+      <div class="section-header-modern">
+        <div class="section-icon-wrapper">
+          <i class="bi bi-credit-card-2-front-fill"></i>
+        </div>
+        <div class="section-text">
+          <h2 class="section-title-modern">Plans d'Abonnement</h2>
+          <p class="section-subtitle-modern">Choisissez le plan qui correspond à vos besoins</p>
+        </div>
+      </div>
+
+      <BRow class="gy-4">
+        <BCol md="3" v-for="sub in subscriptions" :key="sub.id">
+          <div class="pricing-card-modern" :class="sub.types === 'Premium' ? 'featured' : ''">
+            <div v-if="sub.types === 'Premium'" class="featured-badge">
+              <i class="bi bi-star-fill me-1"></i>
+              Recommandé
+            </div>
+            
+            <div class="pricing-icon-wrapper" :class="`pricing-${sub.btnVariant}`">
               <i :class="sub.icon"></i>
             </div>
 
-            <!-- Nom du plan -->
-            <h5 class="fw-bold mb-2">{{ sub.name }}</h5>
+            <h3 class="pricing-title">{{ sub.name }}</h3>
+            
+            <div class="pricing-price">
+              <span class="price-amount">{{ sub.price.split(' ')[0] }}</span>
+              <span class="price-currency">CFA</span>
+            </div>
 
-            <!-- Prix -->
-            <h3 class="fw-bold text-dark mb-3">
-              {{ sub.price }} <small class="text-muted"></small>
-            </h3>
+            <p class="pricing-description">{{ sub.description }}</p>
 
-            <!-- Description -->
-            <p class="text-muted small mb-3">{{ sub.description }}</p>
-
-            <!-- Badges -->
-            <div class="mb-3">
-              <span class="badge fw-semibold px-3 py-1 rounded-pill" :class="sub.badgeClass">
+            <div class="pricing-badge">
+              <span class="badge-modern" :class="`badge-${sub.btnVariant}`">
                 {{ sub.type }}
               </span>
             </div>
 
-            <!-- Bouton -->
-            <BButton
-              :variant="sub.btnVariant"
+            <button 
+              class="pricing-btn" 
+              :class="`btn-${sub.btnVariant}`"
               @click="openForm(sub)"
-              class="px-4 py-2 rounded-pill fw-semibold shadow-sm"
             >
+              <i class="bi bi-check-circle-fill me-2"></i>
               S'abonner
-            </BButton>
-          </BCardBody>
-        </BCard>
-      </BCol>
-    </BRow>
+            </button>
+          </div>
+        </BCol>
+      </BRow>
+    </div>
+
+    <!-- Section Historique -->
+    <div class="subscription-history-section">
+      <div class="section-header-modern">
+        <div class="section-icon-wrapper">
+          <i class="bi bi-receipt-cutoff"></i>
+        </div>
+        <div class="section-text">
+          <h2 class="section-title-modern">Historique des Abonnements</h2>
+          <p class="section-subtitle-modern">Consultez l'historique de vos abonnements</p>
+        </div>
+      </div>
+
     <BRow>
       <BCol cols="12">
         <div class="d-flex justify-content-between">
@@ -472,6 +493,7 @@ export default {
         </BRow>
       </BCol>
     </BRow>
+    </div>
   </div>
 </template>
 <style lang="scss">

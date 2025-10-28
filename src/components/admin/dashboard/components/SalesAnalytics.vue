@@ -449,9 +449,3 @@ export default {
   },
 }
 </script>
-
-<style lang="scss">
-@import '../../../../css/assets/scss/app2.scss';
-@import '../../../../css/admin/badges.scss';
-@import '../../../../css/admin/dashboard.scss';
-</style>

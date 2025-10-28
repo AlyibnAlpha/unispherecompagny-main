@@ -16,7 +16,3 @@ export default {
   },
 }
 </script>
-
-<style>
-@import '../../../css/assets/scss/app2.scss';
-</style>

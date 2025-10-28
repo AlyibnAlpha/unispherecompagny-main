@@ -1,7 +1,7 @@
 <template>
   <q-layout>
     <q-page-container class="bg-light">
-      <q-page>
+      <q-page class="business-dashboard">
         <PageHeader :title="title" :items="items" />
         <Dashbuss />
       </q-page>
@@ -35,7 +35,3 @@ export default {
   },
 }
 </script>
-
-<style lang="scss">
-@import '../../css/assets/scss/app2.scss';
-</style>

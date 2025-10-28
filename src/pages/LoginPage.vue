@@ -169,6 +169,13 @@ export default {
     }
 
     onMounted(() => {
+      // Efface le LocalStorage une seule fois puis recharge la page
+      if (!sessionStorage.getItem('__ls_cleared')) {
+        LocalStorage.clear()
+        sessionStorage.setItem('__ls_cleared', '1')
+        window.location.reload()
+        return
+      }
       // Reset the tab to 'Client' on mount
       showPassword.value = false
     })

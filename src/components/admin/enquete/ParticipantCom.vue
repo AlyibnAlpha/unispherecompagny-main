@@ -62,12 +62,18 @@ export default {
       newCriterion.value = []
     }
 
+    const handleAddCriterion = (value) => {
+      addCriterion([value])
+      showCriteriaDropdown.value = false
+    }
+
     const removeCriterion = (value) => {
       selectedCriteria.value = selectedCriteria.value.filter((c) => c !== value)
     }
 
     const selectedCriteriaEdit = ref([]) // critères sélectionnés dans l'édition
     const newCriterionEdit = ref([]) // nouveau critère à ajouter
+    const showCriteriaDropdownEdit = ref(false)
     const availableOptionsEdit = computed(() => {
       return options.filter((opt) => !selectedCriteriaEdit.value.includes(opt.value ?? opt))
     })
@@ -80,6 +86,11 @@ export default {
         }
       })
       newCriterionEdit.value = []
+    }
+
+    const handleAddCriterionEdit = (value) => {
+      addCriterionEdit([value])
+      showCriteriaDropdownEdit.value = false
     }
 
     const removeCriterionEdit = (value) => {
@@ -358,12 +369,15 @@ export default {
     })
     return {
       addCriterionEdit,
+      handleAddCriterionEdit,
       removeCriterionEdit,
       selectedCriteriaEdit,
       newCriterionEdit,
+      showCriteriaDropdownEdit,
       availableOptionsEdit,
       availableOptions,
       addCriterion,
+      handleAddCriterion,
       removeCriterion,
       newCriterion,
       selectedCriteria,
@@ -473,137 +487,143 @@ export default {
         </div>
 
         <q-dialog v-model="ajout" transition-show="scale" transition-hide="fade">
-            <q-card class="modern-modal-card">
-              <!-- Header moderne -->
-              <div class="modern-modal-header">
-                <div class="modal-header-content">
-                  <div class="modal-icon">
-                    <i class="bi bi-people-fill"></i>
-                  </div>
-                  <div class="modal-title-section">
-                    <h3 class="modal-title">Nouveau Groupe de Participants</h3>
-                    <p class="modal-subtitle">Définissez les critères pour cibler vos participants</p>
-                  </div>
+          <q-card class="modern-modal-card">
+            <!-- Header moderne -->
+            <div class="modern-modal-header">
+              <div class="modal-header-content">
+                <div class="modal-icon">
+                  <i class="bi bi-people-fill"></i>
                 </div>
-                <button class="modal-close-btn" @click="ajout = false">
-                  <i class="bi bi-x"></i>
-                </button>
+                <div class="modal-title-section">
+                  <h3 class="modal-title">Nouveau Groupe de Participants</h3>
+                  <p class="modal-subtitle">Définissez les critères pour cibler vos participants</p>
+                </div>
               </div>
+              <button class="modal-close-btn" @click="ajout = false">
+                <i class="bi bi-x"></i>
+              </button>
+            </div>
 
-              <!-- Formulaire -->
-              <div class="modern-modal-body" style="max-height: 70vh; overflow-y: auto">
-                <BForm>
-                  <BRow>
-                    <BCol cols="12" class="mb-2">
-                      <h4>Informations générales</h4>
-                    </BCol>
-                    <!-- Nom -->
-                    <BCol cols="6" md="6" class="mb-2 floating-label">
-                      <input
-                        id="title"
-                        v-model="form.name"
-                        type="text"
-                        class="form-control-modern"
-                        placeholder=" "
-                      />
-                      <label for="title">Nom du participant</label>
-                    </BCol>
+            <!-- Formulaire -->
+            <div class="modern-modal-body">
+              <BForm>
+                <div class="info-section">
+                  <h4>
+                    <i class="bi bi-info-circle-fill"></i>
+                    Informations générales
+                  </h4>
+                <BRow>
+                  <!-- Nom -->
+                  <BCol cols="6" md="6" class="mb-2 floating-label">
+                    <input
+                      id="title"
+                      v-model="form.name"
+                      type="text"
+                      class="form-control-modern"
+                      placeholder=" "
+                    />
+                    <label for="title">Nom du participant</label>
+                  </BCol>
 
-                    <!-- Description -->
-                    <BCol cols="6" md="6" class="mb-2 floating-label">
-                      <textarea
-                        id="desc"
-                        v-model="form.description"
-                        class="form-control-modern"
-                        rows="1"
-                        placeholder=" "
-                      ></textarea>
-                      <label for="desc">Description</label>
-                    </BCol>
-                  </BRow>
+                  <!-- Description -->
+                  <BCol cols="6" md="6" class="mb-2 floating-label">
+                    <textarea
+                      id="desc"
+                      v-model="form.description"
+                      class="form-control-modern"
+                      rows="1"
+                      placeholder=" "
+                    ></textarea>
+                    <label for="desc">Description</label>
+                  </BCol>
+                </BRow>
+                </div>
 
-                  <div class="info-section mb-4">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                      <h5 class="section-title mb-0">
-                        <i class="bi bi-sliders me-2"></i>
-                        Critères de sélection
-                      </h5>
-                      <div class="dropdown">
+                <div class="info-section mb-4">
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="section-title mb-0">
+                      <i class="bi bi-sliders me-2"></i>
+                      Critères de sélection
+                    </h5>
+                    <div class="dropdown">
+                      <button
+                        type="button"
+                        class="btn-add-criteria-dropdown"
+                        @click="showCriteriaDropdown = !showCriteriaDropdown"
+                      >
+                        <i class="bi bi-plus-circle me-2"></i>
+                        Ajouter un critère
+                        <i class="bi bi-chevron-down ms-2"></i>
+                      </button>
+                      <div v-if="showCriteriaDropdown" class="criteria-dropdown-menu">
                         <button
+                          v-for="option in availableOptions"
+                          :key="option.value"
                           type="button"
-                          class="btn-add-criteria-dropdown"
-                          @click="showCriteriaDropdown = !showCriteriaDropdown"
+                          class="criteria-dropdown-item"
+                          @click="handleAddCriterion(option.value)"
+                          :disabled="selectedCriteria.includes(option.value)"
                         >
-                          <i class="bi bi-plus-circle me-2"></i>
-                          Ajouter un critère
-                          <i class="bi bi-chevron-down ms-2"></i>
+                          <i
+                            class="bi bi-check-circle me-2"
+                            v-if="selectedCriteria.includes(option.value)"
+                          ></i>
+                          <i class="bi bi-circle me-2" v-else></i>
+                          {{ option.label }}
                         </button>
-                        <div v-if="showCriteriaDropdown" class="criteria-dropdown-menu">
-                          <button
-                            v-for="option in availableOptions"
-                            :key="option.value"
-                            type="button"
-                            class="criteria-dropdown-item"
-                            @click="addCriterion([option.value]); showCriteriaDropdown = false"
-                            :disabled="selectedCriteria.includes(option.value)"
-                          >
-                            <i class="bi bi-check-circle me-2" v-if="selectedCriteria.includes(option.value)"></i>
-                            <i class="bi bi-circle me-2" v-else></i>
-                            {{ option.label }}
-                          </button>
-                        </div>
                       </div>
                     </div>
+                  </div>
 
-                    <!-- Section dynamique des critères -->
-                    <div
-                      v-for="(crit, index) in selectedCriteria"
-                      :key="index"
-                      class="criteria-card mb-3"
-                    >
-                      <div class="criteria-card-header">
-                        <div class="criteria-title">
-                          <i class="bi bi-filter-circle me-2"></i>
-                          <strong>{{ crit }}</strong>
-                        </div>
-                        <button
-                          type="button"
-                          class="btn-delete-criteria"
-                          @click="removeCriterion(crit)"
-                          title="Supprimer ce critère"
-                        >
-                          <i class="bi bi-trash"></i>
-                        </button>
+                  <!-- Section dynamique des critères -->
+                  <div
+                    v-for="(crit, index) in selectedCriteria"
+                    :key="index"
+                    class="criteria-card mb-3"
+                  >
+                    <div class="criteria-card-header">
+                      <div class="criteria-title">
+                        <i class="bi bi-filter-circle me-2"></i>
+                        <strong>{{ crit }}</strong>
                       </div>
+                      <button
+                        type="button"
+                        class="btn-delete-criteria"
+                        @click="removeCriterion(crit)"
+                        title="Supprimer ce critère"
+                      >
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
 
-                      <!-- Champs dynamiques selon le critère -->
-                      <div class="criteria-card-body">
-                        <template v-if="crit === 'Genre'">
-                          <BRow>
-                            <BCol cols="12">
-                              <div class="gender-options">
-                                <button
-                                  type="button"
-                                  class="gender-option"
-                                  :class="{ active: form.criteria.gender === 'H' }"
-                                  @click="form.criteria.gender = 'H'"
-                                >
-                                  <i class="bi bi-gender-male me-2"></i>
-                                  Homme
-                                </button>
-                                <button
-                                  type="button"
-                                  class="gender-option"
-                                  :class="{ active: form.criteria.gender === 'F' }"
-                                  @click="form.criteria.gender = 'F'"
-                                >
-                                  <i class="bi bi-gender-female me-2"></i>
-                                  Femme
-                                </button>
-                              </div>
-                            </BCol>
-                          </BRow>
-                        </template>
+                    <!-- Champs dynamiques selon le critère -->
+                    <div class="criteria-card-body">
+                      <template v-if="crit === 'Genre'">
+                        <BRow>
+                          <BCol cols="12">
+                            <div class="gender-options">
+                              <button
+                                type="button"
+                                class="gender-option"
+                                :class="{ active: form.criteria.gender === 'H' }"
+                                @click="form.criteria.gender = 'H'"
+                              >
+                                <i class="bi bi-gender-male me-2"></i>
+                                Homme
+                              </button>
+                              <button
+                                type="button"
+                                class="gender-option"
+                                :class="{ active: form.criteria.gender === 'F' }"
+                                @click="form.criteria.gender = 'F'"
+                              >
+                                <i class="bi bi-gender-female me-2"></i>
+                                Femme
+                              </button>
+                            </div>
+                          </BCol>
+                        </BRow>
+                      </template>
 
                       <template v-else-if="crit === 'Age'">
                         <div class="row">
@@ -667,28 +687,28 @@ export default {
                           </div>
                         </div>
                       </template>
-                      </div>
                     </div>
                   </div>
+                </div>
 
-                  <!-- Boutons -->
-                  <div class="modal-footer-actions">
-                    <button class="modal-btn modal-btn-cancel" @click="ajout = false">
-                      <i class="bi bi-x-circle me-2"></i>
-                      Annuler
-                    </button>
-                    <button v-if="loadings" class="modal-btn modal-btn-primary" disabled>
-                      <q-spinner-dots color="white" size="20px" class="me-2" />
-                      Enregistrement...
-                    </button>
-                    <button v-else class="modal-btn modal-btn-primary" @click="Add">
-                      <i class="bi bi-check-circle me-2"></i>
-                      Enregistrer
-                    </button>
-                  </div>
-                </BForm>
-              </div>
-            </q-card>
+                <!-- Boutons -->
+                <div class="modal-footer-actions">
+                  <button class="modal-btn modal-btn-cancel" @click="ajout = false">
+                    <i class="bi bi-x-circle me-2"></i>
+                    Annuler
+                  </button>
+                  <button v-if="loadings" class="modal-btn modal-btn-primary" disabled>
+                    <q-spinner-dots color="white" size="20px" class="me-2" />
+                    Enregistrement...
+                  </button>
+                  <button v-else class="modal-btn modal-btn-primary" @click="Add">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Enregistrer
+                  </button>
+                </div>
+              </BForm>
+            </div>
+          </q-card>
         </q-dialog>
 
         <div class="modern-table-container">
@@ -719,104 +739,109 @@ export default {
             <q-spinner-ball color="green" size="50px" />
             <p class="loading-text">Chargement des groupes...</p>
           </div>
-          <div
-            v-else-if="Array.isArray(orderData) && orderData.length === 0"
-            class="empty-state"
-          >
+          <div v-else-if="Array.isArray(orderData) && orderData.length === 0" class="empty-state">
             <i class="bi bi-people empty-icon"></i>
             <h4 class="empty-title">Aucun groupe trouvé</h4>
-            <p class="empty-description">Commencez par créer votre premier groupe de participants</p>
+            <p class="empty-description">
+              Commencez par créer votre premier groupe de participants
+            </p>
           </div>
           <div v-else class="table-wrapper">
             <BTable
               table-class="modern-table"
               thead-tr-class="table-header"
-            :items="orderData"
-            :fields="fields"
-            responsive="sm"
-            :per-page="perPage"
-            :current-page="currentPage"
-            :filter="filter"
-            :filter-included-fields="filterOn"
-            @filtered="onFiltered"
-          >
-            <template v-slot:cell(check)="data">
-              <div class="custom-control custom-checkbox text-center">
-                <input
-                  type="checkbox"
-                  class="form-check-input"
-                  :id="`contacusercheck${data.item.id}`"
-                />
-              </div>
-            </template>
+              :items="orderData"
+              :fields="fields"
+              responsive="sm"
+              :per-page="perPage"
+              :current-page="currentPage"
+              :filter="filter"
+              :filter-included-fields="filterOn"
+              @filtered="onFiltered"
+            >
+              <template v-slot:cell(check)="data">
+                <div class="custom-control custom-checkbox text-center">
+                  <input
+                    type="checkbox"
+                    class="form-check-input"
+                    :id="`contacusercheck${data.item.id}`"
+                  />
+                </div>
+              </template>
 
-            <template v-slot:cell(name)="data">
-              <a href="#" class="text-body">{{ data.item.name }}</a>
-            </template>
+              <template v-slot:cell(name)="data">
+                <a href="#" class="text-body">{{ data.item.name }}</a>
+              </template>
 
-            <template v-slot:cell(description)="data">
-              <a href="#" class="text-body">{{
-                data.item.description.length > 50
-                  ? data.item.description.substring(0, 50) + '...'
-                  : data.item.description
-              }}</a>
-            </template>
-            <template v-slot:cell(profession)="data">
-              <a href="#" class="text-body">{{
-                Array.isArray(data.item.criteria.profession.sector)
-                  ? data.item.criteria.profession.sector.join(', ')
-                  : data.item.criteria.profession.sector || '—'
-              }}</a>
-            </template>
-            <template v-slot:cell(location)="data">
-              <a href="#" class="text-body">{{ data.item.criteria.location.country }}</a>
-            </template>
-            <template v-slot:cell(manager)="data">
-              <a href="#" class="text-warning">
-                {{
-                  data.item.manager.businessAccount?.lastName || data.item.manager.admin?.lastName
-                }}-{{ data.item.manager.email }}</a
-              >
-            </template>
+              <template v-slot:cell(description)="data">
+                <a href="#" class="text-body">{{
+                  data.item.description.length > 50
+                    ? data.item.description.substring(0, 50) + '...'
+                    : data.item.description
+                }}</a>
+              </template>
+              <template v-slot:cell(profession)="data">
+                <a href="#" class="text-body">{{
+                  Array.isArray(data.item.criteria.profession.sector)
+                    ? data.item.criteria.profession.sector.join(', ')
+                    : data.item.criteria.profession.sector || '—'
+                }}</a>
+              </template>
+              <template v-slot:cell(location)="data">
+                <a href="#" class="text-body">{{ data.item.criteria.location.country }}</a>
+              </template>
+              <template v-slot:cell(manager)="data">
+                <a href="#" class="text-warning">
+                  {{
+                    data.item.manager.businessAccount?.lastName ||
+                    data.item.manager.admin?.lastName
+                  }}-{{ data.item.manager.email }}</a
+                >
+              </template>
 
-            <template v-slot:cell(action)="data">
-              <ul class="list-inline mb-0">
-                <li class="list-inline-item">
-                  <a
-                    href="#"
-                    class="px-2 text-info"
-                    @click.prevent="openDetailModal(data.item.id)"
-                    title="Voir les détails"
-                  >
-                    <i class="bi bi-eye" style="font-size: 18px"></i>
-                  </a>
-                </li>
-                <li class="list-inline-item">
-                  <a
-                    href="#"
-                    class="px-2 text-warning"
-                    @click.prevent="openEditModal(data.item)"
-                    title="Modifier"
-                  >
-                    <i class="uil uil-pen font-size-18"></i>
-                  </a>
-                </li>
-                <li class="list-inline-item">
-                  <a
-                    href="#"
-                    class="px-2 text-danger"
-                    @click.prevent="deleteRow(data.item.id)"
-                    title="Supprimer"
-                  >
-                    <i class="uil uil-trash-alt font-size-18"></i>
-                  </a>
-                </li>
-              </ul>
-            </template>
+              <template v-slot:cell(action)="data">
+                <ul class="list-inline mb-0">
+                  <li class="list-inline-item">
+                    <a
+                      href="#"
+                      class="px-2 text-info"
+                      @click.prevent="openDetailModal(data.item.id)"
+                      title="Voir les détails"
+                    >
+                      <i class="bi bi-eye" style="font-size: 18px"></i>
+                    </a>
+                  </li>
+                  <li class="list-inline-item">
+                    <a
+                      href="#"
+                      class="px-2 text-warning"
+                      @click.prevent="openEditModal(data.item)"
+                      title="Modifier"
+                    >
+                      <i class="uil uil-pen font-size-18"></i>
+                    </a>
+                  </li>
+                  <li class="list-inline-item">
+                    <a
+                      href="#"
+                      class="px-2 text-danger"
+                      @click.prevent="deleteRow(data.item.id)"
+                      title="Supprimer"
+                    >
+                      <i class="uil uil-trash-alt font-size-18"></i>
+                    </a>
+                  </li>
+                </ul>
+              </template>
             </BTable>
           </div>
           <div class="pagination-container">
-            <BPagination v-model="currentPage" :total-rows="rows" :per-page="perPage" class="modern-pagination" />
+            <BPagination
+              v-model="currentPage"
+              :total-rows="rows"
+              :per-page="perPage"
+              class="modern-pagination"
+            />
           </div>
         </div>
       </BCol>
@@ -840,13 +865,14 @@ export default {
         </div>
 
         <!-- Formulaire -->
-        <div class="modern-modal-body" style="max-height: 70vh; overflow-y: auto">
+        <div class="modern-modal-body">
           <BForm>
-            <!-- Nom -->
+            <div class="info-section">
+              <h4>
+                <i class="bi bi-info-circle-fill"></i>
+                Informations générales
+              </h4>
             <BRow>
-              <BCol cols="12" class="mb-4">
-                <h4>Informations générales</h4>
-              </BCol>
               <!-- Nom -->
               <BCol cols="6" md="6" class="mb-2 floating-label">
                 <input
@@ -871,117 +897,157 @@ export default {
                 <label for="desc">Description</label>
               </BCol>
             </BRow>
+            </div>
 
-            <BCol cols="12" class="mb-3">
-              <h4>Critères</h4>
-            </BCol>
-            <BCol cols="5" class="mb-4 floating-label">
-              <Multiselect
-                v-model="newCriterionEdit"
-                :options="availableOptionsEdit"
-                :searchable="false"
-                :close-on-select="true"
-                placeholder="Ajouter un critère"
-                class="form-control-modern"
-                mode="tags"
-                @update:model-value="addCriterionEdit"
-              />
-            </BCol>
-
-            <div
-              v-for="(crit, index) in selectedCriteriaEdit"
-              :key="index"
-              class="criteria-section"
-            >
-              <div class="criteria-header">
-                <div class="criteria-label">
-                  <strong>{{ crit }}</strong>
+            <div class="info-section mb-4">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="section-title mb-0">
+                  <i class="bi bi-sliders me-2"></i>
+                  Critères de sélection
+                </h5>
+                <div class="dropdown">
+                  <button
+                    type="button"
+                    class="btn-add-criteria-dropdown"
+                    @click="showCriteriaDropdownEdit = !showCriteriaDropdownEdit"
+                  >
+                    <i class="bi bi-plus-circle me-2"></i>
+                    Ajouter un critère
+                    <i class="bi bi-chevron-down ms-2"></i>
+                  </button>
+                  <div v-if="showCriteriaDropdownEdit" class="criteria-dropdown-menu">
+                    <button
+                      v-for="option in availableOptionsEdit"
+                      :key="option.value"
+                      type="button"
+                      class="criteria-dropdown-item"
+                      @click="handleAddCriterionEdit(option.value)"
+                      :disabled="selectedCriteriaEdit.includes(option.value)"
+                    >
+                      <i
+                        class="bi bi-check-circle me-2"
+                        v-if="selectedCriteriaEdit.includes(option.value)"
+                      ></i>
+                      <i class="bi bi-circle me-2" v-else></i>
+                      {{ option.label }}
+                    </button>
+                  </div>
                 </div>
-                <q-btn
-                  flat
-                  round
-                  color="red"
-                  icon="delete"
-                  size="sm"
-                  @click="removeCriterionEdit(crit)"
-                />
               </div>
 
-              <div class="criteria-body mt-2">
-                <template v-if="crit === 'Genre'">
-                  <Multiselect
-                    v-model="formu.criteria.gender"
-                    :options="[
-                      { label: 'Homme', value: 'H' },
-                      { label: 'Femme', value: 'F' },
-                    ]"
-                    placeholder="Sélectionner le genre"
-                    class="form-control-modern"
-                  />
-                </template>
-
-                <template v-else-if="crit === 'Age'">
-                  <div class="row">
-                    <div class="col-md-6 mb-2">
-                      <input
-                        v-model="formu.criteria.age.min"
-                        type="number"
-                        class="form-control-modern"
-                        placeholder="Âge minimum"
-                      />
-                    </div>
-                    <div class="col-md-6 mb-2">
-                      <input
-                        v-model="formu.criteria.age.max"
-                        type="number"
-                        class="form-control-modern"
-                        placeholder="Âge maximum"
-                      />
-                    </div>
+              <!-- Section dynamique des critères -->
+              <div
+                v-for="(crit, index) in selectedCriteriaEdit"
+                :key="index"
+                class="criteria-card mb-3"
+              >
+                <div class="criteria-card-header">
+                  <div class="criteria-title">
+                    <i class="bi bi-filter-circle me-2"></i>
+                    <strong>{{ crit }}</strong>
                   </div>
-                </template>
+                  <button
+                    type="button"
+                    class="btn-delete-criteria"
+                    @click="removeCriterionEdit(crit)"
+                    title="Supprimer ce critère"
+                  >
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
 
-                <template v-else-if="crit === 'Localité'">
-                  <div class="row">
-                    <div class="col-md-6 mb-2">
-                      <input
-                        v-model="formu.criteria.location.city"
-                        type="text"
-                        class="form-control-modern"
-                        placeholder="Ville"
-                      />
-                    </div>
-                    <div class="col-md-6 mb-2">
-                      <Multiselect
-                        v-model="formu.criteria.location.country"
-                        :options="optionl"
-                        placeholder="Pays"
-                        class="form-control-modern"
-                      />
-                    </div>
-                  </div>
-                </template>
+                <!-- Champs dynamiques selon le critère -->
+                <div class="criteria-card-body">
+                  <template v-if="crit === 'Genre'">
+                    <BRow>
+                      <BCol cols="12">
+                        <div class="gender-options">
+                          <button
+                            type="button"
+                            class="gender-option"
+                            :class="{ active: formu.criteria.gender === 'H' }"
+                            @click="formu.criteria.gender = 'H'"
+                          >
+                            <i class="bi bi-gender-male me-2"></i>
+                            Homme
+                          </button>
+                          <button
+                            type="button"
+                            class="gender-option"
+                            :class="{ active: formu.criteria.gender === 'F' }"
+                            @click="formu.criteria.gender = 'F'"
+                          >
+                            <i class="bi bi-gender-female me-2"></i>
+                            Femme
+                          </button>
+                        </div>
+                      </BCol>
+                    </BRow>
+                  </template>
 
-                <template v-else-if="crit === 'Secteur'">
-                  <div class="row">
-                    <div class="col-md-6 mb-2">
-                      <input
-                        v-model="formu.criteria.profession.type"
-                        type="text"
-                        class="form-control-modern"
-                        placeholder="Type de profession"
-                      />
+                  <template v-else-if="crit === 'Age'">
+                    <div class="row">
+                      <div class="col-md-6 mb-2">
+                        <input
+                          v-model="formu.criteria.age.min"
+                          type="number"
+                          class="form-control-modern"
+                          placeholder="Âge minimum"
+                        />
+                      </div>
+                      <div class="col-md-6 mb-2">
+                        <input
+                          v-model="formu.criteria.age.max"
+                          type="number"
+                          class="form-control-modern"
+                          placeholder="Âge maximum"
+                        />
+                      </div>
                     </div>
-                    <div class="col-md-6 mb-2">
-                      <Multiselect
-                        v-model="formu.criteria.profession.sector"
-                        :options="optionl2"
-                        placeholder="Sélectionner un secteur"
-                        class="form-control-modern"
-                      />
+                  </template>
+
+                  <template v-else-if="crit === 'Localité'">
+                    <div class="row">
+                      <div class="col-md-6 mb-2">
+                        <input
+                          v-model="formu.criteria.location.city"
+                          type="text"
+                          class="form-control-modern"
+                          placeholder="Ville"
+                        />
+                      </div>
+                      <div class="col-md-6 mb-2">
+                        <Multiselect
+                          v-model="formu.criteria.location.country"
+                          :options="optionl"
+                          placeholder="Pays"
+                          class="form-control-modern"
+                        />
+                      </div>
                     </div>
-                  </div>
-                </template>
+                  </template>
+
+                  <template v-else-if="crit === 'Secteur'">
+                    <div class="row">
+                      <div class="col-md-6 mb-2">
+                        <input
+                          v-model="formu.criteria.profession.type"
+                          type="text"
+                          class="form-control-modern"
+                          placeholder="Type de profession"
+                        />
+                      </div>
+                      <div class="col-md-6 mb-2">
+                        <Multiselect
+                          v-model="formu.criteria.profession.sector"
+                          :options="optionl2"
+                          placeholder="Sélectionner un secteur"
+                          class="form-control-modern"
+                        />
+                      </div>
+                    </div>
+                  </template>
+                </div>
               </div>
             </div>
 
@@ -1008,10 +1074,7 @@ export default {
 </template>
 
 <style lang="scss">
-@import '../../../css/assets/scss/app2.scss';
+@import '../../../css/admin/users-management.scss';
 @import '../../../css/admin/tables-shared.scss';
 @import '../../../css/admin/participants.scss';
-@import '../../../css/admin/badges.scss';
-
-// ✅ Tous les styles sont maintenant dans les fichiers SCSS partagés
 </style>

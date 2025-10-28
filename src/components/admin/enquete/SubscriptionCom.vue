@@ -36,6 +36,12 @@ export default {
     const optionl = ref([])
     const loading = ref(false)
     const loadings = ref(false)
+    const stats = ref({
+      total: 0,
+      active: 0,
+      expired: 0,
+      pending: 0,
+    })
     const optionl2 = ref([
       { label: 'Mensuelle - 1 mois', value: 'Mensuelle' },
       { label: 'Standard - 3 mois', value: 'Standard' },
@@ -71,6 +77,12 @@ export default {
         loading.value = true
         const response = await api.get('/admin/subscription')
         orderData.value = response.data.subscriptions
+        
+        // Calculer les statistiques
+        stats.value.total = orderData.value.length
+        stats.value.active = orderData.value.filter(s => s.status === 'active').length
+        stats.value.expired = orderData.value.filter(s => s.status === 'expired').length
+        stats.value.pending = orderData.value.filter(s => s.status === 'En attend').length
       } catch (error) {
         console.log(error)
       } finally {
@@ -180,6 +192,7 @@ export default {
       getsBusiness()
     })
     return {
+      stats,
       openDetailModal,
       selectedTask,
       opendMdet,
@@ -262,24 +275,70 @@ export default {
 </script>
 
 <template>
-  <div class="modern-enquete-container">
+  <div class="modern-admin-page">
+    <!-- Hero Header -->
+    <div class="subscription-hero-header">
+      <div class="hero-background"></div>
+      <div class="hero-content">
+        <div class="hero-icon-wrapper">
+          <i class="bi bi-credit-card-2-front-fill"></i>
+        </div>
+        <div class="hero-info">
+          <h1 class="hero-title">Gestion des Abonnements</h1>
+          <p class="hero-subtitle">Créez et gérez les abonnements des comptes business</p>
+        </div>
+        <BButton variant="success" class="hero-action-btn" @click="ajout = true">
+          <i class="bi bi-plus-circle-fill me-2"></i>
+          Créer un abonnement
+        </BButton>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid-modern stats-grid-4">
+      <div class="stat-card-modern stat-card-primary">
+        <div class="stat-icon-wrapper">
+          <i class="bi bi-credit-card-fill"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-value">{{ stats.total }}</h3>
+          <p class="stat-label">Total Abonnements</p>
+        </div>
+      </div>
+
+      <div class="stat-card-modern stat-card-success">
+        <div class="stat-icon-wrapper">
+          <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-value">{{ stats.active }}</h3>
+          <p class="stat-label">Actifs</p>
+        </div>
+      </div>
+
+      <div class="stat-card-modern stat-card-danger">
+        <div class="stat-icon-wrapper">
+          <i class="bi bi-x-circle-fill"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-value">{{ stats.expired }}</h3>
+          <p class="stat-label">Expirés</p>
+        </div>
+      </div>
+
+      <div class="stat-card-modern stat-card-warning">
+        <div class="stat-icon-wrapper">
+          <i class="bi bi-clock-fill"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-value">{{ stats.pending }}</h3>
+          <p class="stat-label">En attente</p>
+        </div>
+      </div>
+    </div>
+
     <BRow>
       <BCol cols="12">
-        <div class="page-header">
-          <div class="header-content">
-            <div class="header-icon">
-              <i class="bi bi-credit-card-2-front"></i>
-            </div>
-            <div>
-              <h2 class="page-title">Gestion des Abonnements</h2>
-              <p class="page-subtitle">Créez et gérez les abonnements des comptes business</p>
-            </div>
-          </div>
-          <BButton variant="success" class="modern-create-btn" @click="ajout = true">
-            <i class="bi bi-plus-circle me-2"></i>
-            Créer un abonnement
-          </BButton>
-        </div>
 
           <q-dialog v-model="ajout" transition-show="scale" transition-hide="fade">
             <q-card class="modern-modal-card">
