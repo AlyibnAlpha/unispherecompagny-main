@@ -1,5 +1,5 @@
 <script>
-import { BCard, BCardBody, BCol, BRow, BPagination, BFormInput } from 'bootstrap-vue-next'
+import { BCol, BRow, BPagination } from 'bootstrap-vue-next'
 import { onMounted, ref } from 'vue'
 import { api } from 'src/boot/axios.js'
 /**
@@ -71,12 +71,9 @@ export default {
     }
   },
   components: {
-    BCard,
-    BCardBody,
     BCol,
     BRow,
     BPagination,
-    BFormInput,
   },
   computed: {
     filteredCourses() {
@@ -128,266 +125,220 @@ export default {
 </script>
 
 <template>
-  <div>
-    <BRow>
-      <BCol lg="12" cols="xl-12">
-        <BCard no-body>
-          <BCardBody>
-            <div>
-              <BRow>
-                <BCol md="6">
-                  <div>
-                    <h5>Historique des sondages</h5>
-                  </div>
-                </BCol>
+  <div class="surveys-modern-container">
+    <!-- Header moderne -->
+    <div class="surveys-header-modern">
+      <div class="header-left">
+        <h2 class="surveys-title-modern">
+          <i class="bi bi-clock-history me-2"></i>
+          Historique des sondages
+        </h2>
+        <p class="surveys-subtitle">Consultez tous vos sondages terminés</p>
+      </div>
+      <div class="header-right">
+        <div class="search-box-modern">
+          <i class="bi bi-search"></i>
+          <input
+            type="text"
+            v-model="searchQuery"
+            @input="currentPage = 1"
+            placeholder="Rechercher un sondage..."
+            class="search-input-modern"
+          />
+        </div>
+      </div>
+    </div>
+    <!-- Loading -->
+    <div v-if="loading" class="loading-modern">
+      <q-spinner-ball color="primary" size="60px" />
+      <p>Chargement...</p>
+    </div>
 
-                <BCol md="6">
-                  <div class="form-inline float-md-end">
-                    <div class="search-box ms-2">
-                      <div class="position-relative">
-                        <BFormInput
-                          type="text"
-                          v-model="searchQuery"
-                          @input="currentPage = 1"
-                          class="form-control bg-light border-light rounded"
-                          placeholder="Search..."
-                        />
-                        <i class="mdi mdi-magnify search-icon"></i>
-                      </div>
-                    </div>
-                  </div>
-                </BCol>
-              </BRow>
-              <div v-if="loading" class="text-center my-5">
-                <q-spinner-ball color="green" size="50px" />
+    <!-- Empty state -->
+    <div v-else-if="paginatedCourses.length === 0" class="empty-state-modern">
+      <i class="bi bi-inbox" style="font-size: 4rem; color: #cbd5e1;"></i>
+      <h3>Aucun historique</h3>
+      <p>Vous n'avez pas encore terminé de sondages</p>
+    </div>
+
+    <!-- Cards grid -->
+    <BRow v-else class="mt-4">
+      <BCol sm="6" lg="3" v-for="item in paginatedCourses" :key="item.id" class="mb-4">
+        <a :href="'/participant/enquetes-avis/' + item.id" class="survey-card-link">
+          <div class="survey-card">
+            <div class="survey-image-modern">
+              <div class="survey-badge">
+                <i class="bi bi-clock"></i>
+                {{ item.startDate }} semaine{{ item.startDate > 1 ? 's' : '' }}
               </div>
-              <div
-                v-else-if="Array.isArray(paginatedCourses) && paginatedCourses.length === 0"
-                class="text-center py-5"
-              >
-                <i class="uil uil-folder-open text-muted" style="font-size: 3rem"></i>
-                <p class="mt-3 text-muted">Aucune Historique</p>
+              <div class="survey-icon-large">
+                <i class="bi bi-clipboard-check"></i>
               </div>
-              <BRow style="margin-top: 25px">
-                <div class="survey-cards-container">
-                  <div v-for="item in paginatedCourses" :key="item.id">
-                    <div
-                      class="survey-card"
-                      @mouseover="item.hover = true"
-                      @mouseleave="item.hover = false"
-                    >
-                      <div class="survey-image">
-                        <div v-if="item.startDate" class="survey-badge">
-                          {{ item.startDate }} semaine
-                        </div>
-                        <img src="/images/course/course-type-01-02/sondage.webp" alt="Sondage" />
-                      </div>
+            </div>
 
-                      <button class="btn-share" @click="shareCourse(item)">
-                        <i class="bi bi-share"></i>
-                      </button>
+            <div class="survey-content">
+              <h5 class="survey-title">
+                <a :href="'/participant/enquetes-avis/' + item.id">
+                  {{ item.title }}
+                </a>
+              </h5>
+              <p class="survey-description">
+                {{ item.description || 'Aucune description disponible.' }}
+              </p>
 
-                      <div class="survey-content">
-                        <h5 class="survey-title">
-                          <router-link :to="'/admin/enquetes-avis/' + item.id">
-                            {{ item.title }}
-                          </router-link>
-                        </h5>
-                        <p class="survey-description">
-                          {{ item.description || 'Aucune description disponible.' }}
-                        </p>
-
-                        <div class="survey-stats">
-                          <span class="badge bg-primary">
-                            <i class="uil-comment-chart-line"></i>
-                            {{ item.question_groups }} Questions
-                          </span>
-                          <span class="badge bg-success">
-                            <i class="uil-comment-check"></i>
-                            {{ item.survey_participants }} Réponses
-                          </span>
-                        </div>
-                      </div>
-                    </div>
+              <div class="survey-stats-modern">
+                <div class="stat-item">
+                  <i class="bi bi-question-circle-fill stat-icon"></i>
+                  <div class="stat-content">
+                    <div class="stat-number">{{ item.question_groups }}</div>
+                    <div class="stat-label">Questions</div>
                   </div>
                 </div>
-              </BRow>
-
-              <BRow class="mt-4">
-                <BCol lg="12">
-                  <BPagination
-                    v-if="courses.length > 0"
-                    class="justify-content-end"
-                    pills
-                    v-model="currentPage"
-                    :total-rows="courses.length"
-                    :per-page="perPage"
-                    aria-controls="my-table"
-                  ></BPagination>
-                </BCol>
-              </BRow>
+                <div class="stat-item">
+                  <i class="bi bi-check-circle-fill stat-icon"></i>
+                  <div class="stat-content">
+                    <div class="stat-number">{{ item.survey_participants }}</div>
+                    <div class="stat-label">Réponses</div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </BCardBody>
-        </BCard>
+          </div>
+        </a>
+      </BCol>
+    </BRow>
+
+    <!-- Pagination -->
+    <BRow class="mt-4" v-if="courses.length > perPage">
+      <BCol lg="12">
+        <BPagination
+          class="pagination-modern"
+          v-model="currentPage"
+          :total-rows="filteredCourses.length"
+          :per-page="perPage"
+          pills
+        ></BPagination>
       </BCol>
     </BRow>
   </div>
 </template>
 
-<style>
-@import '../../../css/assets/scss/app2.scss';
-/* Container responsive */
-.survey-cards-container {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
+<style lang="scss" scoped>
+@import '../../../css/participant/surveys.scss';
+
+// Styles spécifiques pour le header
+.surveys-modern-container {
+  padding: 20px 0;
 }
 
-@media (min-width: 768px) {
-  .survey-cards-container {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1200px) {
-  .survey-cards-container {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-/* Carte */
-.survey-card {
-  background: #fff;
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
+.surveys-header-modern {
   display: flex;
-  flex-direction: column;
-  position: relative;
-  height: 100%;
-}
-
-.survey-card:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
-}
-
-/* Image */
-.survey-image {
-  position: relative;
-  height: 180px;
-  overflow: hidden;
-}
-
-.survey-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.4s ease;
-}
-
-.survey-card:hover .survey-image img {
-  transform: scale(1.08);
-}
-
-/* Badge semaine */
-.survey-badge {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  background: linear-gradient(135deg, #ffc107, #ff9800);
-  color: #000;
-  padding: 5px 10px;
-  font-size: 13px;
-  font-weight: bold;
-  border-radius: 12px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
-}
-
-/* Bouton partage */
-.btn-share {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  background: #25e3fc;
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 38px;
-  height: 38px;
-  display: flex;
+  justify-content: space-between;
   align-items: center;
+  margin-bottom: 32px;
+  padding: 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  color: white;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .header-left {
+    .surveys-title-modern {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin: 0 0 8px 0;
+      display: flex;
+      align-items: center;
+
+      i {
+        font-size: 2rem;
+      }
+    }
+
+    .surveys-subtitle {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 1rem;
+    }
+  }
+
+  .header-right {
+    .search-box-modern {
+      position: relative;
+      display: flex;
+      align-items: center;
+
+      i {
+        position: absolute;
+        left: 16px;
+        font-size: 1.2rem;
+        color: #64748b;
+      }
+
+      .search-input-modern {
+        padding: 12px 16px 12px 48px;
+        border: none;
+        border-radius: 12px;
+        width: 300px;
+        font-size: 0.95rem;
+        background: white;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+
+        &:focus {
+          outline: none;
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+          width: 350px;
+        }
+
+        &::placeholder {
+          color: #94a3b8;
+        }
+
+        @media (max-width: 768px) {
+          width: 100%;
+
+          &:focus {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}
+
+.loading-modern {
+  text-align: center;
+  padding: 60px 20px;
+  color: #64748b;
+
+  p {
+    margin-top: 16px;
+    font-size: 1.1rem;
+  }
+}
+
+.empty-state-modern {
+  text-align: center;
+  padding: 80px 20px;
+  color: #64748b;
+
+  h3 {
+    margin: 20px 0 8px 0;
+    color: #475569;
+  }
+
+  p {
+    color: #94a3b8;
+  }
+}
+
+.pagination-modern {
   justify-content: center;
-  cursor: pointer;
-  transition:
-    background 0.3s ease,
-    transform 0.2s ease;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.btn-share:hover {
-  background: #0dcaf0;
-  transform: rotate(8deg) scale(1.1);
-}
-
-/* Contenu */
-.survey-content {
-  padding: 18px;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-/* Titre */
-.survey-title {
-  font-weight: 700;
-  margin-bottom: 10px;
-  font-size: 1.15rem;
-  line-height: 1.4;
-}
-
-.survey-title a {
-  color: #ff7b00;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.survey-title a:hover {
-  color: #e86c00;
-  text-decoration: underline;
-}
-
-/* Description limitée à 2 lignes */
-.survey-description {
-  font-size: 0.92rem;
-  color: #555;
-  flex: 1;
-  margin-bottom: 14px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2; /* max 2 lignes */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Stats */
-.survey-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: auto; /* pousse les stats vers le bas */
-}
-
-.survey-stats .badge {
-  padding: 6px 10px;
-  font-size: 0.8rem;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
 }
 </style>

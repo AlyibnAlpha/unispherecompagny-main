@@ -1,21 +1,28 @@
 <script>
-import PageHeader from '../../../components/global/PageHeader.vue'
 import PratTransCom from 'src/components/admin/enquete/PratTransCom.vue'
+import ParticipantNavBar from 'src/components/participant/ParticipantNavBar.vue'
+import TopBar from 'src/components/layouts/vertical/TopBar.vue'
 
 export default {
-  data() {
-    return {
-      title: 'Statisque & transactions',
-    }
-  },
   components: {
-    PageHeader,
     PratTransCom,
+    ParticipantNavBar,
+    TopBar,
   },
 }
 </script>
 
 <template>
-  <PageHeader :title="title" />
-  <PratTransCom />
+  <div class="participant-dashboard">
+    <TopBar />
+    <ParticipantNavBar />
+    <div class="participant-content">
+      <PratTransCom />
+    </div>
+  </div>
 </template>
+
+<style lang="scss">
+@import '../../../css/participant/dashboard.scss';
+@import '../../../css/participant/transactions.scss';
+</style>

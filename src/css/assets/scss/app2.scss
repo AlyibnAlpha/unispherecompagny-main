@@ -107,6 +107,10 @@ div,
 
 // Import Modern Dashboard Styles (réutilisables pour toutes les pages)
 @import '../../modern-dashboard.scss';
+@import '../../admin/dashboard.scss';
+@import '../../admin/users-management.scss';
+@import '../../admin/participants.scss';
+@import '../../admin/tables-shared.scss';
 
 body {
   font-family: sans-serif;

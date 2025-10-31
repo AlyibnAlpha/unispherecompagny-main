@@ -1,21 +1,28 @@
 <script>
-import PageHeader from '../../../components/global/PageHeader.vue'
 import PratCataCom from 'src/components/admin/enquete/PratCataCom.vue'
+import ParticipantNavBar from 'src/components/participant/ParticipantNavBar.vue'
+import TopBar from 'src/components/layouts/vertical/TopBar.vue'
 
 export default {
-  data() {
-    return {
-      title: 'Catalogue',
-    }
-  },
   components: {
-    PageHeader,
     PratCataCom,
+    ParticipantNavBar,
+    TopBar,
   },
 }
 </script>
 
 <template>
-  <PageHeader :title="title" />
-  <PratCataCom />
+  <div class="participant-dashboard">
+    <TopBar />
+    <ParticipantNavBar />
+    <div class="participant-content">
+      <PratCataCom />
+    </div>
+  </div>
 </template>
+
+<style lang="scss">
+@import '../../../css/participant/dashboard.scss';
+@import '../../../css/participant/surveys.scss';
+</style>

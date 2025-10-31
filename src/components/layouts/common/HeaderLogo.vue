@@ -5,7 +5,7 @@
         <img src="/favicons.ico" alt="Logo" height="30" />
       </span>
       <span class="logo-lg">
-        <img src="/favicons.ico" alt="Logo" height="80" />
+        <img src="/favicons.ico" alt="Logo" height="40" />
       </span>
     </router-link>
   </div>

@@ -124,18 +124,17 @@ export default {
       selectedCategories: ref([]),
       colors: [
         { title: 'Enquêtes disponibles', value: 'surveys_available' },
-        { title: 'Enquêtes en cours', value: 'surveys_in_progress' },
         { title: 'Enquêtes en Bonus', value: 'welcome_surveys' },
       ],
     }
   },
   components: {
-    BCol,
     BRow,
+    BCol,
     BPagination,
     BTabs,
-    BFormInput,
     BTab,
+    BFormInput,
     StatPart,
   },
   computed: {
@@ -256,15 +255,12 @@ export default {
                       :key="item.id"
                       class="mb-4"
                     >
-                      <router-link :to="'/admin/enquetes-avis/' + item.id" class="survey-card-link">
+                      <a :href="'/participant/enquetes-avis/' + item.id" class="survey-card-link">
                         <div class="survey-card">
                           <div class="survey-image-modern">
-                            <div class="survey-header-top">
-                              <div class="survey-badge">
-                                <i class="bi bi-clock"></i>
-                                {{ item.startDate }} semaine{{ item.startDate > 1 ? 's' : '' }}
-                              </div>
-                              <div class="category-badge">Nouveau</div>
+                            <div class="survey-badge">
+                              <i class="bi bi-clock"></i>
+                              {{ item.startDate }} semaine{{ item.startDate > 1 ? 's' : '' }}
                             </div>
                             <div class="survey-icon-large">
                               <i class="bi bi-clipboard-data"></i>
@@ -273,9 +269,9 @@ export default {
 
                           <div class="survey-content">
                             <h5 class="survey-title">
-                              <router-link :to="'/admin/enquetes-avis/' + item.id">
+                              <a :href="'/participant/enquetes-avis/' + item.id">
                                 {{ item.title }}
-                              </router-link>
+                              </a>
                             </h5>
                             <p class="survey-description">
                               {{ item.description || 'Aucune description disponible.' }}
@@ -299,7 +295,7 @@ export default {
                             </div>
                           </div>
                         </div>
-                      </router-link>
+                      </a>
                     </BCol>
                   </BRow>
               </BTab>
@@ -329,7 +325,7 @@ export default {
                       :key="item.id"
                       class="mb-4"
                     >
-                      <router-link :to="'/admin/enquetes-avis/' + item.id" class="survey-card-link">
+                      <a :href="'/participant/enquetes-avis/' + item.id" class="survey-card-link">
                         <div class="survey-card">
                           <div class="survey-image-modern">
                             <div class="survey-header-top">
@@ -345,9 +341,9 @@ export default {
 
                           <div class="survey-content">
                             <h5 class="survey-title">
-                              <router-link :to="'/admin/enquetes-avis/' + item.id">
+                              <a :href="'/participant/enquetes-avis/' + item.id">
                                 {{ item.title }}
-                              </router-link>
+                              </a>
                             </h5>
                             <p class="survey-description">
                               {{ item.description || 'Aucune description disponible.' }}
@@ -371,7 +367,7 @@ export default {
                             </div>
                           </div>
                         </div>
-                      </router-link>
+                      </a>
                     </BCol>
                   </BRow>
               </BTab>

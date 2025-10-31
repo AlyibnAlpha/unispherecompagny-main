@@ -55,18 +55,74 @@ export default {
       <i class="uil-angle-down d-none d-xl-inline-block font-size-15"></i>
     </template>
 
-    <a class="dropdown-item" @click="profil" href="javascript: void(0);">
-      <i class="uil uil-user-circle font-size-18 align-middle text-muted me-1"></i>
-      <span class="align-middle">{{ $t('navbar.dropdown.marcus.list.profile') }}</span>
+    <a class="dropdown-item profile-dropdown-item" @click="profil" href="javascript: void(0);">
+      <i class="uil uil-user-circle"></i>
+      <span>{{ $t('navbar.dropdown.marcus.list.profile') }}</span>
     </a>
 
-    <a class="dropdown-item" @click="logout" href="javascript: void(0);">
-      <i class="uil uil-sign-out-alt font-size-18 align-middle me-1 text-muted"></i>
-      <span class="align-middle">{{ $t('navbar.dropdown.marcus.list.logout') }}</span>
+    <a class="dropdown-item profile-dropdown-item" @click="logout" href="javascript: void(0);">
+      <i class="uil uil-sign-out-alt"></i>
+      <span>{{ $t('navbar.dropdown.marcus.list.logout') }}</span>
     </a>
   </BDropdown>
 </template>
 
-<style>
+<style lang="scss">
 @import '../../../css/assets/scss/app2.scss';
+
+// Bouton du dropdown profile moderne
+.header-item {
+  background: white !important;
+  border: 2px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  padding: 8px 16px !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
+
+  &:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08) !important;
+    border-color: #667eea !important;
+  }
+
+  &:active {
+    transform: translateY(0) !important;
+  }
+
+  i {
+    color: #667eea !important;
+  }
+
+  span {
+    color: #1e293b !important;
+    font-weight: 600 !important;
+  }
+}
+
+.profile-dropdown-item {
+  display: flex !important;
+  align-items: center;
+  gap: 12px;
+  
+  &::before {
+    display: none !important;
+  }
+  
+  i {
+    font-size: 1.2rem;
+    color: #667eea;
+    flex-shrink: 0;
+    transition: color 0.2s ease;
+  }
+  
+  span {
+    flex: 1;
+  }
+
+  &:hover {
+    i {
+      color: white !important;
+    }
+  }
+}
 </style>

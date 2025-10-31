@@ -1,6 +1,4 @@
 <script>
-import { BRow, BCol, BCard, BCardBody, BButton } from 'bootstrap-vue-next'
-
 import { useRoute } from 'vue-router'
 import { api } from 'src/boot/axios'
 import { onMounted, ref } from 'vue'
@@ -13,12 +11,6 @@ import Swal from 'sweetalert2'
  */
 export default {
   components: {
-    BRow,
-    BCol,
-    BCard,
-    BCardBody,
-
-    BButton,
     DropzoneAd,
   },
   data() {
@@ -300,246 +292,163 @@ export default {
 </script>
 
 <template>
-  <div>
-    <BRow>
-      <BCol lg="12">
-        <BCard no-body class="shadow-lg rounded-4">
-          <BCardBody class="p-4 bg-light">
-            <!-- Header : Progression -->
-            <q-spinner v-if="loading" size="50px" color="green" class="full-width" />
+  <div class="survey-form-container">
+    <q-spinner v-if="loading" size="60px" color="primary" style="display: block; margin: 100px auto" />
 
-            <div class="tab-content" v-else-if="loading === false">
-              <div
-                class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4"
-              >
-                <span class="fw-bold text-muted mb-2 mb-md-0">
-                  Question {{ activeTab }} sur {{ questionsList.length }}
+    <div v-else-if="loading === false && questionsList.length > 0" class="survey-card-creative">
+      <!-- Header avec progression -->
+      <div class="survey-header-creative">
+        <div class="progress-section">
+          <div class="question-counter">
+            <i class="bi bi-list-check"></i>
+            Question {{ activeTab }} / {{ questionsList.length }}
+          </div>
+          <div class="progress-bar-creative">
+            <div
+              class="progress-fill"
+              :style="{ width: (activeTab / questionsList.length) * 100 + '%' }"
+            ></div>
+          </div>
+          <div class="progress-percentage">
+            {{ Math.round((activeTab / questionsList.length) * 100) }}%
+          </div>
+        </div>
+      </div>
+
+      <!-- Corps du formulaire -->
+      <div class="survey-body-creative">
+        <!-- Question Header -->
+        <div class="question-header">
+          <div class="question-title-wrapper">
+            <div class="question-number">{{ currentQuestion.position }}</div>
+            <div class="question-title-content">
+              <h3>{{ currentQuestion.title }}</h3>
+              <div class="question-badges">
+                <span v-if="currentQuestion.isRequired" class="badge-required">
+                  <i class="bi bi-asterisk"></i>
+                  Obligatoire
                 </span>
-                <div
-                  class="progress flex-grow-1 mx-md-3"
-                  style="height: 8px; border-radius: 10px; overflow: hidden"
-                >
-                  <div
-                    class="progress-bar"
-                    role="progressbar"
-                    :style="{
-                      width: (activeTab / questionsList.length) * 100 + '%',
-                      transition: 'width 0.4s ease-in-out',
-                      background: 'linear-gradient(90deg, #4ade80, #16a34a)',
-                    }"
-                  ></div>
-                </div>
-              </div>
-              <div class="tab-pane fade show active">
-                <BRow>
-                  <!-- Titre et description -->
-                  <BCol cols="12" class="mb-3">
-                    <h3 class="fw-bold text-success mb-2">
-                      {{ currentQuestion.position }}. {{ currentQuestion.title }} ?
-                      <span
-                        v-if="currentQuestion.isRequired"
-                        class="badge bg-warning text-dark ms-2"
-                        title="Cette question est obligatoire"
-                      >
-                        Obligatoire
-                      </span>
-                      <span class="badge bg-info text-dark mb-4">
-                        {{ questionTypeLabel(currentQuestion.type) }}
-                      </span>
-                    </h3>
-                    <h3 class="fw-bold text-muted mb-2">Description:</h3>
-                    <p class="text-muted">{{ currentQuestion.description }}</p>
-                  </BCol>
-
-                  <!-- Question texte -->
-                  <BCol cols="12" class="mb-3" v-if="currentQuestion.type === 'text'">
-                    <textarea
-                      v-model="answers[currentQuestion.id]"
-                      class="form-control shadow-sm rounded-3"
-                      placeholder="Tapez votre réponse ici..."
-                      rows="3"
-                    />
-                  </BCol>
-
-                  <!-- Question multiple choice -->
-                  <BCol cols="12" class="mb-3" v-if="currentQuestion.type === 'multiple_choice'">
-                    <div class="d-flex flex-column gap-2">
-                      <div
-                        v-for="option in currentQuestion.choices"
-                        :key="option.id"
-                        class="form-check"
-                      >
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          :id="'opt-' + option.id"
-                          :value="option.value || option.label"
-                          v-model="answers[currentQuestion.id]"
-                        />
-                        <label class="form-check-label" :for="'opt-' + option.id">
-                          {{ option.label }}
-                        </label>
-                      </div>
-                    </div>
-                  </BCol>
-
-                  <!-- Question single choice -->
-                  <BCol cols="12" class="mb-3" v-if="currentQuestion.type === 'single_choice'">
-                    <div class="d-flex flex-wrap gap-2">
-                      <div
-                        v-for="option in currentQuestion.choices"
-                        :key="option.id"
-                        :class="[
-                          'option-card',
-                          {
-                            selected:
-                              answers[currentQuestion.id] === (option.value || option.label),
-                          },
-                        ]"
-                        @click="selectOption(option.value || option.label)"
-                      >
-                        {{ option.label }}
-                      </div>
-                    </div>
-                  </BCol>
-
-                  <!-- Question fichier -->
-                  <BCol cols="12" class="mb-3" v-if="currentQuestion.type === 'file'">
-                    <BCard no-body class="shadow-sm rounded-3">
-                      <BCardBody>
-                        <DropzoneAd
-                          files="files"
-                          cloudIcon="remix"
-                          dropzoneFile="galleryDropzoneFile"
-                          v-model="answers[currentQuestion.id]"
-                          :isMultiple="true"
-                          @drop.prevent="galleryDrop($event)"
-                          @change="gallerySelectedFile"
-                          @dragenter.prevent
-                          @dragover.prevent
-                        />
-                        <ul class="list-unstyled mt-3" id="dropzone-preview2">
-                          <li
-                            v-for="(file, index) in galleryFiles"
-                            :key="index"
-                            class="border rounded mb-2 p-2 d-flex align-items-center justify-content-between shadow-sm"
-                          >
-                            <div class="d-flex align-items-center">
-                              <div
-                                class="avatar-sm bg-light rounded me-3 d-flex align-items-center justify-content-center"
-                              >
-                                <img
-                                  class="img-fluid rounded"
-                                  src="/images2/new-document.png"
-                                  alt="file"
-                                />
-                              </div>
-                              <div>
-                                <h6 class="mb-1">{{ file.name }}</h6>
-                                <p class="mb-0 text-muted fs-sm">
-                                  {{ (file.size / 1024).toFixed(2) }} KB
-                                </p>
-                              </div>
-                            </div>
-                            <BButton
-                              size="sm"
-                              variant="danger"
-                              class="rounded-pill"
-                              @click="() => deleteRecord(file)"
-                            >
-                              Supprimer
-                            </BButton>
-                          </li>
-                        </ul>
-                      </BCardBody>
-                    </BCard>
-                  </BCol>
-                </BRow>
-
-                <!-- Navigation -->
-                <div class="d-flex flex-column flex-md-row justify-content-between mt-4">
-                  <BButton
-                    variant="secondary"
-                    class="rounded-pill px-4 shadow-sm mb-2 mb-md-0"
-                    @click="prevStep"
-                    :disabled="activeTab === 1"
-                  >
-                    Précédent
-                  </BButton>
-                  <BButton
-                    :variant="activeTab === questionsList.length ? 'success' : 'primary'"
-                    class="rounded-pill px-4 shadow-sm"
-                    @click="nextStep"
-                  >
-                    {{ activeTab === questionsList.length ? 'Terminer' : 'Suivant' }}
-                  </BButton>
-                </div>
+                <span class="badge-type">
+                  {{ questionTypeLabel(currentQuestion.type) }}
+                </span>
               </div>
             </div>
+          </div>
+          <div v-if="currentQuestion.description" class="question-description">
+            {{ currentQuestion.description }}
+          </div>
+        </div>
 
-            <!-- Message si pas de questions -->
-            <h3 v-else class="text-center text-muted py-5">
-              Vous avez déjà répondu à toutes les questions
-            </h3>
+        <!-- Question texte -->
+        <div v-if="currentQuestion.type === 'text'">
+          <textarea
+            v-model="answers[currentQuestion.id]"
+            class="answer-textarea"
+            placeholder="Tapez votre réponse ici..."
+            rows="5"
+          ></textarea>
+        </div>
 
-            <!-- Contenu des questions -->
-          </BCardBody>
-        </BCard>
-      </BCol>
-    </BRow>
+        <!-- Question choix multiples -->
+        <div v-if="currentQuestion.type === 'multiple_choice'" class="choices-grid">
+          <div
+            v-for="option in currentQuestion.choices"
+            :key="option.id"
+            class="choice-checkbox-item"
+          >
+            <input
+              type="checkbox"
+              :id="'opt-' + option.id"
+              :value="option.value || option.label"
+              v-model="answers[currentQuestion.id]"
+            />
+            <label :for="'opt-' + option.id">
+              <div class="check-icon">
+                <i class="bi bi-check-lg"></i>
+              </div>
+              <span>{{ option.label }}</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Question choix unique -->
+        <div v-if="currentQuestion.type === 'single_choice'" class="choices-single-grid">
+          <div
+            v-for="option in currentQuestion.choices"
+            :key="option.id"
+            :class="['choice-single-item', {
+              selected: answers[currentQuestion.id] === (option.value || option.label)
+            }]"
+            @click="selectOption(option.value || option.label)"
+          >
+            {{ option.label }}
+          </div>
+        </div>
+
+        <!-- Question fichier -->
+        <div v-if="currentQuestion.type === 'file'">
+          <DropzoneAd
+            files="files"
+            cloudIcon="remix"
+            dropzoneFile="galleryDropzoneFile"
+            v-model="answers[currentQuestion.id]"
+            :isMultiple="true"
+            @drop.prevent="galleryDrop($event)"
+            @change="gallerySelectedFile"
+            @dragenter.prevent
+            @dragover.prevent
+          />
+          <ul class="list-unstyled mt-3">
+            <li
+              v-for="(file, index) in galleryFiles"
+              :key="index"
+              style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;"
+            >
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="/images2/new-document.png" alt="file" style="width: 40px; height: 40px; border-radius: 8px;" />
+                <div>
+                  <h6 style="margin: 0; font-size: 0.95rem;">{{ file.name }}</h6>
+                  <p style="margin: 0; color: #64748b; font-size: 0.85rem;">{{ (file.size / 1024).toFixed(2) }} KB</p>
+                </div>
+              </div>
+              <button
+                @click="() => deleteRecord(file)"
+                style="padding: 6px 16px; background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer;"
+              >
+                Supprimer
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Footer avec navigation -->
+      <div class="survey-footer-creative">
+        <button
+          class="btn-navigation btn-prev"
+          @click="prevStep"
+          :disabled="activeTab === 1"
+        >
+          <i class="bi bi-arrow-left"></i>
+          Précédent
+        </button>
+        <button
+          :class="['btn-navigation', activeTab === questionsList.length ? 'btn-finish' : 'btn-next']"
+          @click="nextStep"
+        >
+          {{ activeTab === questionsList.length ? 'Terminer' : 'Suivant' }}
+          <i :class="activeTab === questionsList.length ? 'bi bi-check-lg' : 'bi bi-arrow-right'"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Message si pas de questions -->
+    <div v-else-if="loading === false && questionsList.length === 0" style="text-align: center; padding: 100px 20px;">
+      <i class="bi bi-check-circle" style="font-size: 4rem; color: #10b981;"></i>
+      <h3 style="margin-top: 20px; color: #64748b;">Vous avez déjà répondu à toutes les questions</h3>
+    </div>
   </div>
 </template>
-<style>
-@import '../../../css/assets/scss/app2.scss';
-.badge.bg-info {
-  background-color: #d0f0fd; /* couleur claire */
-  color: #055a11;
-  font-weight: 500;
-  font-size: 0.85rem;
-}
-/* Animation légère pour la transition entre questions */
-.tab-pane {
-  transition: all 0.3s ease-in-out;
-}
-
-/* Hover léger sur les options */
-.form-check-input:hover {
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-}
-
-/* Responsive spacing */
-@media (max-width: 767px) {
-  .d-flex.flex-md-row {
-    flex-direction: column !important;
-  }
-}
-.option-card {
-  padding: 0.5rem 1rem;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: all 0.2s;
-  user-select: none;
-  background-color: #f8f9fa;
-  color: #333;
-}
-
-.option-card:hover {
-  background-color: #e2e6ea;
-  transform: scale(1.03);
-}
-
-.option-card.selected {
-  background: linear-gradient(90deg, #4ade80, #16a34a);
-  color: white;
-  border-color: #4ade80;
-}
-.form-check-input:checked {
-  background-color: #16a34a !important;
-  border-color: #16a34a !important;
-}
-.form-check-label {
-  font-weight: 500;
-  color: #333;
-}
+<style lang="scss">
+@import '../../../css/survey/survey-form.scss';
 </style>

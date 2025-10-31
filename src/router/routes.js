@@ -30,10 +30,6 @@ const routes = [
   },
   { path: '/course/coursefour', component: () => import('pages/enqueteEncour/CourseFour.vue') },
   {
-    path: '/enquete-details/:id',
-    component: () => import('pages/enqueteEncour/CourseDetails.vue'),
-  },
-  {
     path: '/enquete/:id',
     component: () => import('pages/enqueteEncour/CourseTYPE.vue'),
   },
@@ -109,26 +105,6 @@ const routes = [
         meta: {
           requiresAuth: true,
           roles: [import.meta.env.VITE_DEFAULT_ROLEA],
-        },
-      },
-      {
-        path: '/participant/enquetes-encours',
-        component: () => import('pages/admin/enquetes/EnqueteLes.vue'),
-        meta: {
-          requiresAuth: true,
-          roles: [import.meta.env.VITE_DEFAULT_ROLEP],
-        },
-      },
-      {
-        path: '/admin/enquetes-avis/:id',
-        component: () => import('pages/admin/enquetes/EnqueteAvis.vue'),
-        meta: {
-          requiresAuth: true,
-          roles: [
-            import.meta.env.VITE_DEFAULT_ROLEA,
-            import.meta.env.VITE_DEFAULT_ROLEB,
-            import.meta.env.VITE_DEFAULT_ROLEP,
-          ],
         },
       },
       {
@@ -225,18 +201,6 @@ const routes = [
         meta: {
           requiresAuth: true,
           roles: [import.meta.env.VITE_DEFAULT_ROLEA],
-        },
-      },
-      {
-        path: '/participant/historique',
-        component: () => import('pages/admin/enquetes/historiqueAnalyse.vue'),
-        meta: {
-          requiresAuth: true,
-          roles: [
-            import.meta.env.VITE_DEFAULT_ROLEA,
-            import.meta.env.VITE_DEFAULT_ROLEB,
-            import.meta.env.VITE_DEFAULT_ROLEP,
-          ],
         },
       },
       {
@@ -354,22 +318,6 @@ const routes = [
         },
       },
       {
-        path: '/partcipant/transaction',
-        component: () => import('pages/admin/enquetes/PartTransac.vue'),
-        meta: {
-          requiresAuth: true,
-          roles: [import.meta.env.VITE_DEFAULT_ROLEP],
-        },
-      },
-      {
-        path: '/partcipant/catalogue',
-        component: () => import('pages/admin/enquetes/PartCatalogue.vue'),
-        meta: {
-          requiresAuth: true,
-          roles: [import.meta.env.VITE_DEFAULT_ROLEP],
-        },
-      },
-      {
         path: '/admin/rewards',
         component: () => import('pages/admin/enquetes/AdCatalogue.vue'),
         meta: {
@@ -458,6 +406,57 @@ const routes = [
         },
       },
     ],
+  },
+  {
+    path: '/participant/enquetes-encours',
+    component: () => import('pages/admin/enquetes/EnqueteLes.vue'),
+    meta: {
+      requiresAuth: true,
+      roles: [import.meta.env.VITE_DEFAULT_ROLEP],
+    },
+  },
+  {
+    path: '/participant/historique',
+    component: () => import('pages/admin/enquetes/historiqueAnalyse.vue'),
+    meta: {
+      requiresAuth: true,
+      roles: [import.meta.env.VITE_DEFAULT_ROLEP],
+    },
+  },
+  {
+    path: '/participant/catalogue',
+    component: () => import('pages/admin/enquetes/PartCatalogue.vue'),
+    meta: {
+      requiresAuth: true,
+      roles: [import.meta.env.VITE_DEFAULT_ROLEP],
+    },
+  },
+  {
+    path: '/participant/transaction',
+    component: () => import('pages/admin/enquetes/PartTransac.vue'),
+    meta: {
+      requiresAuth: true,
+      roles: [import.meta.env.VITE_DEFAULT_ROLEP],
+    },
+  },
+  {
+    path: '/admin/enquetes-avis/:id',
+    component: () => import('pages/admin/enquetes/EnqueteAvis.vue'),
+    meta: {
+      requiresAuth: true,
+      roles: [
+        import.meta.env.VITE_DEFAULT_ROLEA,
+        import.meta.env.VITE_DEFAULT_ROLEB,
+      ],
+    },
+  },
+  {
+    path: '/participant/enquetes-avis/:id',
+    component: () => import('pages/admin/enquetes/EnqueteAvis.vue'),
+    meta: {
+      requiresAuth: true,
+      roles: [import.meta.env.VITE_DEFAULT_ROLEP],
+    },
   },
 
   // Always leave this as last one,

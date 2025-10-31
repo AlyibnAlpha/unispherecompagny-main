@@ -40,8 +40,11 @@ export default {
   }
 
   .page-content {
-    padding: 0;
+    padding: 0 20px;
     margin-top: 70px;
+    max-width: 1600px;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 

@@ -1073,8 +1073,3 @@ export default {
   </div>
 </template>
 
-<style lang="scss">
-@import '../../../css/admin/users-management.scss';
-@import '../../../css/admin/tables-shared.scss';
-@import '../../../css/admin/participants.scss';
-</style>

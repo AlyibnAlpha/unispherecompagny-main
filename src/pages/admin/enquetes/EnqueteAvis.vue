@@ -1,31 +1,27 @@
 <script>
 import EnqueteavisCom from 'src/components/admin/enquete/EnqueteavisCom.vue'
-import PageHeader from '../../../components/global/PageHeader.vue'
+import ParticipantNavBar from 'src/components/participant/ParticipantNavBar.vue'
+import TopBar from 'src/components/layouts/vertical/TopBar.vue'
 
 export default {
-  data() {
-    return {
-      title: "Detail de l'enquete",
-      items: [
-        {
-          text: 'ENQUETES en cours',
-        },
-        {
-          text: "Detail de l'enquete",
-          active: true,
-        },
-      ],
-    }
-  },
-
   components: {
-    PageHeader,
     EnqueteavisCom,
+    ParticipantNavBar,
+    TopBar,
   },
 }
 </script>
 
 <template>
-  <PageHeader :title="title" :items="items" />
-  <EnqueteavisCom />
+  <div class="participant-dashboard">
+    <TopBar />
+    <ParticipantNavBar />
+    <div class="participant-content">
+      <EnqueteavisCom />
+    </div>
+  </div>
 </template>
+
+<style lang="scss">
+@import '../../../css/participant/dashboard.scss';
+</style>

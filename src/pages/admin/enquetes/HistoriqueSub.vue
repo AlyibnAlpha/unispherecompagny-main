@@ -9,5 +9,15 @@ export default {
 </script>
 
 <template>
-  <HistoriqueSubCOM />
+  <q-layout>
+    <q-page-container class="bg-light">
+      <q-page>
+        <HistoriqueSubCOM />
+      </q-page>
+    </q-page-container>
+  </q-layout>
 </template>
+
+<style lang="scss">
+@import '../../../css/assets/scss/app2.scss';
+</style>

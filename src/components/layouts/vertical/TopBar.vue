@@ -2,107 +2,104 @@
   <header id="page-topbar">
     <div class="navbar-header">
       <div class="d-flex">
-        <HederLogo />
-        <button
-          type="button"
-          class="btn btn-sm px-3 font-size-16 header-item vertical-menu-btn"
-          id="vertical-menu-btn"
-          @click="toggleMenu"
-        >
-          <i class="bi bi-list"></i>
-        </button>
+        <HederLogo v-if="isParticipantPage" />
       </div>
 
-      <div class="d-flex">
+      <div class="d-flex align-items-center gap-2">
         <!--<LanguageDropdown
           :flag="flag"
           :languages="languages"
           :current_language="current_language"
           @onChange="setLanguage"
         />-->
-        <span
+        <button
           v-if="reg === true"
-          class="text-warning fw-bold py-4 px-3 header-item"
           @click="reflien"
-          style="cursor: pointer; background: rgba(255, 193, 7, 0.15)"
-          >Parrainage</span
+          class="btn-referral-modern"
         >
+          <i class="bi bi-people-fill me-2"></i>
+          Parrainage
+        </button>
         <q-dialog v-model="ajout" transition-show="scale" transition-hide="fade">
-          <q-card
-            style="
-              width: 800px;
-              max-width: 90vw;
-              height: auto;
-              border-radius: 20px;
-              overflow: hidden;
-            "
-            class="shadow-lg"
-          >
-            <!-- Titre -->
-            <q-card-section
-              class="q-pa-md text-white flex items-center justify-center"
-              style="background: linear-gradient(135deg, #0d6efd, #6610f2)"
-            >
-              <q-icon name="group_add" size="28px" class="q-mr-sm" />
-              <div class="text-h6 text-center">Parrainage</div>
-            </q-card-section>
+          <q-card class="referral-modal-modern">
+            <!-- Header avec gradient -->
+            <div class="referral-header">
+              <div class="referral-icon-wrapper">
+                <i class="bi bi-people-fill"></i>
+              </div>
+              <h3 class="referral-title">Programme de Parrainage</h3>
+              <p class="referral-subtitle">Invitez vos amis et gagnez des récompenses</p>
+            </div>
 
-            <!-- Formulaire -->
-            <div class="q-pa-lg">
-              <BRow>
-                <BCol cols="12">
-                  <div class="alert alert-info py-2 px-3 rounded-3 small">
-                    💡 Pour Parrainer :
-                    <ul class="mb-0">
-                      <li>Copier le lien ci-dessous</li>
-                      <li>Envoyez ce lien a vos proches.</li>
-                      <li>Gangez des points.</li>
-                    </ul>
+            <!-- Contenu -->
+            <div class="referral-content">
+              <!-- Instructions -->
+              <div class="referral-steps">
+                <div class="step-item">
+                  <div class="step-number">1</div>
+                  <div class="step-text">
+                    <h4>Copiez votre lien</h4>
+                    <p>Cliquez sur le bouton pour copier votre lien unique</p>
                   </div>
-                </BCol>
-              </BRow>
-              <BForm style="margin: 5px 10px">
-                <BRow>
-                  <BCol cols="12" class="mb-4 floating-label">
-                    <!-- Bouton Copier -->
+                </div>
+                <div class="step-item">
+                  <div class="step-number">2</div>
+                  <div class="step-text">
+                    <h4>Partagez avec vos proches</h4>
+                    <p>Envoyez le lien à vos amis et votre famille</p>
+                  </div>
+                </div>
+                <div class="step-item">
+                  <div class="step-number">3</div>
+                  <div class="step-text">
+                    <h4>Gagnez des points</h4>
+                    <p>Recevez des points pour chaque inscription réussie</p>
+                  </div>
+                </div>
+              </div>
 
-                    <BFormInput
-                      id="title"
-                      v-model="dat"
-                      type="text"
-                      class="form-control form-control-modern"
-                      placeholder=" "
-                      required
-                    />
-                    <label for="title">Lien</label>
-                    <q-btn
-                      flat
-                      round
-                      dense
-                      icon="content_copy"
-                      color="primary"
-                      class="position-absolute"
-                      style="top: 50%; right: 10px; transform: translateY(-50%)"
-                      @click="copyLink"
-                    />
-                  </BCol>
-                </BRow>
-              </BForm>
+              <!-- Lien de parrainage -->
+              <div class="referral-link-section">
+                <label class="referral-link-label">
+                  <i class="bi bi-link-45deg me-2"></i>
+                  Votre lien de parrainage
+                </label>
+                <div class="referral-link-input-wrapper">
+                  <input
+                    type="text"
+                    v-model="dat"
+                    readonly
+                    class="referral-link-input"
+                  />
+                  <button @click="copyLink" class="btn-copy-link">
+                    <i class="bi bi-clipboard-check me-2"></i>
+                    Copier
+                  </button>
+                </div>
+              </div>
+
+              <!-- Stats -->
+              <div class="referral-stats">
+                <div class="stat-box">
+                  <i class="bi bi-gift-fill"></i>
+                  <div class="stat-info">
+                    <span class="stat-value">50</span>
+                    <span class="stat-label">Points par parrainage</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </q-card>
         </q-dialog>
 
-        <div class="dropdown d-none d-lg-inline-block ms-1">
-          <button
-            type="button"
-            class="btn header-item noti-icon waves-effect"
-            data-toggle="fullscreen"
-            @click="initFullScreen"
-          >
-            <i class="uil-minus-path"></i>
-          </button>
-        </div>
-        <Notifications />
+        <button
+          type="button"
+          class="btn-fullscreen-modern"
+          @click="initFullScreen"
+          title="Plein écran"
+        >
+          <i class="uil-minus-path"></i>
+        </button>
         <Profile @logoutUser="logoutUser" />
       </div>
     </div>
@@ -113,11 +110,10 @@
 import { LanguagesWithFlag } from '../../layouts/utils/topBar.js'
 import HederLogo from '../../layouts/common/HeaderLogo.vue'
 //import LanguageDropdown from '../../layouts/common/LanguageDropdown.vue'
-import Notifications from '../../layouts/common/NotificationsLay.vue'
 import Profile from '../../layouts/common/ProfileLay.vue'
-import { ref } from 'vue'
-import { BRow, BCol, BForm, BFormInput } from 'bootstrap-vue-next'
+import { ref, computed } from 'vue'
 import { api } from 'src/boot/axios.js'
+import { useRoute } from 'vue-router'
 
 import { useAuthStore } from 'src/stores/auth.js'
 import Swal from 'sweetalert2'
@@ -207,14 +203,17 @@ export default {
     }
   },
   components: {
-    BRow,
-    BCol,
-    BForm,
-    BFormInput,
     HederLogo,
     //LanguageDropdown,
-    Notifications,
     Profile,
+  },
+  setup() {
+    const route = useRoute()
+    const isParticipantPage = computed(() => route.path.startsWith('/participant'))
+    
+    return {
+      isParticipantPage,
+    }
   },
   mounted() {
     this.getrole()
@@ -274,82 +273,8 @@ export default {
   },
 }
 </script>
-<style>
-@import '../../../css/assets/scss/app2.scss';
-q-dialog__inner {
-  animation: fadeScale 0.35s ease forwards;
-}
-
-@keyframes fadeScale {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* === Inputs flottants modernes === */
-.form-control {
-  border-radius: 12px;
-  transition: all 0.3s ease;
-
-  &:focus {
-    border-color: #2ea3f2;
-    box-shadow: 0 0 8px rgba(46, 163, 242, 0.4);
-    transform: scale(1.01);
-  }
-}
-
-.bg-gradient {
-  background: linear-gradient(135deg, #0d6efd, #6610f2);
-}
-
-/* === Champs modernes avec floating label === */
-.floating-label {
-  position: relative;
-}
-
-.form-control.form-control-modern {
-  border-radius: 12px;
-  border: 2px solid #e0e7ff;
-  padding: 0.9rem 1rem;
-  width: 100%;
-  transition: all 0.3s ease;
-  background: #fff;
-}
-
-.form-control.form-control-modern:focus {
-  border-color: #10d0f2;
-  box-shadow: 0 0 8px rgba(102, 16, 242, 0.25);
-  transform: scale(1.01);
-}
-
-/* Labels flottants */
-.floating-label label {
-  position: absolute;
-  top: 50%;
-  left: 15px;
-  transform: translateY(-50%);
-  color: #6c757d;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  pointer-events: none;
-  background: white;
-  padding: 0 5px;
-}
-
-.form-control-modern:focus + label,
-.form-control-modern:not(:placeholder-shown) + label {
-  top: -10px;
-  left: 10px;
-  font-size: 0.8rem;
-  color: #10d0f2;
-}
-</style>
 
 <style lang="scss">
 @import '../../../css/admin/modern-topbar.scss';
+@import '../../../css/components/referral-modal.scss';
 </style>

@@ -4,11 +4,6 @@ import { onMounted, ref, watch } from 'vue'
 import Multiselect from '@vueform/multiselect'
 import Swal from 'sweetalert2'
 import {
-  BRow,
-  BCol,
-  BCard,
-  BCardBody,
-  BCardTitle,
   BForm,
   BFormGroup,
   BFormInput,
@@ -20,11 +15,6 @@ import {
  */
 export default {
   components: {
-    BRow,
-    BCol,
-    BCard,
-    BCardBody,
-    BCardTitle,
     BForm,
     BFormGroup,
     BFormInput,
@@ -259,75 +249,214 @@ export default {
 </script>
 
 <template>
-  <div>
-    <BRow class="mb-4">
-      <BCol cols="xl-4">
-        <BCard
-          no-body
-          class="h-100 shadow-lg"
-          style="
-            border-radius: 25px;
-            background: linear-gradient(135deg, #f0f4ff, #e0f7fa);
-            transition: all 0.5s ease;
-          "
-        >
-          <BCardBody>
-            <div class="text-center profile-header">
-              <div>
-                <img
-                  src="/icon.png"
-                  alt="avatar"
-                  class="avatar-lg rounded-circle img-thumbnail profile-avatar"
-                />
-              </div>
-              <h5 class="mt-3 mb-1 fw-bold">
-                {{ formget.participantProfile?.firstName }}
-                {{ formget.participantProfile?.lastName }}
-              </h5>
-              <p class="text-muted">{{ formget.participantProfile?.professionType }}</p>
+  <div class="surveys-modern-container">
+    <!-- Hero Profile Header -->
+    <div class="profile-hero-header">
+      <div class="hero-background"></div>
+      <div class="hero-content">
+        <div class="hero-avatar-wrapper">
+          <img src="/icon.png" alt="avatar" class="hero-avatar" />
+          <div class="avatar-badge">
+            <i class="bi bi-patch-check-fill"></i>
+          </div>
+        </div>
+        <div class="hero-info">
+          <h1 class="hero-name">{{ formget.participantProfile?.firstName }} {{ formget.participantProfile?.lastName }}</h1>
+          <p class="hero-position">
+            <i class="bi bi-briefcase-fill me-2"></i>
+            {{ formget.participantProfile?.professionType || 'Participant' }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="quick-stats-grid">
+      <div class="stat-card-profile">
+        <div class="stat-icon-wrapper stat-purple">
+          <i class="bi bi-envelope-fill"></i>
+        </div>
+        <div class="stat-details">
+          <span class="stat-label">Email</span>
+          <span class="stat-value">{{ formget.email }}</span>
+        </div>
+      </div>
+
+      <div class="stat-card-profile">
+        <div class="stat-icon-wrapper stat-blue">
+          <i class="bi bi-telephone-fill"></i>
+        </div>
+        <div class="stat-details">
+          <span class="stat-label">Mobile</span>
+          <span class="stat-value">{{ formget.participantProfile?.phone || 'Non renseigné' }}</span>
+        </div>
+      </div>
+
+      <div class="stat-card-profile">
+        <div class="stat-icon-wrapper stat-green">
+          <i class="bi bi-geo-alt-fill"></i>
+        </div>
+        <div class="stat-details">
+          <span class="stat-label">Localisation</span>
+          <span class="stat-value">{{ formget.participantProfile?.city }}, {{ formget.participantProfile?.country }}</span>
+        </div>
+      </div>
+
+      <div class="stat-card-profile">
+        <div class="stat-icon-wrapper stat-orange">
+          <i class="bi bi-gender-ambiguous"></i>
+        </div>
+        <div class="stat-details">
+          <span class="stat-label">Genre</span>
+          <span class="stat-value">{{ formget.participantProfile?.gender === 'M' ? 'Homme' : 'Femme' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Profile Section -->
+    <div class="profile-edit-section">
+      <div class="section-header-profile">
+        <div class="section-title-profile">
+          <i class="bi bi-pencil-square me-2"></i>
+          Modifier mes informations
+        </div>
+        <div class="section-subtitle-profile">
+          Mettez à jour vos informations personnelles
+        </div>
+      </div>
+
+      <BForm @submit.prevent="updateProfile" class="profile-form-modern">
+        <div class="form-grid-2">
+          <div class="input-group-profile">
+            <div class="input-icon">
+              <i class="bi bi-person"></i>
             </div>
-
-            <hr class="my-4" />
-
-            <div class="text-muted profile-info">
-              <h5 class="font-size-16 mb-3 fw-bold">Vos informations</h5>
-
-              <div class="table-responsive mt-2">
-                <div class="info-row">
-                  <p class="mb-1">Genre :</p>
-                  <h5 class="font-size-16">
-                    {{ formget.participantProfile?.gender === 'M' ? 'Homme' : 'Femme' }}
-                  </h5>
-                </div>
-                <div class="info-row mt-3">
-                  <p class="mb-1">Mobile :</p>
-                  <h5 class="font-size-16">{{ formget.participantProfile?.phone }}</h5>
-                </div>
-                <div class="info-row mt-3">
-                  <p class="mb-1">E-mail :</p>
-                  <h5 class="font-size-16">{{ formget.email }}</h5>
-                </div>
-                <div class="info-row mt-3">
-                  <p class="mb-1">Localisation :</p>
-                  <h5 class="font-size-16">
-                    {{ formget.participantProfile?.city }},
-                    {{ formget.participantProfile?.country }}
-                  </h5>
-                </div>
-                <!--<div class="info-row mt-3">
-                  <a
-                    href="#"
-                    class="font-size-16 text-warning fw-bold"
-                    @click="showPasswordModal = true"
-                  >
-                    Changer votre mot de passe
-                  </a>
-                </div>-->
-              </div>
+            <div class="input-wrapper">
+              <label for="firstName">Prénom</label>
+              <BFormInput
+                id="firstName"
+                v-model="formUpdate.participantProfile.firstName"
+                placeholder="Votre prénom"
+              />
             </div>
-          </BCardBody>
-        </BCard>
-        <q-dialog v-model="showPasswordModal">
+          </div>
+
+          <div class="input-group-profile">
+            <div class="input-icon">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <div class="input-wrapper">
+              <label for="lastName">Nom</label>
+              <BFormInput
+                id="lastName"
+                v-model="formUpdate.participantProfile.lastName"
+                placeholder="Votre nom"
+              />
+            </div>
+          </div>
+
+          <div class="input-group-profile">
+            <div class="input-icon">
+              <i class="bi bi-telephone"></i>
+            </div>
+            <div class="input-wrapper">
+              <label for="phone">Téléphone</label>
+              <BFormInput
+                id="phone"
+                v-model="formUpdate.participantProfile.phone"
+                placeholder="Votre numéro"
+              />
+            </div>
+          </div>
+
+          <div class="input-group-profile">
+            <div class="input-icon">
+              <i class="bi bi-calendar"></i>
+            </div>
+            <div class="input-wrapper">
+              <label for="birthDate">Date de naissance</label>
+              <BFormInput
+                id="birthDate"
+                v-model="formUpdate.participantProfile.birthDate"
+                type="date"
+                placeholder="Votre date de naissance"
+              />
+            </div>
+          </div>
+
+          <div class="input-group-profile">
+            <div class="input-icon">
+              <i class="bi bi-globe"></i>
+            </div>
+            <div class="input-wrapper">
+              <label for="country">Pays</label>
+              <Multiselect
+                id="country"
+                :options="optionl"
+                v-model="formUpdate.participantProfile.country"
+                placeholder="Sélectionnez votre pays"
+                track-by="value"
+                label="label"
+              />
+            </div>
+          </div>
+
+          <div class="input-group-profile">
+            <div class="input-icon">
+              <i class="bi bi-geo-alt"></i>
+            </div>
+            <div class="input-wrapper">
+              <label for="city">Ville</label>
+              <BFormInput
+                id="city"
+                v-model="formUpdate.participantProfile.city"
+                placeholder="Votre ville"
+              />
+            </div>
+          </div>
+
+          <div class="input-group-profile">
+            <div class="input-icon">
+              <i class="bi bi-briefcase"></i>
+            </div>
+            <div class="input-wrapper">
+              <label for="professionType">Type de profession</label>
+              <BFormInput
+                id="professionType"
+                v-model="formUpdate.participantProfile.professionType"
+                placeholder="Votre profession"
+              />
+            </div>
+          </div>
+
+          <div class="input-group-profile">
+            <div class="input-icon">
+              <i class="bi bi-building"></i>
+            </div>
+            <div class="input-wrapper">
+              <label for="professionSector">Secteur de profession</label>
+              <Multiselect
+                id="professionSector"
+                :options="optionls"
+                v-model="formUpdate.participantProfile.professionSector"
+                placeholder="Sélectionnez votre secteur"
+                track-by="value"
+                label="label"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-save-profile">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            Enregistrer les modifications
+          </button>
+        </div>
+      </BForm>
+    </div>
+
+    <q-dialog v-model="showPasswordModal">
           <q-card class="q-pa-md" style="width: 400px; max-width: 90vw; border-radius: 20px">
             <q-card-section>
               <div class="text-h6 text-primary text-center fw-bold">Changer le mot de passe</div>
@@ -373,268 +502,395 @@ export default {
               </BForm>
             </q-card-section>
           </q-card>
-        </q-dialog>
-      </BCol>
-
-      <BCol cols="xl-8">
-        <BCard
-          no-body
-          class="mb-4 shadow-lg"
-          style="
-            border-radius: 25px;
-            background: linear-gradient(135deg, #f0f4ff, #e0f7fa);
-            transition: background 0.5s ease;
-            margin-top: 15px;
-          "
-        >
-          <BCardBody>
-            <BCardTitle class="mb-5 text-center text-primary fw-bold" style="font-size: 1.8rem">
-              Modifier le profil
-            </BCardTitle>
-
-            <BForm @submit.prevent="updateProfile">
-              <BRow class="mb-4">
-                <BCol md="6">
-                  <BFormGroup label-for="firstName" class="floating-label position-relative">
-                    <BFormInput
-                      id="firstName"
-                      v-model="formUpdate.participantProfile.firstName"
-                      placeholder=" "
-                      class="form-control-modern"
-                    />
-                    <label for="firstName">Prénom</label>
-                  </BFormGroup>
-                </BCol>
-
-                <BCol md="6">
-                  <BFormGroup label-for="lastName" class="floating-label position-relative">
-                    <BFormInput
-                      id="lastName"
-                      v-model="formUpdate.participantProfile.lastName"
-                      placeholder=" "
-                      class="form-control-modern"
-                    />
-                    <label for="lastName">Nom</label>
-                  </BFormGroup>
-                </BCol>
-              </BRow>
-
-              <BRow class="mb-4">
-                <BCol md="6">
-                  <BFormGroup label-for="phone" class="floating-label position-relative">
-                    <BFormInput
-                      id="phone"
-                      v-model="formUpdate.participantProfile.phone"
-                      placeholder=" "
-                      class="form-control-modern"
-                    />
-                    <label for="phone">Téléphone</label>
-                  </BFormGroup>
-                </BCol>
-
-                <BCol md="6">
-                  <BFormGroup label-for="birthDate" class="floating-label position-relative">
-                    <BFormInput
-                      id="birthDate"
-                      v-model="formUpdate.participantProfile.birthDate"
-                      type="date"
-                      placeholder=" "
-                      class="form-control-modern"
-                    />
-                    <label for="birthDate">Date de naissance</label>
-                  </BFormGroup>
-                </BCol>
-              </BRow>
-
-              <BFormGroup
-                label="Pays"
-                label-for="pays"
-                class="mb-5 floating-label position-relative"
-              >
-                <Multiselect
-                  :options="optionl"
-                  v-model="formUpdate.participantProfile.country"
-                  placeholder=" "
-                  track-by="value"
-                  label="label"
-                  class="form-control-modern"
-                />
-                <label for="pays">Pays</label>
-              </BFormGroup>
-              <BRow class="mb-4">
-                <BCol md="6">
-                  <BFormGroup label-for="ty" class="floating-label position-relative">
-                    <BFormInput
-                      id="ty"
-                      v-model="formUpdate.participantProfile.professionType"
-                      placeholder=" "
-                      class="form-control-modern"
-                    />
-                    <label for="ty">Type de profession</label>
-                  </BFormGroup>
-                </BCol>
-
-                <BCol md="6">
-                  <BFormGroup label-for="secteur" class="floating-label position-relative">
-                    <Multiselect
-                      id="secteur"
-                      :options="optionls"
-                      v-model="formUpdate.participantProfile.professionSector"
-                      placeholder=" "
-                      track-by="value"
-                      label="label"
-                      class="form-control-modern"
-                    />
-                    <label for="secteur">Secteur de profession</label>
-                  </BFormGroup>
-                </BCol>
-              </BRow>
-
-              <div class="text-center">
-                <BButton type="submit" class="btn-modern px-5 py-2 fw-bold"> Enregistrer </BButton>
-              </div>
-            </BForm>
-          </BCardBody>
-        </BCard>
-      </BCol>
-    </BRow>
+    </q-dialog>
   </div>
 </template>
 
-<style scoped>
-/* Ton style existant intégré */
-.form-focus:focus {
-  box-shadow: 0 0 8px rgba(13, 110, 253, 0.4);
-  border-color: #0d6efd !important;
-  transition: all 0.3s ease;
-}
+<style lang="scss">
+@import '../../../css/assets/scss/app2.scss';
+@import 'src/css/participant/surveys.scss';
 
-.btn-gradient {
-  background: linear-gradient(135deg, #0d6efd, #6610f2);
-  color: #fff;
-  transition: all 0.3s ease;
-}
-
-.btn-gradient:hover {
-  background: linear-gradient(135deg, #6610f2, #0d6efd);
-  transform: translateY(-2px);
-}
-
-/* Champs modernes avec floating label */
-.floating-label {
+/* === Hero Profile Header === */
+.profile-hero-header {
   position: relative;
-  margin-bottom: 1.5rem;
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+
+  .hero-background {
+    height: 180px;
+    background: linear-gradient(135deg, #34c38f 0%, #2ea3f2 100%);
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 100px;
+      background: linear-gradient(to bottom, transparent, white);
+    }
+  }
+
+  .hero-content {
+    position: relative;
+    padding: 0 2rem 2rem 2rem;
+    margin-top: -80px;
+    display: flex;
+    align-items: flex-end;
+    gap: 2rem;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  }
+
+  .hero-avatar-wrapper {
+    position: relative;
+    flex-shrink: 0;
+
+    .hero-avatar {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      border: 6px solid white;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      object-fit: cover;
+      background: white;
+    }
+
+    .avatar-badge {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      width: 36px;
+      height: 36px;
+      background: #10b981;
+      border-radius: 50%;
+      border: 4px solid white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+    }
+  }
+
+  .hero-info {
+    flex: 1;
+    padding-bottom: 0.5rem;
+
+    .hero-name {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0 0 0.5rem 0;
+      line-height: 1.2;
+    }
+
+    .hero-position {
+      font-size: 1.1rem;
+      color: #64748b;
+      font-weight: 600;
+      margin: 0;
+      display: flex;
+      align-items: center;
+
+      @media (max-width: 768px) {
+        justify-content: center;
+      }
+
+      i {
+        color: #667eea;
+      }
+    }
+  }
 }
 
-.form-control-modern {
-  border-radius: 50px;
-  border: 1px solid #0d6efd;
-  padding: 0.75rem 1rem 0.75rem 3rem;
+/* === Quick Stats Grid === */
+.quick-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card-profile {
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
   transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+  &:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-4px);
+  }
+
+  .stat-icon-wrapper {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+
+    &.stat-purple {
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    }
+
+    &.stat-blue {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+    }
+
+    &.stat-green {
+      background: linear-gradient(135deg, #10b981, #059669);
+    }
+
+    &.stat-orange {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+  }
+
+  .stat-details {
+    flex: 1;
+    min-width: 0;
+
+    .stat-label {
+      display: block;
+      font-size: 0.8rem;
+      color: #64748b;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-value {
+      display: block;
+      font-size: 1rem;
+      color: #1e293b;
+      font-weight: 700;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
 }
 
-.form-control-modern:focus,
-.form-control-modern:not(:placeholder-shown) {
-  border-color: #6610f2;
-  box-shadow: 0 0 10px rgba(102, 16, 242, 0.3);
+/* === Profile Edit Section === */
+.profile-edit-section {
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+
+  .section-header-profile {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid #e2e8f0;
+
+    .section-title-profile {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #34c38f, #2ea3f2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+
+      i {
+        background: linear-gradient(135deg, #34c38f, #2ea3f2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+    }
+
+    .section-subtitle-profile {
+      font-size: 0.95rem;
+      color: #64748b;
+      font-weight: 500;
+    }
+  }
 }
 
-.floating-label label {
-  position: absolute;
-  top: 50%;
-  left: 3rem;
-  transform: translateY(-50%);
-  color: #6c757d;
-  pointer-events: none;
-  transition: all 0.3s ease;
+.profile-form-modern {
+  .form-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .input-group-profile {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: #cbd5e1;
+      background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    }
+
+    &:focus-within {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      background: white;
+    }
+
+    .input-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #34c38f, #2ea3f2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(46, 163, 242, 0.3);
+    }
+
+    .input-wrapper {
+      flex: 1;
+      min-width: 0;
+
+      label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+      }
+
+      input,
+      .multiselect {
+        width: 100%;
+        border: none;
+        background: transparent;
+        padding: 0;
+        font-size: 0.95rem;
+        color: #1e293b;
+        font-weight: 600;
+
+        &:focus {
+          outline: none;
+        }
+
+        &::placeholder {
+          color: #94a3b8;
+          font-weight: 400;
+        }
+      }
+
+      .multiselect {
+        --ms-border-color: transparent;
+        --ms-ring-color: transparent;
+        --ms-bg: transparent;
+      }
+    }
+  }
+
+  .form-actions {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #e2e8f0;
+    display: flex;
+    justify-content: center;
+  }
+
+  .btn-save-profile {
+    background: linear-gradient(135deg, #34c38f, #2ea3f2);
+    border: none;
+    border-radius: 50px;
+    padding: 1rem 3rem;
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    box-shadow: 0 4px 12px rgba(46, 163, 242, 0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    &:hover {
+      background: linear-gradient(135deg, #2ea3f2, #34c38f);
+      box-shadow: 0 6px 16px rgba(46, 163, 242, 0.4);
+      transform: translateY(-2px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    i {
+      font-size: 1.2rem;
+    }
+  }
 }
 
-.form-control-modern:focus + label,
-.form-control-modern:not(:placeholder-shown) + label {
-  top: -10px;
-  left: 2.5rem;
-  font-size: 0.8rem;
-  color: #6610f2;
-  background: #f0f4f8;
-  padding: 0 5px;
-}
-
-/* Icônes animées */
-.icon-field {
-  position: absolute;
-  top: 50%;
-  left: 1rem;
-  transform: translateY(-50%);
-  color: #0d6efd;
-  transition: all 0.3s ease;
-}
-
-.form-control-modern:focus ~ .icon-field {
-  color: #6610f2;
-  transform: translateY(-50%) scale(1.2);
-}
-
-/* Bouton moderne */
+// Modal password
 .btn-modern {
-  background: linear-gradient(135deg, #90caf9, #80deea);
-  color: #fff;
-  border-radius: 50px;
+  background: linear-gradient(135deg, #34c38f, #2ea3f2);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 32px;
+  font-weight: 600;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(46, 163, 242, 0.3);
+  }
 }
 
-.btn-modern:hover {
-  background: linear-gradient(135deg, #80deea, #90caf9);
-  transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-}
-
-.btn-modern:active {
-  transform: translateY(0);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-}
-/*-------------------------------------------*/
-/* Avatar */
-.profile-avatar {
-  width: 120px;
-  height: 120px;
-  border: 4px solid #90caf9;
-  transition: all 0.3s ease;
-}
-
-.profile-avatar:hover {
-  transform: scale(1.05);
-  box-shadow: 0 5px 15px rgba(102, 16, 242, 0.3);
-}
-
-/* Titres */
-.profile-header h5 {
-  color: #0d6efd;
-}
-
-.profile-header p {
-  font-style: italic;
-}
-
-/* Info rows */
-.info-row p {
-  font-weight: 500;
-  color: #6c757d;
-}
-
-.info-row h5 {
-  color: #884de7;
-}
-
-/* Ligne de séparation */
-hr {
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-/* Hover léger sur carte */
-.BCard:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
+/* === Responsive === */
+@media (max-width: 768px) {
+  .quick-stats-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

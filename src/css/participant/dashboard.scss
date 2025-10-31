@@ -1,6 +1,23 @@
 // Styles modernes pour le dashboard Participant
 @import './_variables.scss';
 
+// Forcer le topbar à prendre toute la largeur (appliqué immédiatement)
+#page-topbar {
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  background: white !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+
+  .navbar-header {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+}
+
 .participant-dashboard {
   display: flex;
   flex-direction: column;
@@ -8,9 +25,34 @@
   padding: 16px 0;
 }
 
+.participant-content {
+  padding: 0 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
 // Header moderne (compatible avec PageHeader existant)
 .participant-page-header {
   @extend .modern-page-header !optional; // si présent via app2, sinon fallback simple
+}
+
+//* === Participant Dashboard Layout === */
+.participant-dashboard {
+  min-height: 100vh;
+  background: #f8fafc;
+
+  #page-topbar {
+    left: 0 !important;
+  }
+
+  // Cacher la sidebar sur les pages participant
+  .vertical-menu {
+    display: none !important;
+  }
+
+  // Ajuster le contenu principal
+  .main-content {
+    margin-left: 0 !important;
+  }
 }
 
 // Cartes d'enquêtes

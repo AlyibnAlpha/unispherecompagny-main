@@ -19,9 +19,14 @@ export default {
         icon: 'bi-clock-history',
       },
       {
-        label: 'Mes Gains',
-        path: '/participant/gains',
-        icon: 'bi-trophy-fill',
+        label: 'Catalogue',
+        path: '/participant/catalogue',
+        icon: 'bi-gift-fill',
+      },
+      {
+        label: 'Transactions',
+        path: '/participant/transaction',
+        icon: 'bi-graph-up-arrow',
       },
       {
         label: 'Mon Profil',
@@ -68,6 +73,21 @@ export default {
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import '../../css/participant/navbar.scss';
+
+.dropdown-fade-enter-active,
+.dropdown-fade-leave-active {
+  transition: all 0.3s ease;
+}
+
+.dropdown-fade-enter-from {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.dropdown-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
 </style>
