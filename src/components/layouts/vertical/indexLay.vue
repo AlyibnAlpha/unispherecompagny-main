@@ -1,8 +1,13 @@
 <template>
-  <div id="layout-wrapper">
+  <div id="layout-wrapper" :class="{ 'participant-layout': isParticipant }">
     <TopBar />
-    <SideBarComponent class="side-br" :type="layout.leftSidebarType" :width="layout.layoutWidth" />
-    <div class="main-content">
+    <SideBarComponent 
+      v-if="!isParticipant"
+      class="side-br" 
+      :type="layout.leftSidebarType" 
+      :width="layout.layoutWidth" 
+    />
+    <div class="main-content" :class="{ 'main-content-full': isParticipant }">
       <div class="page-content">
         <BContainer fluid>
           <slot />
@@ -36,6 +41,9 @@ export default {
     layout() {
       return useLayoutStore() ? useLayoutStore() : {}
     },
+    isParticipant() {
+      return this.$route.path.startsWith('/participant')
+    },
   },
   methods: {
     toggleRightSidebar() {
@@ -67,6 +75,30 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 @import '../../../css/assets/scss/app2.scss';
+
+// Styles pour le layout participant (sans sidebar)
+.participant-layout {
+  // Étendre le topbar sur toute la largeur
+  #page-topbar {
+    left: 0 !important;
+    margin-bottom: 20px;
+  }
+
+  // Masquer le bouton menu burger
+  .vertical-menu-btn {
+    display: none !important;
+  }
+
+  // Contenu principal sans marge
+  .main-content-full {
+    margin-left: 0 !important;
+    padding-top: 20px;
+  }
+
+  .page-content {
+    padding-top: 0;
+  }
+}
 </style>

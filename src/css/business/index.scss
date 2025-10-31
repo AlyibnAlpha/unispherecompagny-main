@@ -14,9 +14,9 @@
 
 .business-card {
   background: #ffffff;
-  border-radius: 12px;
+  border-radius: 16px;
   border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 6px 18px rgba(21, 26, 48, 0.06);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }
 
 .business-card-header {
@@ -26,6 +26,7 @@
 
 .business-card-body {
   padding: 20px;
+  background: #f8fafc;
 }
 
 .business-section-title {
@@ -43,6 +44,10 @@
   border: 1px solid rgba(0, 0, 0, 0.06);
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
   overflow: hidden;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
 
   .card-body {
     padding: 24px;
@@ -57,11 +62,14 @@
   .countup-wrap span {
     font-weight: 800;
     line-height: 1;
+    font-size: 1.75rem;
   }
 
   .badge {
     font-size: 0.825rem;
     padding: 6px 10px;
+    font-weight: 700;
+    border-radius: 999px;
   }
 
   .apex-charts {
@@ -70,11 +78,13 @@
 }
 
 .shadow-warning {
-  box-shadow: 0 10px 18px rgba(245, 158, 11, 0.15) !important;
+  background: linear-gradient(135deg, #fff8e1 0%, #fff3c4 100%);
+  box-shadow: 0 8px 22px rgba(245, 158, 11, 0.18) !important;
 }
 
 .shadow-success {
-  box-shadow: 0 10px 18px rgba(16, 185, 129, 0.15) !important;
+  background: linear-gradient(135deg, #e8fff6 0%, #d4f9ea 100%);
+  box-shadow: 0 8px 22px rgba(16, 185, 129, 0.18) !important;
 }
 
 .apex-charts {
@@ -85,6 +95,38 @@
 // Icônes et titres alignés
 .stat-card .d-flex.align-items-center {
   gap: 8px;
+}
+
+// Effets hover inspirés du dashboard admin (sans le copier tel quel)
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.18);
+}
+
+.shadow-warning:hover {
+  border-color: rgba(245, 158, 11, 0.45);
+  box-shadow: 0 0 22px rgba(245, 158, 11, 0.35) !important;
+}
+
+.shadow-success:hover {
+  border-color: rgba(16, 185, 129, 0.45);
+  box-shadow: 0 0 22px rgba(16, 185, 129, 0.35) !important;
+}
+
+// Accent visuel discret en fond du body
+.stat-card .card-body {
+  position: relative;
+}
+.stat-card .card-body::before {
+  content: '';
+  position: absolute;
+  top: -25px;
+  right: -25px;
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
 }
 
 // Responsive

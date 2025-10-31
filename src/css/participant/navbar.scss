@@ -1,0 +1,130 @@
+/**
+ * Styles pour la navigation horizontale des participants
+ * Utilisé par : ParticipantNavBar.vue
+ */
+
+.participant-navbar-wrapper {
+  position: sticky;
+  top: 70px; // Hauteur du topbar
+  z-index: 999;
+  margin-top: 20px;
+  margin-bottom: 40px;
+  padding: 0 20px;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.participant-navbar {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+
+  .navbar-container {
+    padding: 0;
+  }
+
+  .navbar-items {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .navbar-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 24px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.95rem;
+
+    .navbar-icon {
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+    }
+
+    .navbar-label {
+      transition: all 0.3s ease;
+    }
+
+    .active-indicator {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 3px 3px 0 0;
+    }
+
+    &:hover {
+      background: rgba(102, 126, 234, 0.05);
+      color: #667eea;
+
+      .navbar-icon {
+        transform: translateY(-2px);
+      }
+    }
+
+    &.active {
+      color: #667eea;
+      background: rgba(102, 126, 234, 0.08);
+
+      .navbar-icon {
+        color: #667eea;
+      }
+
+      .navbar-label {
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .participant-navbar-wrapper {
+    top: 60px;
+  }
+
+  .participant-navbar {
+    .navbar-item {
+      padding: 14px 18px;
+      font-size: 0.85rem;
+
+      .navbar-icon {
+        font-size: 1.1rem;
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .participant-navbar {
+    .navbar-item {
+      flex-direction: column;
+      gap: 4px;
+      padding: 12px 16px;
+
+      .navbar-label {
+        font-size: 0.75rem;
+      }
+
+      .navbar-icon {
+        font-size: 1.3rem;
+      }
+    }
+  }
+}

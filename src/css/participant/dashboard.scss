@@ -1,0 +1,117 @@
+// Styles modernes pour le dashboard Participant
+@import './_variables.scss';
+
+.participant-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 16px 0;
+}
+
+// Header moderne (compatible avec PageHeader existant)
+.participant-page-header {
+  @extend .modern-page-header !optional; // si présent via app2, sinon fallback simple
+}
+
+// Cartes d'enquêtes
+.participant-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 8px 20px rgba(2, 6, 23, 0.08);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 32px rgba(2, 6, 23, 0.12);
+  }
+
+  .card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    background: linear-gradient(135deg, #f8fafc, #ffffff);
+  }
+
+  .card-body {
+    padding: 20px;
+  }
+}
+
+// Badges d’état d’enquête
+.enquete-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+.enquete-badge--draft {
+  background: #fff7ed;
+  color: #9a3412;
+}
+.enquete-badge--published {
+  background: #ecfdf5;
+  color: #047857;
+}
+.enquete-badge--closed {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+// Grille responsive des cartes
+.participant-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px;
+}
+.participant-grid__col-3 {
+  grid-column: span 3;
+}
+.participant-grid__col-4 {
+  grid-column: span 4;
+}
+.participant-grid__col-6 {
+  grid-column: span 6;
+}
+.participant-grid__col-12 {
+  grid-column: span 12;
+}
+
+@media (max-width: 1200px) {
+  .participant-grid__col-3 {
+    grid-column: span 6;
+  }
+  .participant-grid__col-4 {
+    grid-column: span 6;
+  }
+}
+@media (max-width: 768px) {
+  .participant-grid__col-3,
+  .participant-grid__col-4,
+  .participant-grid__col-6 {
+    grid-column: span 12;
+  }
+}
+
+// Bouton principal
+.participant-primary-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-weight: 700;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(102, 126, 234, 0.35);
+  }
+}

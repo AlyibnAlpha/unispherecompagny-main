@@ -1,11 +1,8 @@
 <script>
 import {
-  BCard,
-  BCardBody,
   BCol,
   BRow,
   BPagination,
-  BCollapse,
   BTabs,
   BFormInput,
   BTab,
@@ -133,12 +130,9 @@ export default {
     }
   },
   components: {
-    BCard,
-    BCardBody,
     BCol,
     BRow,
     BPagination,
-    BCollapse,
     BTabs,
     BFormInput,
     BTab,
@@ -187,74 +181,62 @@ export default {
 </script>
 
 <template>
-  <StatPart />
-  <div>
-    <BRow>
-      <BCol lg="3" cols="xl-3">
-        <BCard no-body>
-          <div class="card-header bg-transparent border-bottom">
-            <h5 class="mb-0">Flitre par Categorie</h5>
-          </div>
+  <div class="modern-participant-page">
+    <!-- Stats Section -->
+    <StatPart />
 
-          <div class="custom-accordion">
-            <div class="p-4 border-top">
-              <div>
-                <BCollapse visible id="filterprodductcolor-collapse">
-                  <div class="mt-4">
-                    <div v-for="(color, index) in colors" :key="index" class="form-check mt-2">
-                      <input
-                        type="checkbox"
-                        class="form-check-input"
-                        :id="'productColorCheck' + index"
-                        :value="color.value"
-                        v-model="selectedCategories"
-                      />
-                      <label class="form-check-label" :for="'productColorCheck' + index">
-                        {{ color.title }}
-                      </label>
-                    </div>
-                  </div>
-                </BCollapse>
+    <BRow class="mt-4">
+      <BCol cols="12">
+        <div class="surveys-content-modern">
+          <!-- Top Bar: Search + Filters -->
+          <div class="top-bar-modern">
+            <div class="search-bar-inline">
+              <div class="search-icon">
+                <i class="bi bi-search"></i>
+              </div>
+              <BFormInput
+                type="text"
+                v-model="searchQuery"
+                @input="currentPage = 1"
+                class="search-input-inline"
+                placeholder="Rechercher une enquête..."
+              />
+            </div>
+
+            <div class="filters-inline">
+              <div class="filter-label-inline">
+                <i class="bi bi-funnel me-2"></i>
+                Filtrer:
+              </div>
+              <div class="filter-chips">
+                <label
+                  v-for="(color, index) in colors"
+                  :key="index"
+                  class="filter-chip"
+                  :class="{ active: selectedCategories.includes(color.value) }"
+                >
+                  <input
+                    type="checkbox"
+                    :value="color.value"
+                    v-model="selectedCategories"
+                    class="filter-chip-input"
+                  />
+                  <span class="filter-chip-text">{{ color.title }}</span>
+                </label>
               </div>
             </div>
           </div>
-        </BCard>
-      </BCol>
 
-      <BCol lg="9" cols="xl-9">
-        <BCard no-body>
-          <BCardBody>
-            <div>
-              <BRow>
-                <BCol md="6">
-                  <div>
-                    <h5>Les Enquêtes en cours</h5>
+          <!-- Modern Tabs -->
+          <div class="tabs-modern-wrapper">
+            <BTabs nav-class="tabs-modern">
+              <BTab active>
+                <template v-slot:title>
+                  <div class="tab-modern-title">
+                    <i class="bi bi-stars me-2"></i>
+                    <span>Nouveautés</span>
                   </div>
-                </BCol>
-
-                <BCol md="6">
-                  <div class="form-inline float-md-end">
-                    <div class="search-box ms-2">
-                      <div class="position-relative">
-                        <BFormInput
-                          type="text"
-                          v-model="searchQuery"
-                          @input="currentPage = 1"
-                          class="form-control bg-light border-light rounded"
-                          placeholder="Search..."
-                        />
-                        <i class="mdi mdi-magnify search-icon"></i>
-                      </div>
-                    </div>
-                  </div>
-                </BCol>
-              </BRow>
-              <BTabs nav-class="nav nav-tabs nav-tabs-custom mt-3 mb-2 ecommerce-sortby-list">
-                <BTab active title-item-class="tabs-accordions-link">
-                  <template v-slot:title>
-                    <span class="d-inline-block d-sm-none"> Nouveauté </span>
-                    <span class="d-none d-sm-inline-block">Nouveauté</span>
-                  </template>
+                </template>
                   <BRow>
                     <div v-if="loading" class="text-center my-5">
                       <q-spinner-ball color="green" size="50px" />
@@ -269,23 +251,24 @@ export default {
                     <BCol
                       v-else
                       sm="6"
-                      cols="xl-4"
+                      lg="3"
                       v-for="item in paginatedNew"
                       :key="item.id"
-                      style="margin-top: 20px"
+                      class="mb-4"
                     >
                       <router-link :to="'/admin/enquetes-avis/' + item.id" class="survey-card-link">
-                        <div
-                          class="survey-card"
-                          @mouseover="item.hover = true"
-                          @mouseleave="item.hover = false"
-                        >
-                          <div class="survey-image">
-                            <div class="survey-badge">{{ item.startDate }} semaine</div>
-                            <img
-                              src="/images/course/course-type-01-02/sondage.webp"
-                              alt="Sondage"
-                            />
+                        <div class="survey-card">
+                          <div class="survey-image-modern">
+                            <div class="survey-header-top">
+                              <div class="survey-badge">
+                                <i class="bi bi-clock"></i>
+                                {{ item.startDate }} semaine{{ item.startDate > 1 ? 's' : '' }}
+                              </div>
+                              <div class="category-badge">Nouveau</div>
+                            </div>
+                            <div class="survey-icon-large">
+                              <i class="bi bi-clipboard-data"></i>
+                            </div>
                           </div>
 
                           <div class="survey-content">
@@ -298,27 +281,35 @@ export default {
                               {{ item.description || 'Aucune description disponible.' }}
                             </p>
 
-                            <div class="survey-stats">
-                              <span class="badge bg-primary">
-                                <i class="uil-comment-chart-line"></i>
-                                {{ item.question_groups }} Questions
-                              </span>
-                              <span class="badge bg-success">
-                                <i class="uil-comment-check"></i>
-                                {{ item.survey_participants }} Réponses
-                              </span>
+                            <div class="survey-stats-modern">
+                              <div class="stat-item">
+                                <i class="bi bi-question-circle-fill stat-icon"></i>
+                                <div class="stat-content">
+                                  <div class="stat-number">{{ item.question_groups }}</div>
+                                  <div class="stat-label">Questions</div>
+                                </div>
+                              </div>
+                              <div class="stat-item">
+                                <i class="bi bi-check-circle-fill stat-icon"></i>
+                                <div class="stat-content">
+                                  <div class="stat-number">{{ item.survey_participants }}</div>
+                                  <div class="stat-label">Réponses</div>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </router-link>
                     </BCol>
                   </BRow>
-                </BTab>
-                <BTab title-item-class="tabs-accordions-link">
-                  <template v-slot:title>
-                    <span class="d-inline-block d-sm-none"> En cours </span>
-                    <span class="d-none d-sm-inline-block">En cours</span>
-                  </template>
+              </BTab>
+              <BTab>
+                <template v-slot:title>
+                  <div class="tab-modern-title">
+                    <i class="bi bi-hourglass-split me-2"></i>
+                    <span>En cours</span>
+                  </div>
+                </template>
                   <BRow>
                     <div v-if="loading" class="text-center my-5">
                       <q-spinner-ball color="green" size="50px" />
@@ -333,49 +324,61 @@ export default {
                     <BCol
                       v-else
                       sm="6"
-                      cols="xl-4"
+                      lg="3"
                       v-for="item in paginatedCourses"
                       :key="item.id"
-                      style="margin-top: 20px"
+                      class="mb-4"
                     >
-                      <div
-                        class="survey-card"
-                        @mouseover="item.hover = true"
-                        @mouseleave="item.hover = false"
-                      >
-                        <div class="survey-image">
-                          <div class="survey-badge">{{ item.startDate }} semaine</div>
-                          <img src="/images/course/course-type-01-02/sondage.webp" alt="Sondage" />
-                        </div>
+                      <router-link :to="'/admin/enquetes-avis/' + item.id" class="survey-card-link">
+                        <div class="survey-card">
+                          <div class="survey-image-modern">
+                            <div class="survey-header-top">
+                              <div class="survey-badge">
+                                <i class="bi bi-clock"></i>
+                                {{ item.startDate }} semaine{{ item.startDate > 1 ? 's' : '' }}
+                              </div>
+                            </div>
+                            <div class="survey-icon-large">
+                              <i class="bi bi-clipboard-data"></i>
+                            </div>
+                          </div>
 
-                        <div class="survey-content">
-                          <h5 class="survey-title">
-                            <router-link :to="'/admin/enquetes-avis/' + item.slug">
-                              {{ item.title }}
-                            </router-link>
-                          </h5>
-                          <p class="survey-description">
-                            {{ item.description || 'Aucune description disponible.' }}
-                          </p>
+                          <div class="survey-content">
+                            <h5 class="survey-title">
+                              <router-link :to="'/admin/enquetes-avis/' + item.id">
+                                {{ item.title }}
+                              </router-link>
+                            </h5>
+                            <p class="survey-description">
+                              {{ item.description || 'Aucune description disponible.' }}
+                            </p>
 
-                          <div class="survey-stats">
-                            <span class="badge bg-primary">
-                              <i class="uil-comment-chart-line"></i>
-                              {{ item.question_groups }} Questions
-                            </span>
-                            <span class="badge bg-success">
-                              <i class="uil-comment-check"></i>
-                              {{ item.survey_participants }} Réponses
-                            </span>
+                            <div class="survey-stats-modern">
+                              <div class="stat-item">
+                                <i class="bi bi-question-circle-fill stat-icon"></i>
+                                <div class="stat-content">
+                                  <div class="stat-number">{{ item.question_groups }}</div>
+                                  <div class="stat-label">Questions</div>
+                                </div>
+                              </div>
+                              <div class="stat-item">
+                                <i class="bi bi-check-circle-fill stat-icon"></i>
+                                <div class="stat-content">
+                                  <div class="stat-number">{{ item.survey_participants }}</div>
+                                  <div class="stat-label">Réponses</div>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      </router-link>
                     </BCol>
                   </BRow>
-                </BTab>
-              </BTabs>
+              </BTab>
+            </BTabs>
+          </div>
 
-              <BRow class="mt-4">
+          <BRow class="mt-4">
                 <BCol lg="12">
                   <BPagination
                     v-if="courses.length > 0"
@@ -388,9 +391,7 @@ export default {
                   ></BPagination>
                 </BCol>
               </BRow>
-            </div>
-          </BCardBody>
-        </BCard>
+        </div>
       </BCol>
     </BRow>
   </div>
@@ -399,4 +400,5 @@ export default {
 <style lang="scss">
 @import '../../../css/assets/scss/app2.scss';
 @import '../../../css/modern-cards.scss';
+@import 'src/css/participant/surveys.scss';
 </style>

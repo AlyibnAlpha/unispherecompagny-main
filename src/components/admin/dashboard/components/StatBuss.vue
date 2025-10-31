@@ -1,7 +1,7 @@
 <template>
   <BRow>
     <BCol md="6" cols="xl-6">
-      <BCard no-body class="business-card stat-card shadow-warning">
+      <BCard no-body class="business-card stat-card business-kpi shadow-warning">
         <BCardBody class="business-card-body d-flex justify-content-between align-items-center">
           <div>
             <h4 class="fw-bold mb-1 fs-5">
@@ -31,7 +31,7 @@
     </BCol>
 
     <BCol md="6" cols="xl-6">
-      <BCard no-body class="business-card stat-card shadow-success">
+      <BCard no-body class="business-card stat-card business-kpi shadow-success">
         <BCardBody class="business-card-body d-flex justify-content-between align-items-center">
           <div>
             <div class="d-flex align-items-center mb-2">
@@ -172,3 +172,7 @@ export default {
   },
 }
 </script>
+
+<style lang="scss">
+@import '../../../../css/business/index.scss';
+</style>
