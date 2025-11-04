@@ -142,6 +142,26 @@ export default {
       }
     }
 
+    // Vérifier si le sondage peut être modifié
+    const canEditSurvey = (survey) => {
+      // Ne peut pas modifier si le statut est 'closed'
+      if (survey.status === 'closed') {
+        return false
+      }
+      
+      // Ne peut pas modifier si le sondage est publié et en cours
+      if (survey.status === 'published' && survey.endDate) {
+        const now = new Date()
+        const endDate = new Date(survey.endDate)
+        // Si la date de fin n'est pas encore passée, le sondage est en cours
+        if (now <= endDate) {
+          return false
+        }
+      }
+      
+      return true
+    }
+
     onMounted(() => {
       gets()
       getcaetory()
@@ -151,6 +171,7 @@ export default {
       openEditModal,
       deleteSurvey,
       openDetailModal,
+      canEditSurvey,
       detail,
       listdetail,
       orderData,
@@ -351,9 +372,11 @@ export default {
                 <li class="list-inline-item">
                   <a
                     href="#"
-                    class="px-2 text-warning"
-                    @click.prevent="openEditModal(data.item)"
-                    title="Modifier"
+                    class="px-2"
+                    :class="canEditSurvey(data.item) ? 'text-warning' : 'text-muted disabled-link'"
+                    @click.prevent="canEditSurvey(data.item) && openEditModal(data.item)"
+                    :title="canEditSurvey(data.item) ? 'Modifier' : 'Modification non autorisée (sondage en cours ou clos)'"
+                    :style="{ cursor: canEditSurvey(data.item) ? 'pointer' : 'not-allowed', opacity: canEditSurvey(data.item) ? 1 : 0.5 }"
                   >
                     <i class="uil uil-pen font-size-18"></i>
                   </a>

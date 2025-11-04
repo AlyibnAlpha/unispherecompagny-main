@@ -9,16 +9,21 @@
 .badge,
 .badge-pill,
 a.badge,
-span.badge {
-  display: inline-block !important;
-  padding: 4px 12px !important;
+span.badge,
+div.badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 5px 14px !important;
   border-radius: 20px !important;
-  font-size: 0.8rem !important;
+  font-size: 0.75rem !important;
   font-weight: 600 !important;
   text-transform: capitalize !important;
   letter-spacing: 0.3px !important;
   border: none !important;
   transition: all 0.2s ease !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
 }
 
 .badge-modern-success,
@@ -64,7 +69,37 @@ span.badge.bg-soft-danger {
 .badge.bg-soft-secondary,
 .badge-pill.bg-soft-secondary,
 a.badge.bg-soft-secondary,
-span.badge.bg-soft-secondary {
-  background: #f3f4f6 !important;
-  color: #6b7280 !important;
+span.badge.bg-soft-secondary,
+div.badge.bg-soft-secondary {
+  background: #e5e7eb !important;
+  color: #374151 !important;
+  font-weight: 700 !important;
+}
+
+/* === Badges de rang (leaderboard) === */
+.badge.bg-soft-gold,
+.badge-pill.bg-soft-gold,
+div.badge.bg-soft-gold {
+  background: linear-gradient(135deg, #fef3c7, #fde68a) !important;
+  color: #92400e !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3) !important;
+}
+
+.badge.bg-soft-silver,
+.badge-pill.bg-soft-silver,
+div.badge.bg-soft-silver {
+  background: linear-gradient(135deg, #f3f4f6, #e5e7eb) !important;
+  color: #374151 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(156, 163, 175, 0.3) !important;
+}
+
+.badge.bg-soft-bronze,
+.badge-pill.bg-soft-bronze,
+div.badge.bg-soft-bronze {
+  background: linear-gradient(135deg, #fed7aa, #fdba74) !important;
+  color: #7c2d12 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(251, 146, 60, 0.3) !important;
 }

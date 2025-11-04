@@ -66,7 +66,19 @@
             <i class="bi bi-clipboard-data"></i>
           </div>
           <div class="survey-info">
-            <h1 class="survey-title">{{ form.title }}</h1>
+            <div class="title-with-badge">
+              <h1 class="survey-title">{{ form.title }}</h1>
+              <div
+                class="badge badge-pill font-size-12 survey-status-badge"
+                :class="{
+                  'bg-soft-success': isSurveyActive,
+                  'bg-soft-secondary': !isSurveyActive,
+                }"
+              >
+                <i :class="isSurveyActive ? 'bi bi-play-circle' : 'bi bi-check-circle'"></i>
+                {{ isSurveyActive ? 'En cours' : 'Terminé' }}
+              </div>
+            </div>
             <p class="survey-description">{{ form.description }}</p>
             
             <div class="survey-meta">
@@ -78,63 +90,41 @@
                 <i class="bi bi-calendar-x"></i>
                 <span>Fin: {{ formatDate(form.endDate) }}</span>
               </div>
-              <div class="meta-item status-badge" :class="`status-${form.status}`">
-                <i class="bi bi-circle-fill"></i>
-                <span>{{ form.status }}</span>
+              <div class="meta-item" v-if="form.type">
+                <i class="bi bi-tag"></i>
+                <span>Type: {{ form.type }}</span>
+              </div>
+              <div class="meta-item" v-if="form.category && form.category.name">
+                <i class="bi bi-folder"></i>
+                <span>Catégorie: {{ form.category.name }}</span>
+              </div>
+              <div
+                class="badge badge-pill font-size-12"
+                :class="{
+                  'bg-soft-primary': form.status === 'draft',
+                  'bg-soft-success': form.status === 'published',
+                  'bg-soft-warning': form.status === 'archived',
+                  'bg-soft-secondary': form.status === 'review',
+                  'bg-soft-danger': form.status === 'closed',
+                }"
+              >
+                {{ form.status }}
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Stats Grid -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon stat-icon-primary">
-            <i class="bi bi-people-fill"></i>
-          </div>
-          <div class="stat-content">
-            <h3 class="stat-value">{{ form.survey_participants?.length || 0 }}</h3>
-            <p class="stat-label">Participants</p>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-icon stat-icon-success">
-            <i class="bi bi-check-circle-fill"></i>
-          </div>
-          <div class="stat-content">
-            <h3 class="stat-value">{{ form.responses?.length || 0 }}</h3>
-            <p class="stat-label">Réponses</p>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-icon stat-icon-warning">
-            <i class="bi bi-question-circle-fill"></i>
-          </div>
-          <div class="stat-content">
-            <h3 class="stat-value">{{ questionsList.length }}</h3>
-            <p class="stat-label">Questions</p>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-icon stat-icon-info">
-            <i class="bi bi-graph-up"></i>
-          </div>
-          <div class="stat-content">
-            <h3 class="stat-value">{{ moyenneReponses }}</h3>
-            <p class="stat-label">Moyenne/Question</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Creator Card -->
-      <div v-if="form.user" class="creator-card-modern">
+      <!-- Two Column Layout: Creator Left, Stats Right -->
+      <div class="two-column-layout">
+        <!-- Left Column: Creator Card -->
+        <div v-if="form.user" class="creator-card-modern-large">
         <div class="creator-header">
-          <i class="bi bi-person-badge"></i>
-          <h3>Créateur de l'enquête</h3>
+          <div class="creator-header-left">
+            <i class="bi bi-person-badge"></i>
+            <h3>Créateur de l'enquête</h3>
+          </div>
+          <span class="role-badge">{{ getCreatorRole(form.user) }}</span>
         </div>
         <div class="creator-content">
           <img
@@ -161,6 +151,50 @@
                 <i class="bi bi-calendar-event"></i>
                 <span>Créé le {{ formatDate(form.createdAt) }}</span>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Right Column: Stats Grid -->
+        <div class="stats-grid-compact">
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-primary">
+              <i class="bi bi-people-fill"></i>
+            </div>
+            <div class="stat-content">
+              <h3 class="stat-value">{{ form.survey_participants?.length || 0 }}</h3>
+              <p class="stat-label">Participants</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-success">
+              <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <div class="stat-content">
+              <h3 class="stat-value">{{ form.responses?.length || 0 }}</h3>
+              <p class="stat-label">Réponses</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-warning">
+              <i class="bi bi-question-circle-fill"></i>
+            </div>
+            <div class="stat-content">
+              <h3 class="stat-value">{{ questionsList.length }}</h3>
+              <p class="stat-label">Questions</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-info">
+              <i class="bi bi-graph-up"></i>
+            </div>
+            <div class="stat-content">
+              <h3 class="stat-value">{{ moyenneReponses }}</h3>
+              <p class="stat-label">Moyenne/Question</p>
             </div>
           </div>
         </div>
@@ -478,6 +512,14 @@ export default {
         totalResponses += q.answers.length
       })
       return (totalResponses / questionsList.value.length).toFixed(2)
+    })
+
+    // 🔹 Vérifier si le sondage est en cours
+    const isSurveyActive = computed(() => {
+      if (!form.value.endDate) return false
+      const now = new Date()
+      const endDate = new Date(form.value.endDate)
+      return now <= endDate
     })
 
     // 🔹 Data pour le graphique
@@ -981,6 +1023,15 @@ export default {
       return user.businessAccount?.phone || user.admin?.phone || null
     }
 
+    const getCreatorRole = (user) => {
+      if (user.businessAccount) {
+        return 'Business'
+      } else if (user.admin) {
+        return 'Admin'
+      }
+      return 'User'
+    }
+
     const getTypeLabel = (type) => {
       const types = {
         text: 'Texte libre',
@@ -1001,6 +1052,7 @@ export default {
       getSingleChoiceLabel,
       getMultipleChoiceLabels,
       moyenneReponses,
+      isSurveyActive,
       toggleCollapse,
       openCollapse,
       chartSeries,
@@ -1031,12 +1083,14 @@ export default {
       getCreatorName,
       getCreatorCompany,
       getCreatorPhone,
+      getCreatorRole,
       getTypeLabel,
     }
   },
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import '../../../../css/ultra-modern-detail.scss';
+@import '../../../../css/admin/badges.scss';
 </style>

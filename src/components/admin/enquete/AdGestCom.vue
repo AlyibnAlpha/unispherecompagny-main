@@ -40,12 +40,12 @@ export default {
     const sup = ref(0)
     const loadingx = ref(false)
     const optionlp = [
-      { label: 'Françe', value: 'FR' },
-      { label: 'Engletaire', value: 'EN' },
+      { label: 'Français', value: 'FR' },
+      { label: 'Engleterre', value: 'EN' },
       { label: 'Espagne', value: 'ES' },
       { label: 'Itali', value: 'IT' },
       { label: 'Portugual', value: 'PT' },
-      { label: 'MALI', value: 'ML' },
+      { label: 'Mali', value: 'ML' },
       { label: "Côte d'ivoire", value: 'CI' },
       { label: 'Sénegal', value: 'SN' },
       { label: 'Gambie', value: 'GM' },

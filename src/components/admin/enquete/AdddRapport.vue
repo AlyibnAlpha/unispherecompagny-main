@@ -31,13 +31,22 @@
         <h5 class="selection-card-title">Sélectionnez un sondage</h5>
       </div>
       <div class="selection-card-body">
+        <div v-if="isLoadingSurveys" class="text-center py-3">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Chargement...</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">Chargement des sondages...</p>
+        </div>
         <Multiselect
+          v-else
           v-model="rapport"
+          :key="optionl2.length"
           placeholder="Rechercher et sélectionner un sondage..."
           :searchable="true"
           :close-on-select="true"
           :clear-on-select="false"
           :options="optionl2"
+          :loading="isLoadingSurveys"
           class="multiselect-modern"
         />
       </div>
@@ -367,7 +376,7 @@
 
 <script>
 import { BRow, BCol, BCard, BCollapse, BBadge } from 'bootstrap-vue-next'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch, nextTick } from 'vue'
 import ApexCharts from 'vue3-apexcharts'
 import StatDetail from '../dashboard/components/StatDetail.vue'
 import dayjs from 'dayjs'
@@ -395,6 +404,7 @@ export default {
     const selectedAnswers = ref([])
     const optionl2 = ref([])
     const isDownloading = ref(false)
+    const isLoadingSurveys = ref(true)
     const visibleAnswers = ref({})
     const router = useRouter()
 
@@ -405,25 +415,35 @@ export default {
       return today.diff(dob, 'year')
     }
     const getsurveys = async () => {
-      optionl2.value = []
-      const response = await api.get(`/admin/surveys`)
-      const resp = await api.get('/admin/reports')
-      const reportedSurveyIds = resp.data.map((r) => r.survey.id)
+      try {
+        isLoadingSurveys.value = true
+        optionl2.value = []
+        const response = await api.get(`/admin/surveys`)
+        const resp = await api.get('/admin/reports')
+        const reportedSurveyIds = resp.data.map((r) => r.survey.id)
 
-      response.data.map((group) => {
-        const endDate = new Date(group.endDate) // date de fin du sondage
-        const now = new Date() // date courante
-        if (endDate <= now) {
-          if (group.isPublished) {
-            if (!reportedSurveyIds.includes(group.id)) {
-              optionl2.value.push({
-                value: group.id,
-                label: group.title,
-              })
+        response.data.map((group) => {
+          const endDate = new Date(group.endDate) // date de fin du sondage
+          const now = new Date() // date courante
+          if (endDate <= now) {
+            if (group.isPublished) {
+              if (!reportedSurveyIds.includes(group.id)) {
+                optionl2.value.push({
+                  value: group.id,
+                  label: group.title,
+                })
+              }
             }
           }
-        }
-      })
+        })
+        
+        // Attendre que le DOM soit mis à jour
+        await nextTick()
+        // Petit délai supplémentaire pour s'assurer que le Multiselect est prêt
+        await new Promise(resolve => setTimeout(resolve, 100))
+      } finally {
+        isLoadingSurveys.value = false
+      }
     }
     const gets = async () => {
       const response = await api.get(`/admin/surveys/${rapport.value}`)
@@ -673,6 +693,7 @@ export default {
       genderChartOptions,
       selectedAnswers,
       isDownloading,
+      isLoadingSurveys,
       getVisibleAnswers,
       toggleMore,
       visibleAnswers,

@@ -1,35 +1,22 @@
 <template>
-  <div class="gap-bottom-equal edu-about-area about-style-2 ifh">
-    <div class="container edublink-animated-shape align-items-center">
-      <div class="g-5 align-items-center">
-        <div class="about-image-gallery">
-          <ul class="shape-group">
-            <MouseMove
-              addClassName="shape-1"
-              dataDepth="2"
-              imgSrc="/images/about/shape-38.png"
-              data-aos-delay="500"
-              data-aos="fade"
-              data-aos-duration="200"
-            />
-            <MouseMove
-              addClassName="shape-2"
-              dataDepth="-2"
-              imgSrc="/images/about/shape-37.png"
-              data-aos-delay="500"
-              data-aos="fade"
-              data-aos-duration="200"
-            />
-            <MouseMove
-              addClassName="shape-3"
-              dataDepth="1.8"
-              imgSrc="/images/about/shape-04.png"
-              data-aos-delay="500"
-              data-aos="fade"
-              data-aos-duration="200"
-            />
-          </ul>
-          <div class="q-pa-md">
+  <div class="profile-wizard-container">
+    <!-- Header avec logo et progression -->
+    <div class="wizard-header">
+      <div class="wizard-logo">
+        <i class="bi bi-person-circle"></i>
+        <h1>Complétez votre profil</h1>
+      </div>
+      <div class="wizard-progress">
+        <div class="progress-bar">
+          <div class="progress-fill" :style="{ width: `${(step / 5) * 100}%` }"></div>
+        </div>
+        <span class="progress-text">Étape {{ step }} sur 5</span>
+      </div>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="wizard-content">
+      <div class="wizard-card">
             <q-stepper
               v-model="step"
               vertical
@@ -122,14 +109,14 @@
                 </form>
 
                 <q-stepper-navigation>
+                  <q-btn @click="step = 1" flat color="grey" label="Retour" />
                   <button class="edu-btn btn-medium" @click="step = 3">
-                    Continue <i class="icon-4"></i>
+                    Continuer <i class="bi bi-arrow-right"></i>
                   </button>
-                  <q-btn @click="step = 1" color="grey" label="Back" class="q-ml-sm" />
                 </q-stepper-navigation>
               </q-step>
 
-              <q-step :name="3" title="Votre Pofession ?" icon="create_new_folder" :done="step > 4">
+              <q-step :name="3" title="Votre Pofession ?" icon="create_new_folder" :done="step > 3">
                 <div class="login-form-box">
                   <div class="row">
                     <div class="col-lg-12 form-group">
@@ -151,61 +138,69 @@
                   </div>
                 </div>
                 <q-stepper-navigation>
+                  <q-btn @click="step = 2" flat color="grey" label="Retour" />
                   <button class="edu-btn btn-medium" @click="step = 4">
-                    Continue <i class="icon-4"></i>
+                    Continuer <i class="bi bi-arrow-right"></i>
                   </button>
-                  <q-btn @click="step = 2" color="grey" label="Back" class="q-ml-sm" />
                 </q-stepper-navigation>
               </q-step>
 
-              <q-step :name="4" title="Votre langue ?" icon="create_new_folder" :done="step > 5">
-                <q-select
-                  square
-                  outlined
-                  v-model="form.participantProfile.preferences.language"
-                  :options="languageOptions"
-                  label="Square outlined"
-                />
+              <q-step :name="4" title="Votre langue ?" icon="create_new_folder" :done="step > 4">
+                <div class="language-select-wrapper">
+                  <label class="language-label">Sélectionnez votre langue</label>
+                  <q-select
+                    outlined
+                    v-model="selectedLanguage"
+                    :options="languageOptions"
+                    option-value="value"
+                    option-label="label"
+                    class="modern-language-select"
+                  >
+                    <template v-slot:selected>
+                      <div v-if="selectedLanguage" class="selected-language">
+                        <span class="language-flag">{{ selectedLanguage.flag }}</span>
+                        <span class="language-name">{{ selectedLanguage.label }}</span>
+                      </div>
+                    </template>
+                    <template v-slot:option="scope">
+                      <q-item v-bind="scope.itemProps" class="language-option">
+                        <q-item-section>
+                          <div class="language-item">
+                            <span class="language-flag">{{ scope.opt.flag }}</span>
+                            <span class="language-name">{{ scope.opt.label }}</span>
+                          </div>
+                        </q-item-section>
+                      </q-item>
+                    </template>
+                  </q-select>
+                </div>
 
                 <q-stepper-navigation>
+                  <q-btn @click="step = 3" flat color="grey" label="Retour" />
                   <button class="edu-btn btn-medium" @click="step = 5">
-                    Continue <i class="icon-4"></i>
+                    Continuer <i class="bi bi-arrow-right"></i>
                   </button>
-                  <q-btn @click="step = 3" color="grey" label="Back" class="q-ml-sm" />
                 </q-stepper-navigation>
               </q-step>
 
-              <q-step :name="5" title="Completer votre profil" icon="add_comment">
+              <q-step :name="5" title="Completer votre profil" icon="add_comment" :done="step > 5">
                 Félicitations ! Si vous avez le temps, votre première enquête vous attend dès
                 maintenant sur la page de votre compte Unisphere compagny !
 
                 <q-stepper-navigation>
-                  <button class="edu-btn btn-medium" @click="createParty">
-                    Enregistre <i class="icon-4"></i>
+                  <q-btn @click="step = 4" flat color="grey" label="Retour" />
+                  <button class="edu-btn btn-medium" @click="step = 6; createParty()">
+                    Enregistrer <i class="bi bi-check-circle"></i>
                   </button>
-                  <q-btn @click="step = 4" color="grey" label="Back" class="q-ml-sm" />
                 </q-stepper-navigation>
               </q-step>
             </q-stepper>
-          </div>
-        </div>
       </div>
-      <ul class="shape-group">
-        <MouseMove
-          addClassName="shape-1 circle"
-          dataDepth="-2.3"
-          data-aos-delay="500"
-          data-aos="fade"
-          data-aos-duration="200"
-        />
-      </ul>
     </div>
   </div>
 </template>
 
 <script>
-import MouseMove from 'src/components/animation/MouseMove.vue'
-import parallaxAnimation from '/common/parallaxAnimation.js'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from 'src/boot/axios'
@@ -214,11 +209,7 @@ import Multiselect from 'vue-multiselect'
 import 'vue-multiselect/dist/vue-multiselect.css'
 export default {
   components: {
-    MouseMove,
     Multiselect,
-  },
-  mounted() {
-    parallaxAnimation()
   },
   setup() {
     const languageOptions = [
@@ -283,6 +274,7 @@ export default {
     const optionls = ref([])
     const leval = ref([])
     const levals = ref([])
+    const selectedLanguage = ref(languageOptions[0])
     const form = ref({
       participantProfile: {
         firstName: '',
@@ -327,6 +319,7 @@ export default {
     const createParty = async () => {
       try {
         form.value.participantProfile.professionSector = levals.value
+        form.value.participantProfile.preferences.language = selectedLanguage.value.value
         const resp = await api.get('/users/me')
         LocalStorage.set('nom', resp.data.participantProfile.lastName)
         lq.loading.show()
@@ -358,6 +351,7 @@ export default {
       createParty,
       step: ref(1),
       languageOptions,
+      selectedLanguage,
       form,
       optionl,
       leval,
@@ -368,13 +362,7 @@ export default {
 }
 </script>
 
-<style scoped>
-@import '../css/app.scss';
-.ifh {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #f0f4ff, #e0f7fa);
-}
+<style lang="scss">
+@import '../css/profile-wizard.scss';
+  
 </style>
