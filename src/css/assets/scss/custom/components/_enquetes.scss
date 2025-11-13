@@ -411,12 +411,7 @@
     border: 2px solid #e2e8f0;
     border-radius: 12px;
     overflow: hidden;
-    transition: all 0.3s ease;
-
-    &:hover {
-      border-color: #cbd5e1;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    }
+    /* Pas d'effet de survol pour rester cohérent avec les autres étapes */
 
     .criteria-card-header {
       display: flex;
@@ -1170,7 +1165,7 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
     transition: all 0.3s ease;
 
-    &:hover {
+    &:hover:not(.question-card) {
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
     }
 
@@ -1184,6 +1179,22 @@
 
     .card-body {
       padding: 1.5rem !important;
+    }
+  }
+
+  /* Désactiver tous les effets hover sur les question-card */
+  .question-card {
+    &:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+      transform: none !important;
+      background: white !important;
+    }
+  }
+
+  /* Désactiver les effets hover sur les parents des question-card */
+  .row:has(.question-card) {
+    &:hover {
+      background: transparent !important;
     }
   }
 

@@ -58,7 +58,7 @@ export default {
       { label: 'Cameroun', value: 'CM' },
       { label: 'Gabon', value: 'GA' },
       { label: 'Congo', value: 'CG' },
-      { label: 'République Démocratique du Congo', value: 'CD' },
+      { label: 'République Démocratique du Congo', value: 'RDC' },
       { label: 'Angola', value: 'AO' },
       { label: 'Mozambique', value: 'MZ' },
       { label: 'Zambie', value: 'ZM' },

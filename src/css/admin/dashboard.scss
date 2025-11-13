@@ -633,7 +633,7 @@
 }
 
 /* === Card Hover Effects Enhanced === */
-.card:hover,
+.card:hover:not(.question-card),
 .stat-card:hover,
 .shadow-warning:hover,
 .shadow-success:hover,

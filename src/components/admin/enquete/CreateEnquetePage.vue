@@ -110,7 +110,7 @@ export default {
             <span v-if="activeTab > 3"><i class="bi bi-check-circle-fill"></i></span>
             <span v-else>3</span>
           </div>
-          <div class="step-nav-title-unified">Groupes de participants</div>
+          <div class="step-nav-title-unified">Questions</div>
         </div>
 
         <div class="step-nav-connector-unified" :class="{ active: activeTab > 3 }"></div>
@@ -124,7 +124,7 @@ export default {
             <span v-if="activeTab > 4"><i class="bi bi-check-circle-fill"></i></span>
             <span v-else>4</span>
           </div>
-          <div class="step-nav-title-unified">Questions</div>
+          <div class="step-nav-title-unified">Groupes de participants</div>
         </div>
 
         <div class="step-nav-connector-unified" :class="{ active: activeTab > 4 }"></div>
