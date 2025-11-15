@@ -29,62 +29,72 @@
 
           <BCardBody>
             <BRow>
-            <!-- Sélection du groupe -->
-            <BFormGroup class="form-group mb-3 floating-label">
-              <Multiselect
-                square
-                outlined
-                v-model="field.group"
-                :options="optionl2"
-                placeholder=" "
-                class="form-control-modern"
-              />
-              <label>Choisir le groupe de question</label>
-            </BFormGroup>
+              <!-- Sélection du groupe -->
+              <BCol cols="12" md="6" class="mb-3">
+                <BFormGroup class="form-group floating-label">
+                  <Multiselect
+                    square
+                    outlined
+                    v-model="field.group"
+                    :options="optionl2"
+                    placeholder=" "
+                    class="form-control-modern"
+                  />
+                  <label>Choisir le groupe de question</label>
+                </BFormGroup>
+              </BCol>
 
-            <!-- Titre -->
-            <BFormGroup class="form-group mb-3 floating-label">
-              <BFormInput v-model="field.title" placeholder=" " class="form-control-modern" />
-              <label>Titre de la question</label>
-            </BFormGroup>
+              <!-- Titre -->
+              <BCol cols="12" md="6" class="mb-3">
+                <BFormGroup class="form-group floating-label">
+                  <BFormInput v-model="field.title" placeholder=" " class="form-control-modern" />
+                  <label>Titre de la question</label>
+                </BFormGroup>
+              </BCol>
 
-            <!-- Description -->
-            <BFormGroup class="form-group mb-3 floating-label">
-              <BFormTextarea
-                v-model="field.description"
-                placeholder=" "
-                class="form-control-modern"
-                rows="3"
-              />
-              <label>Description de la question</label>
-            </BFormGroup>
+              <!-- Description -->
+              <BCol cols="12" class="mb-3">
+                <BFormGroup class="form-group floating-label">
+                  <BFormTextarea
+                    v-model="field.description"
+                    placeholder=" "
+                    class="form-control-modern"
+                    rows="3"
+                  />
+                  <label>Description de la question</label>
+                </BFormGroup>
+              </BCol>
 
-            <!-- Position -->
-            <BFormGroup class="form-group mb-3 floating-label">
-              <BFormInput
-                type="number"
-                v-model="field.position"
-                placeholder=" "
-                class="form-control-modern"
-              />
-              <label>Position de la question</label>
-            </BFormGroup>
+              <!-- Position -->
+              <BCol cols="12" md="6" class="mb-3">
+                <BFormGroup class="form-group floating-label">
+                  <BFormInput
+                    type="number"
+                    v-model="field.position"
+                    placeholder=" "
+                    class="form-control-modern"
+                  />
+                  <label>Position de la question</label>
+                </BFormGroup>
+              </BCol>
 
-            <!-- Type de réponses -->
-            <BFormGroup class="form-group mb-3 floating-label">
-              <Multiselect
-                square
-                outlined
-                v-model="field.type"
-                :options="options"
-                placeholder=" "
-                class="form-control-modern"
-              />
-              <label>Type de réponses</label>
-            </BFormGroup>
+              <!-- Type de réponses -->
+              <BCol cols="12" md="6" class="mb-3">
+                <BFormGroup class="form-group floating-label">
+                  <Multiselect
+                    square
+                    outlined
+                    v-model="field.type"
+                    :options="options"
+                    placeholder=" "
+                    class="form-control-modern"
+                  />
+                  <label>Type de réponses</label>
+                </BFormGroup>
+              </BCol>
 
-            <!-- Options de réponses -->
-            <div v-if="field.type === 'single_choice' || field.type === 'multiple_choice'">
+              <!-- Options de réponses -->
+              <BCol cols="12" v-if="field.type === 'single_choice' || field.type === 'multiple_choice'">
               <label class="form-label">Options de réponses</label>
               <BListGroup flush>
                 <BListGroupItem
@@ -171,115 +181,115 @@
                   </div>
                 </div>
               </div>
-            </div>
-            
-            <!-- Obligatoire -->
-            <BCol cols="12" class="mb-3">
-              <div class="form-check form-switch gap-2 d-flex align-items-center">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  id="publishCheck"
-                  v-model="field.isRequired"
-                  style="width: 50px; height: 25px"
-                />
-                <label class="form-check-label fw-semibold" for="publishCheck"> Obligatoire </label>
-              </div>
-            </BCol>
+              </BCol>
 
-            <!-- Questions Conditionnelles -->
-            <BCol cols="12" class="mb-3">
-              <div class="form-check form-switch gap-2 d-flex align-items-center">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  :id="`enableConditional-${index}`"
-                  v-model="field.enableConditional"
-                  style="width: 50px; height: 25px"
-                />
-                <label class="form-check-label fw-semibold" :for="`enableConditional-${index}`">
-                  <i class="bi bi-diagram-3 me-2"></i>
-                  Cette question dépend d'une autre question
-                </label>
-              </div>
-            </BCol>
-
-            <!-- Configuration de la logique conditionnelle -->
-            <BCol cols="12" v-if="field.enableConditional" class="mb-3">
-              <div class="conditional-logic-config">
-                <div class="alert alert-info mb-3">
-                  <i class="bi bi-info-circle me-2"></i>
-                  <strong>Logique conditionnelle :</strong> Cette question s'affichera uniquement si la condition est remplie
+              <!-- Obligatoire -->
+              <BCol cols="12" class="mb-3">
+                <div class="form-check form-switch gap-2 d-flex align-items-center">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="publishCheck"
+                    v-model="field.isRequired"
+                    style="width: 50px; height: 25px"
+                  />
+                  <label class="form-check-label fw-semibold" for="publishCheck"> Obligatoire </label>
                 </div>
+              </BCol>
 
-                <BRow>
-                  <!-- Sélection de la question de référence -->
-                  <BCol cols="12" md="6" class="mb-3">
-                    <BFormGroup class="form-group floating-label">
-                      <Multiselect
-                        square
-                        outlined
-                        v-model="field.conditionalLogic.questionId"
-                        :options="getPreviousQuestions(index)"
-                        placeholder=" "
-                        class="form-control-modern"
-                      />
-                      <label>Question de référence</label>
-                    </BFormGroup>
-                  </BCol>
+              <!-- Questions Conditionnelles -->
+              <BCol cols="12" class="mb-3">
+                <div class="form-check form-switch gap-2 d-flex align-items-center">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    :id="`enableConditional-${index}`"
+                    v-model="field.enableConditional"
+                    style="width: 50px; height: 25px"
+                  />
+                  <label class="form-check-label fw-semibold" :for="`enableConditional-${index}`">
+                    <i class="bi bi-diagram-3 me-2"></i>
+                    Cette question dépend d'une autre question
+                  </label>
+                </div>
+              </BCol>
 
-                  <!-- Opérateur -->
-                  <BCol cols="12" md="6" class="mb-3">
-                    <BFormGroup class="form-group floating-label">
-                      <Multiselect
-                        square
-                        outlined
-                        v-model="field.conditionalLogic.operator"
-                        :options="[
-                          { label: 'Égal à', value: 'equals' },
-                          { label: 'Différent de', value: 'not_equals' },
-                          { label: 'Contient', value: 'contains' },
-                          { label: 'Dans la liste', value: 'in' }
-                        ]"
-                        placeholder=" "
-                        class="form-control-modern"
-                      />
-                      <label>Opérateur</label>
-                    </BFormGroup>
-                  </BCol>
+              <!-- Configuration de la logique conditionnelle -->
+              <BCol cols="12" v-if="field.enableConditional" class="mb-3">
+                <div class="conditional-logic-config">
+                  <div class="alert alert-info mb-3">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>Logique conditionnelle :</strong> Cette question s'affichera uniquement si la condition est remplie
+                  </div>
 
-                  <!-- Valeur -->
-                  <BCol cols="12" class="mb-3">
-                    <BFormGroup class="form-group floating-label">
-                      <BFormInput
-                        v-model="field.conditionalLogic.value"
-                        placeholder=" "
-                        class="form-control-modern"
-                      />
-                      <label>Valeur attendue</label>
-                    </BFormGroup>
-                  </BCol>
+                  <BRow>
+                    <!-- Sélection de la question de référence -->
+                    <BCol cols="12" md="6" class="mb-3">
+                      <BFormGroup class="form-group floating-label">
+                        <Multiselect
+                          square
+                          outlined
+                          v-model="field.conditionalLogic.questionId"
+                          :options="getPreviousQuestions(index)"
+                          placeholder=" "
+                          class="form-control-modern"
+                        />
+                        <label>Question de référence</label>
+                      </BFormGroup>
+                    </BCol>
 
-                  <!-- Action -->
-                  <BCol cols="12" class="mb-3">
-                    <BFormGroup class="form-group floating-label">
-                      <Multiselect
-                        square
-                        outlined
-                        v-model="field.conditionalLogic.action"
-                        :options="[
-                          { label: 'Afficher', value: 'show' },
-                          { label: 'Masquer', value: 'hide' }
-                        ]"
-                        placeholder=" "
-                        class="form-control-modern"
-                      />
-                      <label>Action</label>
-                    </BFormGroup>
-                  </BCol>
-                </BRow>
-              </div>
-            </BCol>
+                    <!-- Opérateur -->
+                    <BCol cols="12" md="6" class="mb-3">
+                      <BFormGroup class="form-group floating-label">
+                        <Multiselect
+                          square
+                          outlined
+                          v-model="field.conditionalLogic.operator"
+                          :options="[
+                            { label: 'Égal à', value: 'equals' },
+                            { label: 'Différent de', value: 'not_equals' },
+                            { label: 'Contient', value: 'contains' },
+                            { label: 'Dans la liste', value: 'in' }
+                          ]"
+                          placeholder=" "
+                          class="form-control-modern"
+                        />
+                        <label>Opérateur</label>
+                      </BFormGroup>
+                    </BCol>
+
+                    <!-- Valeur -->
+                    <BCol cols="12" class="mb-3">
+                      <BFormGroup class="form-group floating-label">
+                        <BFormInput
+                          v-model="field.conditionalLogic.value"
+                          placeholder=" "
+                          class="form-control-modern"
+                        />
+                        <label>Valeur attendue</label>
+                      </BFormGroup>
+                    </BCol>
+
+                    <!-- Action -->
+                    <BCol cols="12" class="mb-3">
+                      <BFormGroup class="form-group floating-label">
+                        <Multiselect
+                          square
+                          outlined
+                          v-model="field.conditionalLogic.action"
+                          :options="[
+                            { label: 'Afficher', value: 'show' },
+                            { label: 'Masquer', value: 'hide' }
+                          ]"
+                          placeholder=" "
+                          class="form-control-modern"
+                        />
+                        <label>Action</label>
+                      </BFormGroup>
+                    </BCol>
+                  </BRow>
+                </div>
+              </BCol>
             </BRow>
           </BCardBody>
         </BCard>

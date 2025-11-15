@@ -99,30 +99,27 @@
                   <i class="bi bi-list-ul me-2"></i>
                   Options de réponses
                 </label>
-                <div class="options-list">
-                  <div
+                <BListGroup flush>
+                  <BListGroupItem
                     v-for="(option, idx) in field.choices"
                     :key="option.id"
-                    class="option-item mb-3"
+                    class="d-flex justify-content-between align-items-center gap-2"
                   >
-                    <div class="option-input-wrapper">
-                      <span class="option-number">{{ idx + 1 }}</span>
-                      <BFormInput
-                        v-model="option.value"
-                        placeholder="Entrez une option de réponse"
-                        class="form-control-modern"
-                      />
+                    <BFormInput
+                      v-model="option.value"
+                      placeholder="Entrez une option de réponse"
+                      class="form-control-modern"
+                    />
+                    <div class="d-flex align-items-center gap-2">
+                      <BButton size="sm" class="btn-success me-1" @click="AddFormDataM(index)" title="Ajouter une option">
+                        <i class="bi bi-file-earmark-plus"></i>
+                      </BButton>
+                      <BButton size="sm" class="btn-danger" @click="deleteRow2(index, idx)" title="Supprimer cette option">
+                        <i class="bi bi-file-earmark-minus"></i>
+                      </BButton>
                     </div>
-                    <div class="option-actions">
-                      <button class="btn-add-option" @click="AddFormDataM(index)" title="Ajouter une option">
-                        <i class="bi bi-plus-circle"></i>
-                      </button>
-                      <button class="btn-delete-option" @click="deleteRow2(index, idx)" title="Supprimer cette option">
-                        <i class="bi bi-trash"></i>
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                  </BListGroupItem>
+                </BListGroup>
 
                 <!-- Options avancées pour les choix -->
                 <div class="advanced-options mt-4">
@@ -337,6 +334,8 @@ import {
   BFormGroup,
   BFormTextarea,
   BFormInput,
+  BListGroup,
+  BListGroupItem,
 } from 'bootstrap-vue-next'
 import { useRegisterStore } from 'src/stores/useRegisterStore'
 import { getCurrentInstance, onMounted, ref, watch } from 'vue'
@@ -358,6 +357,8 @@ export default {
     BFormTextarea,
     BCardBody,
     BCardHeader,
+    BListGroup,
+    BListGroupItem,
   },
   emits: ['onBack', 'onNext'],
   setup(props) {
