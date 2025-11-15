@@ -123,6 +123,70 @@
                     </div>
                   </div>
                 </div>
+
+                <!-- Options avancées pour les choix -->
+                <div class="advanced-options mt-4">
+                  <div class="form-check form-switch gap-2 d-flex align-items-center mb-3">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      :id="`allowOther-${index}`"
+                      v-model="field.allowOther"
+                      style="width: 50px; height: 25px"
+                    />
+                    <label class="form-check-label fw-semibold" :for="`allowOther-${index}`">
+                      <i class="bi bi-plus-square me-2"></i>
+                      Permettre option "Autre" avec texte libre
+                    </label>
+                  </div>
+
+                  <div v-if="field.allowOther" class="other-label-input mb-3">
+                    <BFormInput
+                      v-model="field.otherLabel"
+                      placeholder="Label pour l'option 'Autre' (ex: Autre (précisez))"
+                      class="form-control-modern"
+                    />
+                  </div>
+
+                  <!-- Commentaires conditionnels -->
+                  <div class="form-check form-switch gap-2 d-flex align-items-center mb-3">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      :id="`enableComments-${index}`"
+                      v-model="field.enableComments"
+                      style="width: 50px; height: 25px"
+                    />
+                    <label class="form-check-label fw-semibold" :for="`enableComments-${index}`">
+                      <i class="bi bi-chat-left-text me-2"></i>
+                      Activer commentaires conditionnels
+                    </label>
+                  </div>
+
+                  <!-- Configuration des commentaires par option -->
+                  <div v-if="field.enableComments" class="comments-config">
+                    <div v-for="(option, idx) in field.choices" :key="`comment-${option.id}`" class="comment-config-item mb-3">
+                      <div class="d-flex align-items-center gap-2 mb-2">
+                        <input
+                          type="checkbox"
+                          :id="`requireComment-${index}-${idx}`"
+                          v-model="option.requiresComment"
+                          class="form-check-input"
+                          style="width: 20px; height: 20px"
+                        />
+                        <label :for="`requireComment-${index}-${idx}`" class="form-label mb-0">
+                          <strong>{{ option.value || `Option ${idx + 1}` }}</strong> - Demander un commentaire
+                        </label>
+                      </div>
+                      <BFormInput
+                        v-if="option.requiresComment"
+                        v-model="option.commentLabel"
+                        placeholder="Label du commentaire (ex: Pourquoi ?)"
+                        class="form-control-modern ms-4"
+                      />
+                    </div>
+                  </div>
+                </div>
               </BCol>
 
               <!-- Obligatoire -->
@@ -136,6 +200,100 @@
                     style="width: 50px; height: 25px"
                   />
                   <label class="form-check-label fw-semibold" for="publishCheck"> Obligatoire </label>
+                </div>
+              </BCol>
+
+              <!-- Questions Conditionnelles -->
+              <BCol cols="12" class="mb-3">
+                <div class="form-check form-switch gap-2 d-flex align-items-center">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    :id="`enableConditional-${index}`"
+                    v-model="field.enableConditional"
+                    style="width: 50px; height: 25px"
+                  />
+                  <label class="form-check-label fw-semibold" :for="`enableConditional-${index}`">
+                    <i class="bi bi-diagram-3 me-2"></i>
+                    Cette question dépend d'une autre question
+                  </label>
+                </div>
+              </BCol>
+
+              <!-- Configuration de la logique conditionnelle -->
+              <BCol cols="12" v-if="field.enableConditional" class="mb-3">
+                <div class="conditional-logic-config">
+                  <div class="alert alert-info mb-3">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>Logique conditionnelle :</strong> Cette question s'affichera uniquement si la condition est remplie
+                  </div>
+
+                  <BRow>
+                    <!-- Sélection de la question de référence -->
+                    <BCol cols="12" md="6" class="mb-3">
+                      <BFormGroup class="form-group floating-label">
+                        <Multiselect
+                          square
+                          outlined
+                          v-model="field.conditionalLogic.questionId"
+                          :options="getPreviousQuestions(index)"
+                          placeholder=" "
+                          class="form-control-modern"
+                        />
+                        <label>Question de référence</label>
+                      </BFormGroup>
+                    </BCol>
+
+                    <!-- Opérateur -->
+                    <BCol cols="12" md="6" class="mb-3">
+                      <BFormGroup class="form-group floating-label">
+                        <Multiselect
+                          square
+                          outlined
+                          v-model="field.conditionalLogic.operator"
+                          :options="[
+                            { label: 'Égal à', value: 'equals' },
+                            { label: 'Différent de', value: 'not_equals' },
+                            { label: 'Contient', value: 'contains' },
+                            { label: 'Dans la liste', value: 'in' }
+                          ]"
+                          placeholder=" "
+                          class="form-control-modern"
+                        />
+                        <label>Opérateur</label>
+                      </BFormGroup>
+                    </BCol>
+
+                    <!-- Valeur -->
+                    <BCol cols="12" class="mb-3">
+                      <BFormGroup class="form-group floating-label">
+                        <BFormInput
+                          v-model="field.conditionalLogic.value"
+                          placeholder=" "
+                          class="form-control-modern"
+                        />
+                        <label>Valeur attendue</label>
+                      </BFormGroup>
+                    </BCol>
+
+                    <!-- Action -->
+                    <BCol cols="12" class="mb-3">
+                      <BFormGroup class="form-group floating-label">
+                        <Multiselect
+                          square
+                          outlined
+                          v-model="field.conditionalLogic.action"
+                          :options="[
+                            { label: 'Afficher', value: 'show' },
+                            { label: 'Masquer', value: 'hide' }
+                          ]"
+                          placeholder=" "
+                          class="form-control-modern"
+                        />
+                        <label>Action</label>
+                      </BFormGroup>
+                    </BCol>
+                  </BRow>
                 </div>
               </BCol>
             </BRow>
@@ -214,8 +372,18 @@ export default {
         type: null,
         position: 0,
         isRequired: false,
-        choices: [{ id: 1, label: '', value: '' }],
+        choices: [{ id: 1, label: '', value: '', requiresComment: false, commentLabel: '' }],
         isNew: true,
+        allowOther: false,
+        otherLabel: 'Autre (précisez)',
+        enableComments: false,
+        enableConditional: false,
+        conditionalLogic: {
+          questionId: null,
+          operator: 'equals',
+          value: '',
+          action: 'show'
+        }
       },
     ])
     const originalFields = ref([])
@@ -251,15 +419,24 @@ export default {
 
       fields.value.push({
         id: idCounter++,
-
         title: '',
         description: '',
         group: null,
         type: null,
         position: 0,
         isRequired: false,
-        choices: [{ id: 1, label: '', value: '' }],
+        choices: [{ id: 1, label: '', value: '', requiresComment: false, commentLabel: '' }],
         isNew: true,
+        allowOther: false,
+        otherLabel: 'Autre (précisez)',
+        enableComments: false,
+        enableConditional: false,
+        conditionalLogic: {
+          questionId: null,
+          operator: 'equals',
+          value: '',
+          action: 'show'
+        }
       })
     }
     const AddFormDataM = (index) => {
@@ -278,6 +455,8 @@ export default {
         label: '',
         value: '',
         isNew: true,
+        requiresComment: false,
+        commentLabel: ''
       })
     }
     const deleteRow2 = async (index, indexs) => {
@@ -530,6 +709,15 @@ export default {
       }
     }
 
+    const getPreviousQuestions = (currentIndex) => {
+      return fields.value
+        .slice(0, currentIndex)
+        .map((field, idx) => ({
+          label: `Q${idx + 1}: ${field.title || 'Sans titre'}`,
+          value: field.id
+        }))
+    }
+
     watch(
       () => props.refreshTrigger,
       async () => {
@@ -549,6 +737,7 @@ export default {
       deleteRow,
       AddFormDataM,
       deleteRow2,
+      getPreviousQuestions,
       fields,
       idCounter,
       optionl2,
@@ -637,5 +826,77 @@ export default {
   left: 10px;
   font-size: 0.8rem;
   color: #10d0f2;
+}
+
+/* Styles pour les options avancées */
+.advanced-options {
+  background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+  border: 2px solid #e0e7ff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.advanced-options .form-check-label {
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.advanced-options .form-check-input:checked {
+  background-color: #10d0f2;
+  border-color: #10d0f2;
+}
+
+.other-label-input {
+  background: #fff;
+  padding: 12px;
+  border-radius: 8px;
+  border-left: 4px solid #10d0f2;
+}
+
+/* Configuration des commentaires */
+.comments-config {
+  background: #fff;
+  border: 1px solid #e0e7ff;
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 15px;
+}
+
+.comment-config-item {
+  background: #f8f9ff;
+  padding: 12px;
+  border-radius: 6px;
+  border-left: 3px solid #10d0f2;
+}
+
+.comment-config-item .form-check-input {
+  border-color: #10d0f2;
+}
+
+.comment-config-item .form-check-input:checked {
+  background-color: #10d0f2;
+  border-color: #10d0f2;
+}
+
+/* Configuration de la logique conditionnelle */
+.conditional-logic-config {
+  background: linear-gradient(135deg, #f0f8ff 0%, #f0f4ff 100%);
+  border: 2px solid #10d0f2;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 15px;
+}
+
+.conditional-logic-config .alert {
+  background: #e3f2fd;
+  border: 1px solid #90caf9;
+  color: #1565c0;
+  border-radius: 8px;
+}
+
+.conditional-logic-config .form-label {
+  color: #333;
+  font-weight: 500;
 }
 </style>
